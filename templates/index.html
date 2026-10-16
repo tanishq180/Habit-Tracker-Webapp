@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#090a0f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Orbit">
+    <meta name="application-name" content="Orbit">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="description" content="Orbit • Modern habit and task flow with streak tracking, categories, and deadlines.">
+
+    <title>Orbit • Habit & Task Flow</title>
+
+    <!-- PWA Icons & Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/svg+xml" href="/static/icons/icon.svg">
+    <link rel="apple-touch-icon" href="/static/icons/icon.svg">
+
+    <!-- Modern Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+
+    <!-- Canvas Confetti for task celebrations -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+</head>
+<body>
+    <!-- Background Ambient Glow Effects -->
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+    <div class="ambient-glow glow-3"></div>
+
+    <div class="app-layout">
+        <!-- Top Navigation Bar -->
+        <header class="app-header">
+            <div class="brand">
+                <div class="logo-mark">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="m9 12 2 2 4-4"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="brand-title">Orbit</h1>
+                    <span class="brand-subtitle">Habits & Task Mastery</span>
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <!-- Live Date Indicator -->
+                <div class="date-badge" id="currentDateBadge">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+                        <line x1="16" x2="16" y1="2" y2="6"/>
+                        <line x1="8" x2="8" y1="2" y2="6"/>
+                        <line x1="3" x2="21" y1="10" y2="10"/>
+                    </svg>
+                    <span id="headerDateText">Today</span>
+                </div>
+
+                <!-- Install PWA Button -->
+                <button class="icon-btn install-btn hidden" id="installAppBtn" title="Install Orbit as an App">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" x2="12" y1="15" y2="3"/>
+                    </svg>
+                </button>
+
+                <!-- Theme Switcher -->
+                <button class="icon-btn theme-toggle" id="themeToggleBtn" title="Toggle theme (Light / Dark)">
+                    <svg class="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="4"/>
+                        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                    </svg>
+                    <svg class="moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Stats Overview Banner -->
+        <section class="stats-grid">
+            <!-- Progress Radial Card -->
+            <div class="glass-card stat-card progress-overview-card">
+                <div class="radial-wrap">
+                    <svg class="radial-svg" width="84" height="84" viewBox="0 0 84 84">
+                        <circle class="radial-bg" cx="42" cy="42" r="34" stroke-width="7" fill="none"/>
+                        <circle class="radial-bar" id="statRadialBar" cx="42" cy="42" r="34" stroke-width="7" fill="none"
+                            stroke-dasharray="213.6" stroke-dashoffset="213.6"/>
+                    </svg>
+                    <span class="radial-label" id="statPercent">0%</span>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-title">Daily Momentum</span>
+                    <span class="stat-desc" id="statSubtext">Keep going, habits take form!</span>
+                </div>
+            </div>
+
+            <!-- Total Completed -->
+            <div class="glass-card stat-card">
+                <div class="stat-icon-badge emerald">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-num" id="statCompleted">0</span>
+                    <span class="stat-label">Tasks Finished</span>
+                </div>
+            </div>
+
+            <!-- Active Streak -->
+            <div class="glass-card stat-card">
+                <div class="stat-icon-badge amber">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
+                    </svg>
+                </div>
+                <div class="stat-info">
+                    <div class="streak-num-wrap">
+                        <span class="stat-num" id="statBestStreak">0</span>
+                        <span class="streak-flame">🔥</span>
+                    </div>
+                    <span class="stat-label">Best Streak</span>
+                </div>
+            </div>
+
+            <!-- Pending / Attention -->
+            <div class="glass-card stat-card">
+                <div class="stat-icon-badge indigo">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-num" id="statPending">0</span>
+                    <span class="stat-label">Remaining Today</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Task Addition Hero Card -->
+        <section class="glass-card composer-card">
+            <div class="composer-main">
+                <input 
+                    type="text" 
+                    id="taskInput" 
+                    class="composer-input" 
+                    placeholder="What habit or task are you conquering today?"
+                    autocomplete="off"
+                />
+            </div>
+
+            <!-- Rich Options Toolbar -->
+            <div class="composer-toolbar">
+                <div class="toolbar-left">
+                    <!-- Category Select Dropdown -->
+                    <div class="custom-select-wrap">
+                        <select id="taskCategorySelect" class="pill-select">
+                            <!-- Populated dynamically -->
+                        </select>
+                        <div class="select-chip">
+                            <span class="dot-indicator" id="categoryDot"></span>
+                            <span id="selectedCategoryLabel">Category</span>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+                        </div>
+                    </div>
+
+                    <!-- Priority Selector -->
+                    <div class="priority-picker">
+                        <button type="button" class="priority-pill active" data-priority="low">Low</button>
+                        <button type="button" class="priority-pill" data-priority="medium">Medium</button>
+                        <button type="button" class="priority-pill" data-priority="high">Urgent</button>
+                    </div>
+
+                    <!-- Deadline Picker -->
+                    <div class="deadline-wrap" id="deadlineWrap">
+                        <button type="button" class="action-pill" id="deadlineTriggerBtn">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+                                <line x1="16" x2="16" y1="2" y2="6"/>
+                                <line x1="8" x2="8" y1="2" y2="6"/>
+                                <line x1="3" x2="21" y1="10" y2="10"/>
+                            </svg>
+                            <span id="deadlineText">Set Deadline</span>
+                        </button>
+                        <button type="button" class="clear-date-pill hidden" id="clearDeadlineBtn" title="Clear deadline">&times;</button>
+
+                        <!-- Sleek Deadline Dropdown Popover -->
+                        <div class="deadline-popover hidden" id="deadlinePopover">
+                            <div class="popover-header">
+                                <span>Quick Schedule</span>
+                            </div>
+                            <div class="preset-chips">
+                                <button type="button" class="preset-chip" data-preset="today-evening">⚡ Today, 6:00 PM</button>
+                                <button type="button" class="preset-chip" data-preset="today-night">🌙 Tonight, 10:00 PM</button>
+                                <button type="button" class="preset-chip" data-preset="tomorrow-morning">☀️ Tomorrow, 9:00 AM</button>
+                                <button type="button" class="preset-chip" data-preset="in-2-days">📅 In 2 Days, 9:00 AM</button>
+                                <button type="button" class="preset-chip" data-preset="next-monday">🗓️ Next Monday, 9:00 AM</button>
+                            </div>
+                            <div class="popover-divider"></div>
+                            <div class="custom-dt-section">
+                                <label class="custom-dt-label" for="taskDeadlineInput">Custom Date & Time</label>
+                                <input type="datetime-local" id="taskDeadlineInput" class="custom-datetime-input" />
+                            </div>
+                            <div class="popover-actions">
+                                <button type="button" class="popover-btn-cancel" id="cancelDeadlinePopover">Cancel</button>
+                                <button type="button" class="popover-btn-apply" id="applyDeadlinePopover">Apply</button>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- New Category Modal Button -->
+                    <button type="button" class="action-pill" id="openCategoryModalBtn">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/>
+                            <line x1="12" x2="12" y1="10" y2="16"/>
+                            <line x1="9" x2="15" y1="13" y2="13"/>
+                        </svg>
+                        <span>New Folder</span>
+                    </button>
+                </div>
+
+                <div class="toolbar-right">
+                    <button type="button" id="addTaskBtn" class="primary-btn">
+                        <span>Add Task</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12"/></svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Controls Bar: Category Pills + Search & Filter Tabs -->
+        <section class="controls-section">
+            <!-- Category Filter Carousel -->
+            <div class="category-scroll-container">
+                <div class="category-pills" id="categoryPillsList">
+                    <button class="cat-pill active" data-id="all">
+                        <span>All Folders</span>
+                        <span class="count-badge" id="catCountAll">0</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Search & Status Tabs -->
+            <div class="filters-row">
+                <!-- Search Input -->
+                <div class="search-wrap">
+                    <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.3-4.3"/>
+                    </svg>
+                    <input type="text" id="searchInput" placeholder="Search tasks or habits..." autocomplete="off">
+                </div>
+
+                <!-- Status Tabs -->
+                <div class="status-tabs" id="statusTabs">
+                    <button class="tab-btn active" data-status="all">All</button>
+                    <button class="tab-btn" data-status="active">Active</button>
+                    <button class="tab-btn" data-status="completed">Done</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tasks Grouped / List View -->
+        <main class="tasks-container" id="tasksContainer">
+            <!-- Dynamic task groups will be rendered here -->
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <p>Syncing your tasks...</p>
+            </div>
+        </main>
+
+        <!-- Empty State Template -->
+        <div class="empty-state hidden" id="emptyState">
+            <div class="empty-icon-ring">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                </svg>
+            </div>
+            <h3 class="empty-title">All clear & peaceful</h3>
+            <p class="empty-desc">No tasks in this view. Enjoy the moment or add a new goal above.</p>
+        </div>
+    </div>
+
+    <!-- Create Category Modal -->
+    <div class="modal-backdrop hidden" id="categoryModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Create New Category</h3>
+                <button class="close-modal-btn" id="closeCategoryModalBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <label class="form-label" for="newCategoryName">Category Name</label>
+                <input type="text" id="newCategoryName" class="modal-input" placeholder="e.g. Fitness, Reading, Projects..." autocomplete="off" />
+
+                <label class="form-label">Theme Color</label>
+                <div class="color-palette-picker" id="colorPicker">
+                    <button type="button" class="color-swatch active" data-color="#10b981" style="background: #10b981;"></button>
+                    <button type="button" class="color-swatch" data-color="#6366f1" style="background: #6366f1;"></button>
+                    <button type="button" class="color-swatch" data-color="#ec4899" style="background: #ec4899;"></button>
+                    <button type="button" class="color-swatch" data-color="#8b5cf6" style="background: #8b5cf6;"></button>
+                    <button type="button" class="color-swatch" data-color="#f59e0b" style="background: #f59e0b;"></button>
+                    <button type="button" class="color-swatch" data-color="#06b6d4" style="background: #06b6d4;"></button>
+                    <button type="button" class="color-swatch" data-color="#f43f5e" style="background: #f43f5e;"></button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="secondary-btn" id="cancelCategoryModalBtn">Cancel</button>
+                <button class="primary-btn" id="saveCategoryModalBtn">Create Category</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Task Modal -->
+    <div class="modal-backdrop hidden" id="editTaskModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Edit Task</h3>
+                <button class="close-modal-btn" id="closeEditModalBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editTaskId" />
+                
+                <label class="form-label" for="editTaskText">Task Description</label>
+                <input type="text" id="editTaskText" class="modal-input" placeholder="Task text..." />
+
+                <div class="modal-row">
+                    <div class="modal-col">
+                        <label class="form-label" for="editTaskCategory">Category</label>
+                        <select id="editTaskCategory" class="modal-select"></select>
+                    </div>
+                    <div class="modal-col">
+                        <label class="form-label" for="editTaskPriority">Priority</label>
+                        <select id="editTaskPriority" class="modal-select">
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">Urgent</option>
+                        </select>
+                    </div>
+                </div>
+
+                <label class="form-label" for="editTaskDeadline">Deadline</label>
+                <input type="datetime-local" id="editTaskDeadline" class="modal-input" />
+            </div>
+            <div class="modal-footer">
+                <button class="secondary-btn" id="cancelEditModalBtn">Cancel</button>
+                <button class="primary-btn" id="saveEditModalBtn">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

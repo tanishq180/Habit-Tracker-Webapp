@@ -1,0 +1,20 @@
+{
+  "name": "Orbit • Habit & Task Mastery",
+  "short_name": "Orbit",
+  "description": "Track your daily habits, master tasks, and maintain streaks with modern elegance on every device.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#090a0f",
+  "theme_color": "#090a0f",
+  "categories": ["productivity", "lifestyle", "utilities"],
+  "icons": [
+    {
+      "src": "/static/icons/icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
