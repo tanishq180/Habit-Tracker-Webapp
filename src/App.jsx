@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, Tag, Check, Circle, FolderPlus, Clock, Plus } from 'lucide-react';
+import { Calendar, Tag, Check, Circle, FolderPlus, Clock } from 'lucide-react';
 
 export default function App() {
   const [categories, setCategories] = useState([
@@ -15,6 +15,7 @@ export default function App() {
   const [newTaskText, setNewTaskText] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('1');
   const [deadline, setDeadline] = useState('');
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   
   const [showCategoryInput, setShowCategoryInput] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState('');
@@ -76,32 +77,73 @@ export default function App() {
             <div className="flex flex-wrap items-center gap-3">
               
               {/* Deadline Picker */}
-              <div className="relative group">
+              <div className="relative flex items-center">
                 <input 
                   type="datetime-local" 
-                  className="absolute opacity-0 inset-0 w-full h-full cursor-pointer z-10"
+                  id="react-deadline-input"
+                  className="sr-only"
                   onChange={(e) => setDeadline(e.target.value)}
                   value={deadline}
                 />
-                <button className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm transition-colors ${deadline ? 'bg-zinc-100 text-zinc-900' : 'text-gray-400 bg-gray-50 hover:bg-gray-100'}`}>
-                  <Clock size={16} />
-                  {deadline ? new Date(deadline).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' }) : 'Set Date & Time'}
-                </button>
+                <label 
+                  htmlFor="react-deadline-input"
+                  className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm cursor-pointer transition-all ${
+                    deadline 
+                      ? 'bg-indigo-50/80 text-indigo-700 font-medium border border-indigo-200/60 shadow-xs' 
+                      : 'text-gray-500 bg-gray-50 hover:bg-gray-100/80 border border-transparent'
+                  }`}
+                >
+                  <Clock size={15} className={deadline ? 'text-indigo-600' : 'text-gray-400'} />
+                  <span>{deadline ? new Date(deadline).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' }) : 'Set Deadline'}</span>
+                </label>
+                {deadline && (
+                  <button 
+                    type="button" 
+                    onClick={() => setDeadline('')}
+                    className="ml-1 text-gray-400 hover:text-rose-500 p-1 rounded-full hover:bg-gray-100 transition-colors"
+                    title="Clear deadline"
+                    aria-label="Clear deadline"
+                  >
+                    ×
+                  </button>
+                )}
               </div>
 
-              {/* Category Dropdown */}
-              <div className="relative group">
-                 <select 
-                   className="absolute opacity-0 inset-0 w-full h-full cursor-pointer z-10"
-                   value={selectedCategory}
-                   onChange={(e) => setSelectedCategory(e.target.value)}
+              {/* Custom Category Dropdown */}
+              <div className="relative">
+                 <button 
+                   type="button"
+                   onClick={() => setIsCategoryOpen(!isCategoryOpen)}
+                   className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm text-gray-600 bg-gray-50 hover:bg-gray-100/80 transition-colors"
                  >
-                   {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                 </select>
-                 <button className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm text-gray-500 bg-gray-50 hover:bg-gray-100 transition-colors">
-                   <Tag size={16} />
-                   {categories.find(c => c.id === selectedCategory)?.name || 'Select Category'}
+                   <Tag size={15} className="text-gray-400" />
+                   <span>{categories.find(c => c.id === selectedCategory)?.name || 'Select Category'}</span>
                  </button>
+                 {isCategoryOpen && (
+                   <div className="absolute top-full left-0 mt-2 w-48 bg-white border border-gray-100 rounded-2xl shadow-xl p-1.5 z-30">
+                     <div className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider px-2.5 py-1.5">
+                       Select Folder
+                     </div>
+                     <div className="flex flex-col gap-0.5">
+                       {categories.map(c => (
+                         <button
+                           key={c.id}
+                           type="button"
+                           onClick={() => {
+                             setSelectedCategory(c.id);
+                             setIsCategoryOpen(false);
+                           }}
+                           className={`flex items-center justify-between w-full px-2.5 py-1.5 rounded-xl text-sm text-left transition-colors ${
+                             selectedCategory === c.id ? 'bg-indigo-50 text-indigo-600 font-medium' : 'text-gray-700 hover:bg-gray-50'
+                           }`}
+                         >
+                           <span>{c.name}</span>
+                           {selectedCategory === c.id && <Check size={14} className="text-indigo-600" />}
+                         </button>
+                       ))}
+                     </div>
+                   </div>
+                 )}
               </div>
 
               {/* Create Category Button */}

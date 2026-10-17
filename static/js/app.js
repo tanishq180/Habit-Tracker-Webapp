@@ -27,13 +27,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const taskInput = document.getElementById('taskInput');
     const taskCategorySelect = document.getElementById('taskCategorySelect');
+    const categoryDropdownWrap = document.getElementById('categoryDropdownWrap');
+    const categoryTriggerBtn = document.getElementById('categoryTriggerBtn');
+    const categoryDropdownMenu = document.getElementById('categoryDropdownMenu');
+    const categoryOptionsList = document.getElementById('categoryOptionsList');
+    const categoryMenuAddBtn = document.getElementById('categoryMenuAddBtn');
     const categoryDot = document.getElementById('categoryDot');
     const selectedCategoryLabel = document.getElementById('selectedCategoryLabel');
     const priorityPills = document.querySelectorAll('.priority-pill');
     const addTaskBtn = document.getElementById('addTaskBtn');
 
     const categoryPillsList = document.getElementById('categoryPillsList');
-    const catCountAll = document.getElementById('catCountAll');
     const searchInput = document.getElementById('searchInput');
     const statusTabs = document.getElementById('statusTabs');
     const tasksContainer = document.getElementById('tasksContainer');
@@ -99,6 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Deadline Elements
     const deadlineWrap = document.getElementById('deadlineWrap');
+    const deadlinePillGroup = document.getElementById('deadlinePillGroup');
     const deadlineTriggerBtn = document.getElementById('deadlineTriggerBtn');
     const deadlinePopover = document.getElementById('deadlinePopover');
     const deadlineText = document.getElementById('deadlineText');
@@ -106,6 +111,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const taskDeadlineInput = document.getElementById('taskDeadlineInput');
     const cancelDeadlinePopover = document.getElementById('cancelDeadlinePopover');
     const applyDeadlinePopover = document.getElementById('applyDeadlinePopover');
+    const popoverQuickClear = document.getElementById('popoverQuickClear');
+    const deadlineRelativeHint = document.getElementById('deadlineRelativeHint');
     const presetChips = document.querySelectorAll('.preset-chip');
 
     // Deadline Formatting Helper
@@ -119,18 +126,59 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${y}-${m}-${d}T${h}:${min}`;
     }
 
-    function applyDeadline(isoStr) {
+    function updateRelativeHint(isoStr) {
+        if (!deadlineRelativeHint) return;
+        if (!isoStr) {
+            deadlineRelativeHint.classList.add('hidden');
+            deadlineRelativeHint.textContent = '';
+            return;
+        }
+        const target = new Date(isoStr);
+        if (isNaN(target.getTime())) return;
+        const now = new Date();
+        const diffMs = target - now;
+
+        if (diffMs < 0) {
+            deadlineRelativeHint.textContent = '⚠️ Selected time is in the past';
+            deadlineRelativeHint.style.color = 'var(--rose)';
+            deadlineRelativeHint.classList.remove('hidden');
+            return;
+        }
+
+        const diffHours = Math.round(diffMs / (1000 * 60 * 60));
+        let relText = '';
+        if (diffHours < 1) {
+            const diffMin = Math.max(1, Math.round(diffMs / (1000 * 60)));
+            relText = `Due in ${diffMin} minute${diffMin === 1 ? '' : 's'}`;
+        } else if (diffHours < 24) {
+            relText = `Due in ~${diffHours} hour${diffHours === 1 ? '' : 's'}`;
+        } else {
+            const diffDays = Math.round(diffHours / 24);
+            relText = `Due in ~${diffDays} day${diffDays === 1 ? '' : 's'}`;
+        }
+        deadlineRelativeHint.textContent = `⏱️ ${relText} (${formatFriendlyDeadline(isoStr)})`;
+        deadlineRelativeHint.style.color = 'var(--primary)';
+        deadlineRelativeHint.classList.remove('hidden');
+    }
+
+    function applyDeadline(isoStr, presetKey = '') {
         selectedDeadline = isoStr;
         taskDeadlineInput.value = isoStr;
+        presetChips.forEach(chip => {
+            chip.classList.toggle('active', !!presetKey && chip.dataset.preset === presetKey);
+        });
         if (selectedDeadline) {
             deadlineText.textContent = formatFriendlyDeadline(selectedDeadline);
-            deadlineTriggerBtn.classList.add('has-deadline');
+            if (deadlinePillGroup) deadlinePillGroup.classList.add('has-deadline');
             clearDeadlineBtn.classList.remove('hidden');
+            if (popoverQuickClear) popoverQuickClear.classList.remove('hidden');
         } else {
             deadlineText.textContent = 'Set Deadline';
-            deadlineTriggerBtn.classList.remove('has-deadline');
+            if (deadlinePillGroup) deadlinePillGroup.classList.remove('has-deadline');
             clearDeadlineBtn.classList.add('hidden');
+            if (popoverQuickClear) popoverQuickClear.classList.add('hidden');
         }
+        updateRelativeHint(selectedDeadline);
         deadlinePopover.classList.add('hidden');
     }
 
@@ -138,14 +186,45 @@ document.addEventListener('DOMContentLoaded', () => {
         selectedDeadline = '';
         taskDeadlineInput.value = '';
         deadlineText.textContent = 'Set Deadline';
-        deadlineTriggerBtn.classList.remove('has-deadline');
+        if (deadlinePillGroup) deadlinePillGroup.classList.remove('has-deadline');
         clearDeadlineBtn.classList.add('hidden');
+        if (popoverQuickClear) popoverQuickClear.classList.add('hidden');
+        if (deadlineRelativeHint) {
+            deadlineRelativeHint.classList.add('hidden');
+            deadlineRelativeHint.textContent = '';
+        }
+        presetChips.forEach(c => c.classList.remove('active'));
     }
 
     // Toggle Popover
     deadlineTriggerBtn.addEventListener('click', (e) => {
         e.stopPropagation();
+        const isOpening = deadlinePopover.classList.contains('hidden');
+        if (isOpening) {
+            // Set min to current time
+            taskDeadlineInput.min = getLocalDatetimeString(new Date());
+            if (selectedDeadline) {
+                taskDeadlineInput.value = selectedDeadline;
+                updateRelativeHint(selectedDeadline);
+                if (popoverQuickClear) popoverQuickClear.classList.remove('hidden');
+            } else {
+                taskDeadlineInput.value = '';
+                if (deadlineRelativeHint) deadlineRelativeHint.classList.add('hidden');
+                if (popoverQuickClear) popoverQuickClear.classList.add('hidden');
+            }
+        }
+        if (categoryDropdownMenu) {
+            categoryDropdownMenu.classList.add('hidden');
+            if (categoryTriggerBtn) {
+                categoryTriggerBtn.classList.remove('is-open');
+                categoryTriggerBtn.setAttribute('aria-expanded', 'false');
+            }
+        }
         deadlinePopover.classList.toggle('hidden');
+    });
+
+    taskDeadlineInput.addEventListener('input', () => {
+        updateRelativeHint(taskDeadlineInput.value);
     });
 
     cancelDeadlinePopover.addEventListener('click', () => {
@@ -161,6 +240,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    if (popoverQuickClear) {
+        popoverQuickClear.addEventListener('click', () => {
+            clearDeadline();
+            deadlinePopover.classList.add('hidden');
+        });
+    }
+
     // Preset Chips
     presetChips.forEach(chip => {
         chip.addEventListener('click', (e) => {
@@ -169,8 +255,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const targetDate = new Date();
 
             if (preset === 'today-evening') {
+                if (targetDate.getHours() >= 18) {
+                    targetDate.setDate(targetDate.getDate() + 1);
+                }
                 targetDate.setHours(18, 0, 0, 0);
             } else if (preset === 'today-night') {
+                if (targetDate.getHours() >= 22) {
+                    targetDate.setDate(targetDate.getDate() + 1);
+                }
                 targetDate.setHours(22, 0, 0, 0);
             } else if (preset === 'tomorrow-morning') {
                 targetDate.setDate(targetDate.getDate() + 1);
@@ -178,6 +270,11 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (preset === 'in-2-days') {
                 targetDate.setDate(targetDate.getDate() + 2);
                 targetDate.setHours(9, 0, 0, 0);
+            } else if (preset === 'friday-evening') {
+                const day = targetDate.getDay();
+                const diff = (day <= 5 ? 5 - day : 5 - day + 7);
+                targetDate.setDate(targetDate.getDate() + diff);
+                targetDate.setHours(17, 0, 0, 0);
             } else if (preset === 'next-monday') {
                 const day = targetDate.getDay();
                 const diff = (day === 0 ? 1 : 8 - day);
@@ -186,7 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const iso = getLocalDatetimeString(targetDate);
-            applyDeadline(iso);
+            applyDeadline(iso, preset);
         });
     });
 
@@ -196,20 +293,46 @@ document.addEventListener('DOMContentLoaded', () => {
         clearDeadline();
     });
 
-    // Close on click outside
+    // Category Dropdown Toggle
+    if (categoryTriggerBtn) {
+        categoryTriggerBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (deadlinePopover) deadlinePopover.classList.add('hidden');
+            const isOpen = !categoryDropdownMenu.classList.contains('hidden');
+            if (isOpen) {
+                categoryDropdownMenu.classList.add('hidden');
+                categoryTriggerBtn.classList.remove('is-open');
+                categoryTriggerBtn.setAttribute('aria-expanded', 'false');
+            } else {
+                categoryDropdownMenu.classList.remove('hidden');
+                categoryTriggerBtn.classList.add('is-open');
+                categoryTriggerBtn.setAttribute('aria-expanded', 'true');
+            }
+        });
+    }
+
+    if (categoryMenuAddBtn) {
+        categoryMenuAddBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            categoryDropdownMenu.classList.add('hidden');
+            categoryTriggerBtn.classList.remove('is-open');
+            categoryTriggerBtn.setAttribute('aria-expanded', 'false');
+            categoryModal.classList.remove('hidden');
+            newCategoryName.focus();
+        });
+    }
+
+    // Close popovers on click outside
     document.addEventListener('click', (e) => {
         if (deadlineWrap && !deadlineWrap.contains(e.target)) {
             deadlinePopover.classList.add('hidden');
         }
-    });
-
-
-    // Category Select Dropdown sync with custom chip
-    taskCategorySelect.addEventListener('change', () => {
-        const selected = categories.find(c => c.id == taskCategorySelect.value);
-        if (selected) {
-            selectedCategoryLabel.textContent = selected.name;
-            categoryDot.style.background = selected.color || '#6366f1';
+        if (categoryDropdownWrap && !categoryDropdownWrap.contains(e.target)) {
+            if (categoryDropdownMenu) categoryDropdownMenu.classList.add('hidden');
+            if (categoryTriggerBtn) {
+                categoryTriggerBtn.classList.remove('is-open');
+                categoryTriggerBtn.setAttribute('aria-expanded', 'false');
+            }
         }
     });
 
@@ -471,6 +594,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function selectCategory(cat) {
+        if (!cat) return;
+        taskCategorySelect.value = cat.id;
+        selectedCategoryLabel.textContent = cat.name;
+        categoryDot.style.background = cat.color || '#6366f1';
+        if (categoryOptionsList) {
+            categoryOptionsList.querySelectorAll('.category-option-item').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.id == cat.id);
+            });
+        }
+    }
+
     // Render Category Pills & Dropdown Options
     function renderCategoryPills() {
         // Reset category pill list
@@ -481,8 +616,8 @@ document.addEventListener('DOMContentLoaded', () => {
             </button>
         `;
 
-        // Reset dropdowns
-        taskCategorySelect.innerHTML = '';
+        // Reset custom category options list and edit modal dropdown
+        if (categoryOptionsList) categoryOptionsList.innerHTML = '';
         editTaskCategory.innerHTML = '<option value="">No Category</option>';
 
         categories.forEach(cat => {
@@ -505,11 +640,34 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             categoryPillsList.appendChild(pill);
 
-            // Add Task Select Option
-            const opt = document.createElement('option');
-            opt.value = cat.id;
-            opt.textContent = cat.name;
-            taskCategorySelect.appendChild(opt);
+            // Custom Dropdown Option Item
+            if (categoryOptionsList) {
+                const isSelected = String(taskCategorySelect.value) === String(cat.id);
+                const itemBtn = document.createElement('button');
+                itemBtn.type = 'button';
+                itemBtn.className = `category-option-item ${isSelected ? 'active' : ''}`;
+                itemBtn.dataset.id = cat.id;
+                itemBtn.innerHTML = `
+                    <div class="category-option-left">
+                        <span class="category-option-dot" style="background: ${cat.color};"></span>
+                        <span class="category-option-name">${escapeHtml(cat.name)}</span>
+                    </div>
+                    <div class="category-option-right">
+                        <span class="category-option-count">${count}</span>
+                        <svg class="category-option-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                    </div>
+                `;
+                itemBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    selectCategory(cat);
+                    categoryDropdownMenu.classList.add('hidden');
+                    categoryTriggerBtn.classList.remove('is-open');
+                    categoryTriggerBtn.setAttribute('aria-expanded', 'false');
+                });
+                categoryOptionsList.appendChild(itemBtn);
+            }
 
             // Edit Task Select Option
             const editOpt = document.createElement('option');
@@ -528,14 +686,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Update selected category chip indicator
         if (categories.length > 0 && !taskCategorySelect.value) {
-            taskCategorySelect.value = categories[0].id;
-            selectedCategoryLabel.textContent = categories[0].name;
-            categoryDot.style.background = categories[0].color;
+            selectCategory(categories[0]);
         } else if (taskCategorySelect.value) {
             const selected = categories.find(c => c.id == taskCategorySelect.value);
             if (selected) {
-                selectedCategoryLabel.textContent = selected.name;
-                categoryDot.style.background = selected.color;
+                selectCategory(selected);
             }
         }
     }
