@@ -4,6 +4,94 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+    // ==========================================
+    // 8-Bit Web Audio API Synthesizer Engine
+    // ==========================================
+    let audioCtx = null;
+    let sfxEnabled = localStorage.getItem('orbit_sfx') !== 'false';
+
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+    }
+
+    function playTone(freq, duration, type = 'square', gainVal = 0.08) {
+        if (!sfxEnabled) return;
+        try {
+            initAudio();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(gainVal, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        } catch {}
+    }
+
+    // 8-bit Mario/Arcade Coin sound on task complete! (B5 -> E6)
+    function playCoinSound() {
+        if (!sfxEnabled) return;
+        try {
+            initAudio();
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'square';
+            gain.gain.setValueAtTime(0.08, now);
+            osc.frequency.setValueAtTime(987.77, now);
+            osc.frequency.setValueAtTime(1318.51, now + 0.08);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.38);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + 0.38);
+        } catch {}
+    }
+
+    // 8-bit Blip for button clicks / navigation
+    function playBlipSound(pitch = 540) {
+        playTone(pitch, 0.05, 'square', 0.05);
+    }
+
+    // 8-bit Level Up / 100% Fanfare
+    function playFanfareSound() {
+        if (!sfxEnabled) return;
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((freq, idx) => {
+            setTimeout(() => playTone(freq, 0.12, 'square', 0.07), idx * 80);
+        });
+    }
+
+    // 8-bit Delete buzz
+    function playDeleteSound() {
+        if (!sfxEnabled) return;
+        const notes = [320, 240, 160];
+        notes.forEach((freq, idx) => {
+            setTimeout(() => playTone(freq, 0.08, 'sawtooth', 0.06), idx * 60);
+        });
+    }
+
+    // Floating Pixel EXP Animation (+100 EXP!)
+    function showFloatingExp(x, y, text = '+100 EXP! ⚡') {
+        const el = document.createElement('div');
+        el.className = 'floating-pixel-exp';
+        el.textContent = text;
+        const posX = x || (window.innerWidth / 2);
+        const posY = y || (window.innerHeight / 2);
+        el.style.left = `${posX}px`;
+        el.style.top = `${posY}px`;
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 950);
+    }
+
     // Application State
     let categories = [];
     let tasks = [];
@@ -13,9 +101,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let searchQuery = '';
     let selectedPriority = 'low';
     let selectedDeadline = '';
-    let selectedCategoryColor = '#10b981';
+    let selectedCategoryColor = '#39ff14';
 
     // DOM Elements
+    const sfxToggleBtn = document.getElementById('sfxToggleBtn');
+    const crtToggleBtn = document.getElementById('crtToggleBtn');
+    const crtOverlay = document.getElementById('crtOverlay');
     const themeToggleBtn = document.getElementById('themeToggleBtn');
     const headerDateText = document.getElementById('headerDateText');
     const statRadialBar = document.getElementById('statRadialBar');
@@ -81,7 +172,43 @@ document.addEventListener('DOMContentLoaded', () => {
         const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', nextTheme);
         localStorage.setItem('orbit_theme', nextTheme);
+        playBlipSound(580);
     });
+
+    // 8-Bit Arcade SFX Toggle Handling
+    if (sfxToggleBtn) {
+        sfxToggleBtn.classList.toggle('active', sfxEnabled);
+        sfxToggleBtn.addEventListener('click', () => {
+            sfxEnabled = !sfxEnabled;
+            localStorage.setItem('orbit_sfx', sfxEnabled);
+            sfxToggleBtn.classList.toggle('active', sfxEnabled);
+            if (sfxEnabled) {
+                playCoinSound();
+                showToast('SFX: ON 🔊');
+            } else {
+                showToast('SFX: MUTED 🔇');
+            }
+        });
+    }
+
+    // Vintage CRT Scanlines Screen Toggle Handling
+    let crtEnabled = localStorage.getItem('orbit_crt') !== 'false';
+    if (crtOverlay) {
+        crtOverlay.classList.toggle('crt-off', !crtEnabled);
+    }
+    if (crtToggleBtn) {
+        crtToggleBtn.classList.toggle('active', crtEnabled);
+        crtToggleBtn.addEventListener('click', () => {
+            crtEnabled = !crtEnabled;
+            localStorage.setItem('orbit_crt', crtEnabled);
+            crtToggleBtn.classList.toggle('active', crtEnabled);
+            if (crtOverlay) {
+                crtOverlay.classList.toggle('crt-off', !crtEnabled);
+            }
+            playBlipSound(620);
+            showToast(crtEnabled ? 'CRT SCANLINES: ON 📺' : 'CRT SCANLINES: OFF');
+        });
+    }
 
     // Color Swatches Selection for Category Creation
     colorSwatches.forEach(swatch => {
@@ -344,6 +471,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     statusTabs.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
+            playBlipSound(480);
             statusTabs.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             currentStatus = btn.dataset.status;
@@ -356,7 +484,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const text = taskInput.value.trim();
         if (!text) {
             taskInput.focus();
-            showToast('Please type a task or habit name');
+            showToast('Please type a quest or habit name');
             return;
         }
 
@@ -375,14 +503,15 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (res.ok) {
+                playTone(660, 0.08, 'square');
                 const newTask = await res.json();
                 tasks.unshift(newTask);
                 taskInput.value = '';
                 clearDeadline();
-                showToast('Task added successfully!');
+                showToast('Quest added to log!');
                 await refreshData();
             } else {
-                showToast('Failed to add task');
+                showToast('Failed to add quest');
             }
         } catch (err) {
             console.error(err);
@@ -471,20 +600,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Confetti celebration helper
+    // Square pixel confetti for retro arcade celebration
     function triggerCelebration() {
         if (typeof confetti === 'function') {
             confetti({
-                particleCount: 50,
-                spread: 60,
+                particleCount: 55,
+                spread: 75,
                 origin: { y: 0.8 },
-                colors: ['#10b981', '#6366f1', '#f59e0b', '#ec4899', '#38bdf8']
+                shapes: ['square'],
+                scalar: 1.25,
+                colors: ['#39ff14', '#ff007f', '#00f0ff', '#ffe600', '#ff3344']
             });
         }
     }
 
     // Toggle Task completion
-    async function toggleTaskStatus(task) {
+    async function toggleTaskStatus(task, event) {
         // Optimistic UI update
         const wasCompleted = task.completed;
         task.completed = wasCompleted ? 0 : 1;
@@ -492,7 +623,18 @@ document.addEventListener('DOMContentLoaded', () => {
         renderTasks();
 
         if (!wasCompleted) {
+            playCoinSound();
+            let clickX = window.innerWidth / 2;
+            let clickY = window.innerHeight / 2;
+            if (event && event.clientX) {
+                clickX = event.clientX;
+                clickY = event.clientY;
+            }
+            const expMsg = task.streak > 1 ? `+100 EXP • ${task.streak}x COMBO! 🔥` : '+100 EXP! ⚡';
+            showFloatingExp(clickX, clickY, expMsg);
             triggerCelebration();
+        } else {
+            playBlipSound(360);
         }
 
         try {
@@ -514,17 +656,54 @@ document.addEventListener('DOMContentLoaded', () => {
     // Delete Task
     async function deleteTask(id) {
         try {
+            playDeleteSound();
             const res = await fetch(`/api/tasks/${id}`, { method: 'DELETE' });
             if (res.ok) {
                 tasks = tasks.filter(t => t.id !== id);
                 renderTasks();
                 await refreshStats();
                 await refreshCategories();
-                showToast('Task removed');
+                showToast('Quest removed');
             }
         } catch (err) {
             console.error(err);
-            showToast('Error deleting task');
+            showToast('Error deleting quest');
+        }
+    }
+
+    // Delete Category / Pack
+    async function deleteCategory(id, name) {
+        if (!id) return;
+        const confirmMsg = `Remove pack "${name}"?\nTasks inside this pack will remain as Uncategorized.`;
+        if (!confirm(confirmMsg)) {
+            return;
+        }
+
+        try {
+            playDeleteSound();
+            const res = await fetch(`/api/categories/${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                categories = categories.filter(c => c.id !== id);
+                if (selectedCategoryId == id) {
+                    selectedCategoryId = 'all';
+                }
+                if (taskCategorySelect.value == id) {
+                    if (categories.length > 0) {
+                        selectCategory(categories[0]);
+                    } else {
+                        taskCategorySelect.value = '';
+                        selectedCategoryLabel.textContent = 'Category';
+                        categoryDot.style.background = '#39ff14';
+                    }
+                }
+                await refreshData();
+                showToast(`Pack "${name}" removed`);
+            } else {
+                showToast('Failed to remove category');
+            }
+        } catch (err) {
+            console.error(err);
+            showToast('Error removing category');
         }
     }
 
@@ -587,6 +766,7 @@ document.addEventListener('DOMContentLoaded', () => {
             statSubtext.textContent = 'Add your first goal!';
         } else if (rate === 100) {
             statSubtext.textContent = 'Spectacular! All done today 🎉';
+            playFanfareSound();
         } else if (rate >= 50) {
             statSubtext.textContent = 'Over halfway there, finish strong!';
         } else {
@@ -624,20 +804,30 @@ document.addEventListener('DOMContentLoaded', () => {
             const count = tasks.filter(t => t.category_id === cat.id).length;
             
             // Filter Pill
-            const pill = document.createElement('button');
+            const pill = document.createElement('div');
             pill.className = `cat-pill ${selectedCategoryId == cat.id ? 'active' : ''}`;
             pill.dataset.id = cat.id;
             pill.innerHTML = `
                 <span class="dot-indicator" style="background: ${cat.color}; width: 8px; height: 8px; border-radius: 50%;"></span>
-                <span>${cat.name}</span>
+                <span class="cat-pill-name">${escapeHtml(cat.name)}</span>
                 <span class="count-badge">${count}</span>
+                <button type="button" class="cat-pill-remove" title="Remove pack" aria-label="Remove category">&times;</button>
             `;
-            pill.addEventListener('click', () => {
+            pill.addEventListener('click', (e) => {
+                if (e.target.closest('.cat-pill-remove')) return;
+                playBlipSound(520);
                 selectedCategoryId = cat.id;
                 document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
                 pill.classList.add('active');
                 renderTasks();
             });
+            const removeBtn = pill.querySelector('.cat-pill-remove');
+            if (removeBtn) {
+                removeBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    deleteCategory(cat.id, cat.name);
+                });
+            }
             categoryPillsList.appendChild(pill);
 
             // Custom Dropdown Option Item
@@ -654,18 +844,27 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="category-option-right">
                         <span class="category-option-count">${count}</span>
+                        <button type="button" class="category-option-delete" title="Remove pack" aria-label="Remove category">&times;</button>
                         <svg class="category-option-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                             <polyline points="20 6 9 17 4 12"></polyline>
                         </svg>
                     </div>
                 `;
                 itemBtn.addEventListener('click', (e) => {
+                    if (e.target.closest('.category-option-delete')) return;
                     e.stopPropagation();
                     selectCategory(cat);
                     categoryDropdownMenu.classList.add('hidden');
                     categoryTriggerBtn.classList.remove('is-open');
                     categoryTriggerBtn.setAttribute('aria-expanded', 'false');
                 });
+                const optDelBtn = itemBtn.querySelector('.category-option-delete');
+                if (optDelBtn) {
+                    optDelBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        deleteCategory(cat.id, cat.name);
+                    });
+                }
                 categoryOptionsList.appendChild(itemBtn);
             }
 
@@ -741,16 +940,37 @@ document.addEventListener('DOMContentLoaded', () => {
             const groupEl = document.createElement('div');
             groupEl.className = 'category-group';
 
+            const canDeleteCategory = group.info && group.info.id;
             groupEl.innerHTML = `
                 <div class="group-header">
                     <div class="group-title-wrap">
                         <span class="group-color-dot" style="background: ${group.info.color};"></span>
-                        <h2 class="group-title">${group.info.name}</h2>
+                        <h2 class="group-title">${escapeHtml(group.info.name)}</h2>
                     </div>
-                    <span class="group-count">${group.tasks.length}</span>
+                    <div class="group-header-actions">
+                        <span class="group-count">[${group.tasks.length}]</span>
+                        ${canDeleteCategory ? `
+                            <button type="button" class="group-delete-cat-btn pixel-btn" title="Remove category pack" aria-label="Remove category pack">
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                    <polyline points="3 6 5 6 21 6"/>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                </svg>
+                            </button>
+                        ` : ''}
+                    </div>
                 </div>
                 <div class="task-list"></div>
             `;
+
+            if (canDeleteCategory) {
+                const groupDel = groupEl.querySelector('.group-delete-cat-btn');
+                if (groupDel) {
+                    groupDel.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        deleteCategory(group.info.id, group.info.name);
+                    });
+                }
+            }
 
             const listEl = groupEl.querySelector('.task-list');
 
@@ -813,8 +1033,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
 
                 // Events
-                taskCard.querySelector('.task-checkbox-btn').addEventListener('click', () => toggleTaskStatus(task));
-                taskCard.querySelector('.edit-btn').addEventListener('click', () => openEditModal(task));
+                taskCard.querySelector('.task-checkbox-btn').addEventListener('click', (e) => toggleTaskStatus(task, e));
+                taskCard.querySelector('.edit-btn').addEventListener('click', () => {
+                    playBlipSound(520);
+                    openEditModal(task);
+                });
                 taskCard.querySelector('.delete-btn').addEventListener('click', () => deleteTask(task.id));
 
                 listEl.appendChild(taskCard);
