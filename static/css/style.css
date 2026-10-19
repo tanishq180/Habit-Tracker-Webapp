@@ -1,11 +1,11 @@
 /* ==========================================================================
-   Orbit • Retro Pixel-Art Theme & 8-Bit Arcade Design System
+   Orbit • Retro Pixel-Art Theme & Modern Arcade Design System
    ========================================================================== */
 
 :root {
     color-scheme: dark;
 
-    /* Silkscreen Clean Arcade Typography Tokens */
+    /* Clean Arcade Typography Tokens */
     --font-pixel-heading: 'Silkscreen', monospace, sans-serif;
     --font-pixel-sub: 'Silkscreen', monospace, sans-serif;
     --font-pixel-body: 'Silkscreen', monospace, sans-serif;
@@ -14,23 +14,23 @@
     --font-heading: var(--font-pixel-heading);
     --font-body: var(--font-pixel-body);
 
-    /* Arcade Dark Palette (Neon 80s Arcade / Cyber-Pixel) */
-    --bg-base: #0c0721;
-    --bg-grid-line: rgba(147, 51, 234, 0.16);
-    --bg-surface: #140d2e;
-    --bg-surface-solid: #191038;
-    --bg-surface-hover: #23164d;
-    --bg-surface-elevated: #281957;
-    --bg-input: #090518;
+    /* Arcade Dark Palette (Optimized High-Contrast Neon Dark) */
+    --bg-base: #0c081e;
+    --bg-grid-line: rgba(147, 51, 234, 0.14);
+    --bg-surface: #140d30;
+    --bg-surface-solid: #1a113d;
+    --bg-surface-hover: #241753;
+    --bg-surface-elevated: #2a1b63;
+    --bg-input: #0f0925;
 
     --text-primary: #ffffff;
-    --text-secondary: #e9d5ff;
-    --text-muted: #a855f7;
-    --text-subtle: #7e22ce;
+    --text-secondary: #e2e8f0;
+    --text-muted: #94a3b8;
+    --text-subtle: #64748b;
 
     /* Pixel Art Borders & Shadows */
     --pixel-border: #000000;
-    --pixel-border-light: rgba(255, 255, 255, 0.28);
+    --pixel-border-light: rgba(255, 255, 255, 0.25);
     --pixel-shadow: #000000;
     --box-border-size: 3px;
 
@@ -38,26 +38,26 @@
     --primary: #ff007f;             /* Arcade Neon Magenta */
     --primary-hover: #ff2a9d;
     --primary-light: rgba(255, 0, 127, 0.2);
-    --primary-glow: rgba(255, 0, 127, 0.55);
+    --primary-glow: rgba(255, 0, 127, 0.5);
 
-    --emerald: #39ff14;             /* 1-UP Neon Green */
-    --emerald-bg: rgba(57, 255, 20, 0.18);
-    --emerald-glow: rgba(57, 255, 20, 0.45);
+    --emerald: #10b981;             /* 1-UP Neon Emerald */
+    --emerald-bg: rgba(16, 185, 129, 0.18);
+    --emerald-glow: rgba(16, 185, 129, 0.4);
 
-    --amber: #ffe600;               /* Star / Coin Gold */
-    --amber-bg: rgba(255, 230, 0, 0.18);
-    --amber-glow: rgba(255, 230, 0, 0.4);
+    --amber: #f59e0b;               /* Star Coin Gold */
+    --amber-bg: rgba(245, 158, 11, 0.18);
+    --amber-glow: rgba(245, 158, 11, 0.35);
 
-    --rose: #ff3344;                /* Game Over Red / Urgent */
-    --rose-bg: rgba(255, 51, 68, 0.2);
-    --rose-glow: rgba(255, 51, 68, 0.4);
+    --rose: #ef4444;                /* Urgent Red */
+    --rose-bg: rgba(239, 68, 68, 0.2);
+    --rose-glow: rgba(239, 68, 68, 0.4);
 
-    --cyan: #00f0ff;                /* Cyber Cyan */
-    --cyan-bg: rgba(0, 240, 255, 0.18);
-    --cyan-glow: rgba(0, 240, 255, 0.4);
+    --cyan: #06b6d4;                /* Cyber Cyan */
+    --cyan-bg: rgba(6, 182, 212, 0.18);
+    --cyan-glow: rgba(6, 182, 212, 0.35);
 
-    --indigo: #a855f7;
-    --indigo-bg: rgba(168, 85, 247, 0.2);
+    --indigo: #8b5cf6;
+    --indigo-bg: rgba(139, 92, 246, 0.2);
 
     /* 8-Bit Stepped Shadows & Bevels */
     --shadow-pixel-sm: 2px 2px 0px var(--pixel-shadow);
@@ -65,8 +65,8 @@
     --shadow-pixel-lg: 6px 6px 0px var(--pixel-shadow);
     --shadow-pixel-pressed: 1px 1px 0px var(--pixel-shadow);
 
-    --bevel-outset: inset 2px 2px 0px rgba(255, 255, 255, 0.32), inset -2px -2px 0px rgba(0, 0, 0, 0.55);
-    --bevel-inset: inset 2px 2px 0px rgba(0, 0, 0, 0.7), inset -2px -2px 0px rgba(255, 255, 255, 0.15);
+    --bevel-outset: inset 2px 2px 0px rgba(255, 255, 255, 0.3), inset -2px -2px 0px rgba(0, 0, 0, 0.55);
+    --bevel-inset: inset 2px 2px 0px rgba(0, 0, 0, 0.7), inset -2px -2px 0px rgba(255, 255, 255, 0.12);
 
     /* Sharp Pixel Art Radii */
     --radius-sm: 0px;
@@ -79,50 +79,53 @@
     --transition-smooth: 0.15s steps(3, start);
 }
 
-/* Retro Famicom / Game Boy Console Light Theme */
+/* Optimized Clean Retro Light Theme (Famicom / Game Boy Color) */
 [data-theme="light"] {
     color-scheme: light;
 
-    --bg-base: #f1ecdd;
-    --bg-grid-line: rgba(100, 116, 139, 0.15);
+    --bg-base: #f8fafc;
+    --bg-grid-line: rgba(148, 163, 184, 0.22);
     --bg-surface: #ffffff;
     --bg-surface-solid: #ffffff;
-    --bg-surface-hover: #f5f2e8;
+    --bg-surface-hover: #f1f5f9;
     --bg-surface-elevated: #ffffff;
-    --bg-input: #fdfbf7;
+    --bg-input: #f8fafc;
 
-    --text-primary: #121016;
-    --text-secondary: #3b3745;
-    --text-muted: #6f687e;
-    --text-subtle: #9d95ae;
+    --text-primary: #0f172a;
+    --text-secondary: #334155;
+    --text-muted: #64748b;
+    --text-subtle: #94a3b8;
 
-    --pixel-border: #1a162b;
-    --pixel-border-light: rgba(26, 22, 43, 0.15);
-    --pixel-shadow: #1a162b;
+    --pixel-border: #0f172a;
+    --pixel-border-light: rgba(15, 23, 42, 0.16);
+    --pixel-shadow: #0f172a;
 
-    --primary: #d90429;             /* Famicom Crimson */
-    --primary-hover: #ef233c;
-    --primary-light: rgba(217, 4, 41, 0.15);
-    --primary-glow: rgba(217, 4, 41, 0.3);
+    --primary: #e11d48;             /* Famicom Crimson */
+    --primary-hover: #be123c;
+    --primary-light: rgba(225, 29, 72, 0.12);
+    --primary-glow: rgba(225, 29, 72, 0.25);
 
-    --emerald: #16a34a;
-    --emerald-bg: rgba(22, 163, 74, 0.15);
-    --emerald-glow: rgba(22, 163, 74, 0.3);
+    --emerald: #059669;
+    --emerald-bg: rgba(5, 150, 105, 0.12);
+    --emerald-glow: rgba(5, 150, 105, 0.25);
 
     --amber: #d97706;
-    --amber-bg: rgba(217, 119, 6, 0.15);
+    --amber-bg: rgba(217, 119, 6, 0.12);
+    --amber-glow: rgba(217, 119, 6, 0.25);
 
     --rose: #dc2626;
-    --rose-bg: rgba(220, 38, 38, 0.15);
+    --rose-bg: rgba(220, 38, 38, 0.12);
+    --rose-glow: rgba(220, 38, 38, 0.25);
 
     --cyan: #0284c7;
-    --cyan-bg: rgba(2, 132, 199, 0.15);
+    --cyan-bg: rgba(2, 132, 199, 0.12);
+    --cyan-glow: rgba(2, 132, 199, 0.25);
 
-    --indigo: #7c3aed;
-    --indigo-bg: rgba(124, 58, 237, 0.15);
+    --indigo: #6d28d9;
+    --indigo-bg: rgba(109, 40, 217, 0.12);
 
-    --bevel-outset: inset 2px 2px 0px rgba(255, 255, 255, 0.9), inset -2px -2px 0px rgba(0, 0, 0, 0.3);
-    --bevel-inset: inset 2px 2px 0px rgba(0, 0, 0, 0.25), inset -2px -2px 0px rgba(255, 255, 255, 0.8);
+    --bevel-outset: inset 2px 2px 0px rgba(255, 255, 255, 0.95), inset -2px -2px 0px rgba(15, 23, 42, 0.18);
+    --bevel-inset: inset 2px 2px 0px rgba(15, 23, 42, 0.14), inset -2px -2px 0px rgba(255, 255, 255, 0.9);
 }
 
 /* ==========================================================================
@@ -146,47 +149,13 @@ body {
     background-position: -1px -1px;
     color: var(--text-primary);
     font-family: var(--font-body);
-    font-size: 16px;
+    font-size: 15px;
     line-height: 1.45;
     min-height: 100vh;
     overflow-x: hidden;
     position: relative;
-    -webkit-font-smoothing: none;
+    -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-}
-
-/* Vintage CRT Scanlines Overlay */
-.crt-scanlines {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    pointer-events: none;
-    z-index: 9999;
-    background: repeating-linear-gradient(
-        0deg,
-        rgba(0, 0, 0, 0.22) 0px,
-        rgba(0, 0, 0, 0.22) 1.5px,
-        transparent 1.5px,
-        transparent 3.5px
-    );
-    opacity: 0.75;
-    transition: opacity 0.2s;
-}
-
-.crt-scanlines.crt-off {
-    display: none !important;
-}
-
-/* CRT Vignette / Screen Curvature Glow */
-body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    background: radial-gradient(circle at center, transparent 60%, rgba(0, 0, 0, 0.65) 100%);
-    z-index: 9998;
 }
 
 /* Pixel Starfield Floating Dots */
@@ -249,7 +218,7 @@ body::before {
     z-index: 2;
     max-width: 890px;
     margin: 0 auto;
-    padding: 34px 20px 100px;
+    padding: 34px 20px 200px;
 }
 
 /* Pixel Card Baseline */
@@ -819,6 +788,26 @@ body::before {
 /* Custom Dropdown & Deadline Popover System */
 .custom-select-wrap, .deadline-wrap {
     position: relative;
+    display: inline-block;
+}
+
+details.deadline-wrap > summary {
+    list-style: none;
+    cursor: pointer;
+    user-select: none;
+}
+
+details.deadline-wrap > summary::-webkit-details-marker {
+    display: none;
+}
+
+details.deadline-wrap[open] {
+    z-index: 200;
+}
+
+details.deadline-wrap[open] > summary {
+    border-color: var(--cyan);
+    box-shadow: var(--bevel-inset);
 }
 
 .category-dropdown-menu, .deadline-popover {
@@ -829,7 +818,7 @@ body::before {
     border: 3px solid var(--pixel-border);
     box-shadow: var(--bevel-outset), var(--shadow-pixel-lg);
     z-index: 100;
-    min-width: 260px;
+    min-width: 290px;
     padding: 12px;
 }
 
@@ -969,12 +958,30 @@ body::before {
     gap: 6px;
     cursor: pointer;
     text-align: left;
+    position: relative;
+    user-select: none;
+}
+
+.preset-chip .preset-radio {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
 }
 
 .preset-chip:hover {
+    background: var(--bg-surface-hover);
+    border-color: var(--cyan);
+    transform: translate(-1px, -1px);
+}
+
+.preset-chip:has(.preset-radio:checked) {
     background: var(--cyan);
     color: #000000;
-    transform: translate(-1px, -1px);
+    border-color: var(--pixel-border);
+    box-shadow: var(--bevel-inset);
+    transform: translate(1px, 1px);
 }
 
 .preset-chip:active {
@@ -1515,12 +1522,16 @@ body::before {
 .modal-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.8);
-    display: flex;
+    background: rgba(0, 0, 0, 0.82);
+    display: none;
     align-items: center;
     justify-content: center;
     z-index: 500;
     padding: 20px;
+}
+
+.modal-backdrop:target {
+    display: flex;
 }
 
 .modal-card {
@@ -1735,3 +1746,535 @@ body::before {
         width: 100%;
     }
 }
+
+/* ==========================================================================
+   Zero-JavaScript Architecture Styles & Enhancements
+   ========================================================================== */
+
+/* Inline form utilities for toggle / delete buttons */
+.inline-form {
+    display: inline-flex;
+    margin: 0;
+    padding: 0;
+}
+
+/* Select dropdowns in retro theme */
+.pixel-select {
+    background: var(--bg-surface-solid);
+    color: var(--text-primary);
+    border: 2px solid var(--pixel-border);
+    box-shadow: var(--bevel-outset), var(--shadow-pixel-sm);
+    padding: 8px 12px;
+    font-family: var(--font-pixel-heading);
+    font-size: 11px;
+    outline: none;
+    cursor: pointer;
+    min-width: 140px;
+}
+.pixel-select option {
+    background: var(--bg-surface-solid);
+    color: var(--text-primary);
+    padding: 6px;
+}
+
+/* Datetime input */
+.pixel-datetime-input {
+    background: var(--bg-input);
+    color: var(--text-primary);
+    border: 2px solid var(--pixel-border);
+    box-shadow: var(--bevel-inset);
+    padding: 7px 10px;
+    font-family: var(--font-pixel-sub);
+    font-size: 11px;
+    outline: none;
+    color-scheme: dark;
+}
+[data-theme="light"] .pixel-datetime-input {
+    color-scheme: light;
+}
+
+/* Pure CSS Modal Close Button / Links */
+.close-modal-link {
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-primary);
+}
+
+.action-icon-link {
+    background: var(--bg-surface-solid);
+    border: 2px solid var(--pixel-border);
+    box-shadow: var(--bevel-outset), var(--shadow-pixel-sm);
+    color: var(--text-primary);
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 14px;
+}
+.action-icon-link:hover {
+    background: var(--bg-surface-hover);
+    transform: translate(-1px, -1px);
+}
+
+/* No-JS Architecture Badge */
+.no-js-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(57, 255, 20, 0.12);
+    border: 1px solid var(--emerald);
+    color: var(--emerald);
+    padding: 4px 8px;
+    font-family: var(--font-pixel-heading);
+    font-size: 9px;
+    letter-spacing: 0.5px;
+    box-shadow: 1px 1px 0px #000;
+}
+
+/* Search Form Wrap */
+.search-form-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 260px;
+}
+.search-btn {
+    padding: 7px 12px;
+    font-size: 9px;
+    text-decoration: none;
+}
+
+.color-input-pixel {
+    width: 38px;
+    height: 38px;
+    padding: 2px;
+    background: var(--bg-input);
+    border: 2px solid var(--pixel-border);
+    cursor: pointer;
+}
+
+/* ==========================================================================
+   Horizontal Pack Progress Dashboard Section
+   ========================================================================== */
+
+.pack-dashboard-section {
+    margin-bottom: 26px;
+    background: var(--bg-surface);
+    border: var(--box-border-size) solid var(--pixel-border);
+    box-shadow: var(--bevel-outset), var(--shadow-pixel-md);
+    padding: 16px 20px;
+}
+
+.section-title-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 2px dashed rgba(255, 255, 255, 0.15);
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+[data-theme="light"] .section-title-bar {
+    border-bottom-color: rgba(0, 0, 0, 0.15);
+}
+
+.section-title-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pixel-section-icon {
+    font-size: 16px;
+}
+
+.pixel-section-title {
+    font-family: var(--font-pixel-heading);
+    font-size: 11px;
+    letter-spacing: 0.8px;
+    color: var(--cyan);
+}
+
+[data-theme="light"] .pixel-section-title {
+    color: var(--primary);
+}
+
+.pixel-section-hint {
+    font-family: var(--font-pixel-heading);
+    font-size: 8.5px;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+}
+
+.pack-cards-horizontal-track {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+}
+
+@media (max-width: 900px) {
+    .pack-cards-horizontal-track {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x mandatory;
+        padding-bottom: 8px;
+    }
+}
+
+.pack-dashboard-card {
+    background: var(--bg-surface-solid);
+    border: 2px solid var(--pixel-border);
+    box-shadow: var(--bevel-outset), var(--shadow-pixel-sm);
+    padding: 12px 14px;
+    text-decoration: none;
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    position: relative;
+    min-width: 200px;
+    scroll-snap-align: start;
+}
+
+.pack-dashboard-card:hover {
+    background: var(--bg-surface-hover);
+    transform: translate(-2px, -2px);
+    box-shadow: var(--bevel-outset), var(--shadow-pixel-md);
+}
+
+.pack-dashboard-card.active-pack {
+    border-color: var(--cyan);
+    box-shadow: var(--bevel-inset), 0 0 10px rgba(0, 240, 255, 0.35);
+}
+
+.pack-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+}
+
+.pack-card-name-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+}
+
+.pack-card-color-dot {
+    width: 8px;
+    height: 8px;
+    border: 1px solid #000;
+    flex-shrink: 0;
+}
+
+.pack-card-name {
+    font-family: var(--font-pixel-heading);
+    font-size: 10px;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pack-card-fraction {
+    font-family: var(--font-pixel-sub);
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
+.pack-card-body {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+}
+
+.pack-card-percent {
+    font-family: var(--font-pixel-heading);
+    font-size: 20px;
+    line-height: 1;
+    color: var(--text-primary);
+    text-shadow: 1px 1px 0px var(--pixel-shadow);
+}
+
+.pack-card-status-label {
+    font-family: var(--font-pixel-heading);
+    font-size: 8px;
+    letter-spacing: 0.5px;
+}
+
+.pack-card-status-label.status-cleared {
+    color: var(--emerald);
+}
+
+.pack-card-status-label.status-pending {
+    color: var(--amber);
+}
+
+.pack-card-status-label.status-empty {
+    color: var(--text-muted);
+}
+
+.pack-progress-meter {
+    background: var(--bg-input);
+    border: 2px solid var(--pixel-border);
+    box-shadow: var(--bevel-inset);
+    height: 10px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.pack-progress-bar-fill {
+    height: 100%;
+    transition: width 0.3s ease;
+    box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.pack-card-footer {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-pixel-sub);
+    font-size: 9px;
+    color: var(--text-muted);
+}
+
+/* ==========================================================================
+   Fixed Bottom Docked Add Task Bar
+   ========================================================================== */
+
+.composer-dock-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 350;
+    pointer-events: none;
+    padding: 0 16px 12px;
+    display: flex;
+    justify-content: center;
+}
+
+.composer-docked {
+    pointer-events: auto;
+    width: 100%;
+    max-width: 890px;
+    margin: 0;
+    padding: 10px 16px 12px;
+    background: var(--bg-surface-solid);
+    border: var(--box-border-size) solid var(--pixel-border);
+    border-top: 4px solid var(--primary);
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.75), var(--shadow-pixel-lg), var(--bevel-outset);
+}
+
+.composer-docked .composer-main {
+    margin-bottom: 8px;
+    padding: 6px 12px;
+}
+
+.composer-docked .composer-input {
+    font-size: 16px;
+}
+
+.composer-docked .composer-toolbar {
+    padding-top: 8px;
+    gap: 8px;
+}
+
+/* Ensure dropdown popovers in the bottom docked bar open upwards so they don't get clipped */
+.composer-docked .deadline-popover,
+.composer-docked .category-dropdown-menu {
+    bottom: calc(100% + 8px);
+    top: auto;
+    box-shadow: var(--bevel-outset), 0 -8px 24px rgba(0, 0, 0, 0.85), var(--shadow-pixel-lg);
+}
+
+@media (max-width: 768px) {
+    .composer-dock-container {
+        padding: 0 8px 8px;
+    }
+    .composer-docked {
+        padding: 8px 10px;
+    }
+    .composer-docked .composer-main {
+        padding: 5px 8px;
+        margin-bottom: 6px;
+    }
+    .composer-docked .composer-input {
+        font-size: 14px;
+    }
+    .composer-docked .composer-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .composer-docked .toolbar-left {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+    .composer-docked .toolbar-right {
+        margin-top: 4px;
+    }
+    .app-layout {
+        padding-bottom: 240px;
+    }
+}
+
+/* ==========================================================================
+   Theme Optimization Overrides (Light & Dark Polish)
+   ========================================================================== */
+
+/* Theme Switcher Button Content */
+.theme-btn-content {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+/* Light Mode Card & Element Contrast Polish */
+[data-theme="light"] .theme-toggle {
+    background: #f1f5f9;
+    color: #0f172a;
+    border-color: #0f172a;
+}
+
+[data-theme="light"] .date-badge,
+[data-theme="light"] .no-js-badge {
+    background: #ffffff;
+    border-color: #0f172a;
+    color: #0f172a;
+}
+
+[data-theme="light"] .no-js-badge {
+    color: #059669;
+    border-color: #059669;
+    background: rgba(5, 150, 105, 0.08);
+}
+
+[data-theme="light"] .badge.deadline-badge {
+    background: var(--cyan);
+    color: #ffffff;
+}
+
+[data-theme="light"] .badge.priority-medium {
+    background: var(--amber);
+    color: #ffffff;
+}
+
+[data-theme="light"] .badge.streak-badge {
+    background: var(--amber);
+    color: #ffffff;
+}
+
+[data-theme="light"] .badge.priority-low {
+    background: #e2e8f0;
+    color: #334155;
+    border-color: #cbd5e1;
+}
+
+[data-theme="light"] .cat-pill.active {
+    background: var(--primary);
+    color: #ffffff;
+}
+
+[data-theme="light"] .tab-btn.active {
+    background: var(--primary);
+    color: #ffffff;
+}
+
+[data-theme="light"] .task-card {
+    background: #ffffff;
+    border-color: #0f172a;
+}
+
+[data-theme="light"] .task-card.completed {
+    background: #f1f5f9;
+    opacity: 0.75;
+}
+
+[data-theme="light"] .task-card.completed .task-text {
+    color: #64748b;
+}
+
+[data-theme="light"] .composer-docked {
+    background: #ffffff;
+    border-color: #0f172a;
+    box-shadow: 0 -8px 24px rgba(15, 23, 42, 0.12), var(--shadow-pixel-lg), var(--bevel-outset);
+}
+
+[data-theme="light"] .category-dropdown-menu,
+[data-theme="light"] .deadline-popover,
+[data-theme="light"] .modal-card {
+    background: #ffffff;
+    border-color: #0f172a;
+}
+
+[data-theme="light"] .ambient-glow {
+    opacity: 0.08;
+}
+
+[data-theme="light"] .pixel-stars {
+    opacity: 0.12;
+}
+
+[data-theme="light"] .custom-datetime-input,
+[data-theme="light"] .modal-input,
+[data-theme="light"] .modal-select,
+[data-theme="light"] .search-wrap,
+[data-theme="light"] .composer-main {
+    background: #f8fafc;
+    border-color: #0f172a;
+    color: #0f172a;
+}
+
+[data-theme="light"] .composer-input {
+    color: #0f172a;
+}
+
+[data-theme="light"] .composer-input::placeholder {
+    color: #94a3b8;
+}
+
+/* Dark Mode Polish */
+[data-theme="dark"] .badge.deadline-badge {
+    background: var(--cyan);
+    color: #000000;
+    font-weight: 700;
+}
+
+[data-theme="dark"] .badge.priority-medium {
+    background: var(--amber);
+    color: #000000;
+    font-weight: 700;
+}
+
+[data-theme="dark"] .badge.streak-badge {
+    background: var(--amber);
+    color: #000000;
+    font-weight: 700;
+}
+
+[data-theme="dark"] .badge.priority-low {
+    background: #271a5c;
+    color: #cbd5e1;
+    border-color: rgba(255, 255, 255, 0.18);
+}
+
+
+
+

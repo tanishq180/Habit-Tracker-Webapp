@@ -1,38 +1,21 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="{{ theme }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#090a0f">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Orbit">
-    <meta name="application-name" content="Orbit">
-    <meta name="format-detection" content="telephone=no">
-    <meta name="description" content="Orbit • Modern habit and task flow with streak tracking, categories, and deadlines.">
+    <meta name="theme-color" content="#0c0721">
+    <meta name="description" content="Orbit • Zero-JavaScript Retro Habit & Task Tracker with Pure CSS Glassmorphism and SQLite.">
 
-    <title>Orbit • Habit & Task Flow</title>
-
-    <!-- PWA Icons & Manifest -->
-    <link rel="manifest" href="/manifest.json">
-    <link rel="icon" type="image/svg+xml" href="/static/icons/icon.svg">
-    <link rel="apple-touch-icon" href="/static/icons/icon.svg">
+    <title>Orbit • Habit & Task Mastery (Zero JS)</title>
 
     <!-- Retro Pixel-Art Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Silkscreen:wght@400;700&family=VT323&family=Pixelify+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Silkscreen:wght@400;700&family=VT323&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/style.css">
-
-    <!-- Canvas Confetti for task celebrations -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
-
 </head>
 <body>
-    <!-- CRT Scanlines Screen Effect -->
-    <div class="crt-scanlines" id="crtOverlay"></div>
-
-    <!-- Background Ambient Glow Effects & Pixel Starfield -->
+    <!-- Background Ambient Glow & Stars -->
     <div class="pixel-stars"></div>
     <div class="ambient-glow glow-1"></div>
     <div class="ambient-glow glow-2"></div>
@@ -50,48 +33,41 @@
                         <h1 class="brand-title">ORBIT</h1>
                         <span class="pixel-cursor">_</span>
                     </div>
-                    <span class="brand-subtitle">[ LVL 1 • QUEST & HABIT LOG ]</span>
+                    <span class="brand-subtitle">[ LVL 1 • ZERO JS • QUEST & HABIT LOG ]</span>
                 </div>
             </div>
 
             <div class="header-actions">
-                <!-- Live Date Indicator -->
-                <div class="date-badge pixel-box" id="currentDateBadge">
-                    <span class="pixel-icon">📅</span>
-                    <span id="headerDateText">Today</span>
+                <!-- Zero-JS Tech Badge -->
+                <div class="no-js-badge pixel-box">
+                    <span>⚡ ZERO JS</span>
                 </div>
 
-                <!-- 8-Bit Arcade SFX Toggle -->
-                <button class="icon-btn sfx-toggle pixel-box active" id="sfxToggleBtn" title="Toggle 8-bit Arcade Sound (On/Off)">
-                    <span class="sfx-icon">🔊</span>
-                    <span class="btn-text-badge">SFX</span>
-                </button>
+                <!-- Live Date Indicator -->
+                <div class="date-badge pixel-box">
+                    <span class="pixel-icon">📅</span>
+                    <span>{{ current_date_str }}</span>
+                </div>
 
-                <!-- CRT Scanlines Toggle -->
-                <button class="icon-btn crt-toggle pixel-box active" id="crtToggleBtn" title="Toggle CRT Scanline Effect">
-                    <span class="crt-icon">📺</span>
-                    <span class="btn-text-badge">CRT</span>
-                </button>
-
-                <!-- Install PWA Button -->
-                <button class="icon-btn install-btn pixel-box hidden" id="installAppBtn" title="Install Orbit as an App">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                        <polyline points="7 10 12 15 17 10"/>
-                        <line x1="12" x2="12" y1="15" y2="3"/>
-                    </svg>
-                </button>
-
-                <!-- Theme Switcher -->
-                <button class="icon-btn theme-toggle pixel-box" id="themeToggleBtn" title="Toggle theme (Light / Dark)">
-                    <svg class="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="4"/>
-                        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
-                    </svg>
-                    <svg class="moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 3a6 6 0 0 0 9 9 9 0 1 1-9-9Z"/>
-                    </svg>
-                </button>
+                <!-- Theme Switcher Link (Optimized) -->
+                <a href="{{ url_for('set_theme', theme='light' if theme == 'dark' else 'dark', category=current_category, status=current_status, search=search_query) }}" class="icon-btn theme-toggle pixel-box" title="Toggle Theme (Light / Dark)">
+                    {% if theme == 'light' %}
+                    <span class="theme-btn-content">
+                        <svg class="moon-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M12 3a6 6 0 0 0 9 9 9 0 1 1-9-9Z"/>
+                        </svg>
+                        <span class="btn-text-badge">DARK</span>
+                    </span>
+                    {% else %}
+                    <span class="theme-btn-content">
+                        <svg class="sun-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <circle cx="12" cy="12" r="4"/>
+                            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                        </svg>
+                        <span class="btn-text-badge">LIGHT</span>
+                    </span>
+                    {% endif %}
+                </a>
             </div>
         </header>
 
@@ -102,17 +78,19 @@
                 <div class="radial-wrap">
                     <svg class="radial-svg" width="84" height="84" viewBox="0 0 84 84">
                         <circle class="radial-bg" cx="42" cy="42" r="34" stroke-width="7" fill="none"/>
-                        <circle class="radial-bar" id="statRadialBar" cx="42" cy="42" r="34" stroke-width="7" fill="none"
-                            stroke-dasharray="213.6" stroke-dashoffset="213.6"/>
+                        <circle class="radial-bar" cx="42" cy="42" r="34" stroke-width="7" fill="none"
+                            stroke-dasharray="213.6" stroke-dashoffset="{{ stats.radial_offset }}"/>
                     </svg>
-                    <span class="radial-label" id="statPercent">0%</span>
+                    <span class="radial-label">{{ stats.completion_rate }}%</span>
                 </div>
                 <div class="stat-info">
                     <div class="stat-title-badge-wrap">
                         <span class="stat-title">EXP MOMENTUM</span>
                         <span class="pixel-mini-tag">1P</span>
                     </div>
-                    <span class="stat-desc" id="statSubtext">Level up by conquering habits!</span>
+                    <span class="stat-desc">
+                        {% if stats.completion_rate == 100 %}ALL QUESTS CLEARED! ★★★{% else %}Level up by conquering habits!{% endif %}
+                    </span>
                 </div>
             </div>
 
@@ -123,7 +101,7 @@
                 </div>
                 <div class="stat-info">
                     <div class="streak-num-wrap">
-                        <span class="stat-num" id="statCompleted">0</span>
+                        <span class="stat-num">{{ stats.completed }}</span>
                         <span class="stat-tag-emoji green-tick">✅</span>
                     </div>
                     <span class="stat-label">QUESTS CLEARED</span>
@@ -137,21 +115,21 @@
                 </div>
                 <div class="stat-info">
                     <div class="streak-num-wrap">
-                        <span class="stat-num" id="statBestStreak">0</span>
+                        <span class="stat-num">{{ stats.best_streak }}</span>
                         <span class="streak-flame">🔥</span>
                     </div>
                     <span class="stat-label">MAX COMBO</span>
                 </div>
             </div>
 
-            <!-- Pending / Attention -->
+            <!-- Pending Quests -->
             <div class="glass-card stat-card pixel-card">
                 <div class="stat-icon-badge indigo pixel-box">
                     <span class="badge-emoji voltage-emoji">⚡</span>
                 </div>
                 <div class="stat-info">
                     <div class="streak-num-wrap">
-                        <span class="stat-num" id="statPending">0</span>
+                        <span class="stat-num">{{ stats.pending }}</span>
                         <span class="stat-tag-emoji voltage-emoji">⚡</span>
                     </div>
                     <span class="stat-label">ACTIVE QUESTS</span>
@@ -159,178 +137,52 @@
             </div>
         </section>
 
-        <!-- Main Task Addition Hero Card -->
-        <section class="glass-card composer-card pixel-card">
-            <div class="composer-main">
-                <div class="input-cmd-prefix">&gt;</div>
-                <input 
-                    type="text" 
-                    id="taskInput" 
-                    class="composer-input" 
-                    placeholder="ENTER QUEST OR HABIT..."
-                    autocomplete="off"
-                />
+        <!-- Horizontal Pack Mastery Dashboard Section -->
+        <section class="pack-dashboard-section pixel-card">
+            <div class="section-title-bar">
+                <div class="section-title-left">
+                    <span class="pixel-section-icon">📦</span>
+                    <h2 class="pixel-section-title">PACK PROGRESS RADAR</h2>
+                </div>
+                <span class="pixel-section-hint">[ HORIZONTAL DASHBOARD • CLICK TO FILTER ]</span>
             </div>
 
-            <!-- Rich Options Toolbar -->
-            <div class="composer-toolbar">
-                <div class="toolbar-left">
-                    <!-- Custom Category Dropdown -->
-                    <div class="custom-select-wrap" id="categoryDropdownWrap">
-                        <button type="button" class="select-chip" id="categoryTriggerBtn" aria-haspopup="listbox" aria-expanded="false">
-                            <span class="dot-indicator" id="categoryDot"></span>
-                            <span id="selectedCategoryLabel">Category</span>
-                            <svg class="dropdown-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
-                        </button>
-                        <input type="hidden" id="taskCategorySelect" value="" />
-
-                        <!-- Sleek Category Dropdown Menu -->
-                        <div class="category-dropdown-menu hidden" id="categoryDropdownMenu" role="listbox">
-                            <div class="category-menu-header">
-                                <div class="category-menu-title">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/>
-                                    </svg>
-                                    <span>Select Folder</span>
-                                </div>
-                            </div>
-                            <div class="category-options-list" id="categoryOptionsList">
-                                <!-- Populated dynamically with color dots, names, count badges & checkmarks -->
-                            </div>
-                            <div class="category-menu-footer">
-                                <button type="button" class="category-menu-add-btn" id="categoryMenuAddBtn">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                                    </svg>
-                                    <span>Create New Folder</span>
-                                </button>
-                            </div>
+            <div class="pack-cards-horizontal-track">
+                {% for cat in categories %}
+                <a href="{{ url_for('index', category=cat.id, status=current_status, search=search_query) }}" 
+                   class="pack-dashboard-card pixel-card {% if current_category == (cat.id|string) %}active-pack{% endif %}"
+                   style="border-top: 4px solid {{ cat.color }};"
+                   title="Filter by {{ cat.name }}">
+                    
+                    <div class="pack-card-header">
+                        <div class="pack-card-name-wrap">
+                            <span class="pack-card-color-dot" style="background-color: {{ cat.color }};"></span>
+                            <span class="pack-card-name">{{ cat.name }}</span>
                         </div>
+                        <span class="pack-card-fraction">{{ cat.completed_tasks }}/{{ cat.total_tasks }}</span>
                     </div>
 
-                    <!-- Priority Selector -->
-                    <div class="priority-picker">
-                        <button type="button" class="priority-pill active" data-priority="low">Low</button>
-                        <button type="button" class="priority-pill" data-priority="medium">Medium</button>
-                        <button type="button" class="priority-pill" data-priority="high">Urgent</button>
+                    <div class="pack-card-body">
+                        <span class="pack-card-percent" style="color: {{ cat.color }};">{{ cat.completion_rate }}%</span>
+                        {% if cat.total_tasks == 0 %}
+                        <span class="pack-card-status-label status-empty">[ EMPTY ]</span>
+                        {% elif cat.completion_rate == 100 %}
+                        <span class="pack-card-status-label status-cleared">[ CLEARED ★ ]</span>
+                        {% else %}
+                        <span class="pack-card-status-label status-pending">[{{ cat.pending_tasks }} LEFT]</span>
+                        {% endif %}
                     </div>
 
-                    <!-- Deadline Picker -->
-                    <div class="deadline-wrap" id="deadlineWrap">
-                        <div class="deadline-pill-group" id="deadlinePillGroup">
-                            <button type="button" class="action-pill deadline-trigger-pill" id="deadlineTriggerBtn">
-                                <svg class="pill-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
-                                    <line x1="16" x2="16" y1="2" y2="6"/>
-                                    <line x1="8" x2="8" y1="2" y2="6"/>
-                                    <line x1="3" x2="21" y1="10" y2="10"/>
-                                </svg>
-                                <span id="deadlineText">Set Deadline</span>
-                            </button>
-                            <button type="button" class="deadline-clear-btn hidden" id="clearDeadlineBtn" title="Clear deadline" aria-label="Clear deadline">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-                                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                                </svg>
-                            </button>
-                        </div>
-
-                        <!-- Sleek Deadline Dropdown Popover -->
-                        <div class="deadline-popover hidden" id="deadlinePopover">
-                            <div class="popover-header">
-                                <div class="popover-header-title">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <circle cx="12" cy="12" r="10"></circle>
-                                        <polyline points="12 6 12 12 16 14"></polyline>
-                                    </svg>
-                                    <span>Quick Presets</span>
-                                </div>
-                                <button type="button" class="popover-quick-clear hidden" id="popoverQuickClear" title="Clear deadline">Clear</button>
-                            </div>
-                            <div class="preset-chips-grid">
-                                <button type="button" class="preset-chip" data-preset="today-evening">
-                                    <span class="preset-chip-icon">⚡</span>
-                                    <div class="preset-chip-text">
-                                        <span class="preset-chip-name">Evening</span>
-                                        <span class="preset-chip-time">6:00 PM</span>
-                                    </div>
-                                </button>
-                                <button type="button" class="preset-chip" data-preset="today-night">
-                                    <span class="preset-chip-icon">🌙</span>
-                                    <div class="preset-chip-text">
-                                        <span class="preset-chip-name">Tonight</span>
-                                        <span class="preset-chip-time">10:00 PM</span>
-                                    </div>
-                                </button>
-                                <button type="button" class="preset-chip" data-preset="tomorrow-morning">
-                                    <span class="preset-chip-icon">☀️</span>
-                                    <div class="preset-chip-text">
-                                        <span class="preset-chip-name">Tomorrow</span>
-                                        <span class="preset-chip-time">9:00 AM</span>
-                                    </div>
-                                </button>
-                                <button type="button" class="preset-chip" data-preset="in-2-days">
-                                    <span class="preset-chip-icon">📅</span>
-                                    <div class="preset-chip-text">
-                                        <span class="preset-chip-name">In 2 Days</span>
-                                        <span class="preset-chip-time">9:00 AM</span>
-                                    </div>
-                                </button>
-                                <button type="button" class="preset-chip" data-preset="friday-evening">
-                                    <span class="preset-chip-icon">🎯</span>
-                                    <div class="preset-chip-text">
-                                        <span class="preset-chip-name">Friday</span>
-                                        <span class="preset-chip-time">5:00 PM</span>
-                                    </div>
-                                </button>
-                                <button type="button" class="preset-chip" data-preset="next-monday">
-                                    <span class="preset-chip-icon">🗓️</span>
-                                    <div class="preset-chip-text">
-                                        <span class="preset-chip-name">Next Mon</span>
-                                        <span class="preset-chip-time">9:00 AM</span>
-                                    </div>
-                                </button>
-                            </div>
-
-                            <div class="popover-divider-wrap">
-                                <span class="popover-divider-text">OR CUSTOM DATE & TIME</span>
-                            </div>
-
-                            <div class="custom-dt-section">
-                                <div class="custom-dt-input-wrap">
-                                    <input type="datetime-local" id="taskDeadlineInput" class="custom-datetime-input" />
-                                </div>
-                                <div class="deadline-relative-hint hidden" id="deadlineRelativeHint"></div>
-                            </div>
-
-                            <div class="popover-actions">
-                                <button type="button" class="popover-btn-cancel" id="cancelDeadlinePopover">Cancel</button>
-                                <button type="button" class="popover-btn-apply" id="applyDeadlinePopover">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                                    <span>Apply</span>
-                                </button>
-                            </div>
-                        </div>
+                    <div class="pack-progress-meter">
+                        <div class="pack-progress-bar-fill" style="width: {{ cat.completion_rate }}%; background-color: {{ cat.color }};"></div>
                     </div>
 
-
-                    <!-- New Category Modal Button -->
-                    <button type="button" class="action-pill" id="openCategoryModalBtn">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/>
-                            <line x1="12" x2="12" y1="10" y2="16"/>
-                            <line x1="9" x2="15" y1="13" y2="13"/>
-                        </svg>
-                        <span>+ New Pack</span>
-                    </button>
-                </div>
-
-                <div class="toolbar-right">
-                    <button type="button" id="addTaskBtn" class="primary-btn pixel-btn">
-                        <span>+ ADD QUEST</span>
-                    </button>
-                </div>
+                    <div class="pack-card-footer">
+                        <span>Cleared: {{ cat.completed_tasks }}</span>
+                        <span>Pending: {{ cat.pending_tasks }}</span>
+                    </div>
+                </a>
+                {% endfor %}
             </div>
         </section>
 
@@ -338,120 +190,379 @@
         <section class="controls-section">
             <!-- Category Filter Carousel -->
             <div class="category-scroll-container">
-                <div class="category-pills" id="categoryPillsList">
-                    <button class="cat-pill active pixel-pill" data-id="all">
+                <div class="category-pills">
+                    <a href="{{ url_for('index', category='all', status=current_status, search=search_query) }}" 
+                       class="cat-pill pixel-pill {% if current_category == 'all' or not current_category %}active{% endif %}">
                         <span>[ ALL PACKS ]</span>
-                        <span class="count-badge" id="catCountAll">0</span>
-                    </button>
+                        <span class="count-badge">{{ cat_count_all }}</span>
+                    </a>
+
+                    {% for cat in categories %}
+                    <a href="{{ url_for('index', category=cat.id, status=current_status, search=search_query) }}" 
+                       class="cat-pill pixel-pill {% if current_category == (cat.id|string) %}active{% endif %}">
+                        <span style="width: 8px; height: 8px; background: {{ cat.color }}; border: 1px solid #000; display: inline-block;"></span>
+                        <span>{{ cat.name }}</span>
+                        <span class="count-badge">{{ cat.total_tasks }}</span>
+                    </a>
+                    {% endfor %}
                 </div>
             </div>
 
             <!-- Search & Status Tabs -->
             <div class="filters-row">
-                <!-- Search Input -->
-                <div class="search-wrap pixel-box">
-                    <span class="search-icon-pixel">🔍</span>
-                    <input type="text" id="searchInput" placeholder="SEARCH QUESTS..." autocomplete="off">
-                </div>
+                <!-- Search Form -->
+                <form action="/" method="GET" class="search-form-row">
+                    <input type="hidden" name="category" value="{{ current_category }}">
+                    <input type="hidden" name="status" value="{{ current_status }}">
+                    <div class="search-wrap pixel-box">
+                        <span class="search-icon-pixel">🔍</span>
+                        <input type="text" name="search" value="{{ search_query }}" placeholder="SEARCH QUESTS..." autocomplete="off">
+                    </div>
+                    <button type="submit" class="primary-btn pixel-btn search-btn">FIND</button>
+                    {% if search_query %}
+                    <a href="{{ url_for('index', category=current_category, status=current_status) }}" class="secondary-btn pixel-btn search-btn">CLEAR</a>
+                    {% endif %}
+                </form>
 
                 <!-- Status Tabs -->
-                <div class="status-tabs pixel-box" id="statusTabs">
-                    <button class="tab-btn active" data-status="all">ALL</button>
-                    <button class="tab-btn" data-status="active">ACTIVE</button>
-                    <button class="tab-btn" data-status="completed">DONE</button>
+                <div class="status-tabs pixel-box">
+                    <a href="{{ url_for('index', category=current_category, status='all', search=search_query) }}" 
+                       class="tab-btn {% if current_status == 'all' or not current_status %}active{% endif %}">ALL</a>
+                    <a href="{{ url_for('index', category=current_category, status='active', search=search_query) }}" 
+                       class="tab-btn {% if current_status == 'active' %}active{% endif %}">ACTIVE</a>
+                    <a href="{{ url_for('index', category=current_category, status='completed', search=search_query) }}" 
+                       class="tab-btn {% if current_status == 'completed' %}active{% endif %}">DONE</a>
                 </div>
             </div>
         </section>
 
         <!-- Tasks Grouped / List View -->
-        <main class="tasks-container" id="tasksContainer">
-            <!-- Dynamic task groups will be rendered here -->
-            <div class="loading-state">
-                <div class="spinner pixel-spinner"></div>
-                <p>LOADING QUEST LOG...</p>
+        <main class="tasks-container">
+            {% if not tasks %}
+            <!-- Empty State Card -->
+            <div class="empty-state pixel-card">
+                <div class="empty-icon-ring pixel-box">
+                    <span class="empty-pixel-icon">🎮</span>
+                </div>
+                <h3 class="empty-title">STAGE CLEAR ★</h3>
+                <p class="empty-desc">No quests found in this view! Enter a quest above to continue your run.</p>
             </div>
+            {% else %}
+                {% for (cat_id, cat_name, cat_color), group_tasks in tasks_by_category.items() %}
+                <div class="category-group">
+                    <div class="group-header">
+                        <div class="group-title-wrap">
+                            <span class="group-color-dot" style="background-color: {{ cat_color }};"></span>
+                            <span class="group-title">{{ cat_name }}</span>
+                        </div>
+                        <div class="group-header-actions">
+                            <span class="group-count">{{ group_tasks|length }} QUEST{{ 'S' if group_tasks|length != 1 else '' }}</span>
+                            {% if cat_id %}
+                            <form action="/categories/{{ cat_id }}/delete" method="POST" class="inline-form" onsubmit="return confirm('Delete pack {{ cat_name }}? Tasks will be moved to General.');">
+                                <input type="hidden" name="filter_status" value="{{ current_status }}">
+                                <input type="hidden" name="filter_search" value="{{ search_query }}">
+                                <button type="submit" class="group-delete-cat-btn" title="Delete this Pack">🗑️</button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="task-list">
+                        {% for task in group_tasks %}
+                        <div class="task-card {% if task.completed %}completed{% endif %}">
+                            <!-- Toggle Checkbox Form -->
+                            <form action="/tasks/{{ task.id }}/toggle" method="POST" class="inline-form">
+                                <input type="hidden" name="filter_category" value="{{ current_category }}">
+                                <input type="hidden" name="filter_status" value="{{ current_status }}">
+                                <input type="hidden" name="filter_search" value="{{ search_query }}">
+                                <button type="submit" class="task-checkbox-btn" title="{% if task.completed %}Mark Incomplete{% else %}Clear Quest{% endif %}">
+                                    {% if task.completed %}✓{% endif %}
+                                </button>
+                            </form>
+
+                            <div class="task-content">
+                                <span class="task-text">{{ task.text }}</span>
+                                <div class="task-meta">
+                                    {% if task.category_name %}
+                                    <span class="badge" style="border-left: 3px solid {{ task.category_color }};">
+                                        📁 {{ task.category_name }}
+                                    </span>
+                                    {% endif %}
+
+                                    <span class="badge priority-{{ task.priority }}">
+                                        {% if task.priority == 'high' %}💀 BOSS{% elif task.priority == 'low' %}⚔️ CASUAL{% else %}⚔️ NORMAL{% endif %}
+                                    </span>
+
+                                    {% if task.streak > 0 %}
+                                    <span class="badge streak-badge">
+                                        🔥 {{ task.streak }} STREAK
+                                    </span>
+                                    {% endif %}
+
+                                    {% if task.formatted_deadline %}
+                                    <span class="badge deadline-badge {% if task.is_overdue %}overdue{% endif %}">
+                                        ⏰ {{ task.formatted_deadline }}{% if task.is_overdue %} [OVERDUE]{% endif %}
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="task-actions">
+                                <!-- Pure CSS Modal Edit Link -->
+                                <a href="#edit-task-{{ task.id }}" class="action-icon-link" title="Edit Quest">✏️</a>
+
+                                <!-- Delete Task Form -->
+                                <form action="/tasks/{{ task.id }}/delete" method="POST" class="inline-form">
+                                    <input type="hidden" name="filter_category" value="{{ current_category }}">
+                                    <input type="hidden" name="filter_status" value="{{ current_status }}">
+                                    <input type="hidden" name="filter_search" value="{{ search_query }}">
+                                    <button type="submit" class="action-icon-btn delete-btn" title="Delete Quest">🗑️</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Edit Quest Pure CSS Modal -->
+                        <div class="modal-backdrop" id="edit-task-{{ task.id }}">
+                            <div class="modal-card pixel-modal">
+                                <div class="modal-header pixel-header">
+                                    <h3>EDIT QUEST #{{ task.id }}</h3>
+                                    <a href="#" class="close-modal-link close-modal-btn pixel-btn">&times;</a>
+                                </div>
+                                <form action="/tasks/{{ task.id }}/edit" method="POST">
+                                    <input type="hidden" name="filter_category" value="{{ current_category }}">
+                                    <input type="hidden" name="filter_status" value="{{ current_status }}">
+                                    <input type="hidden" name="filter_search" value="{{ search_query }}">
+
+                                    <div class="modal-body">
+                                        <label class="form-label">QUEST DESCRIPTION</label>
+                                        <input type="text" name="text" class="modal-input pixel-input" value="{{ task.text }}" required />
+
+                                        <div class="modal-row" style="display: flex; gap: 10px; margin-top: 12px;">
+                                            <div class="modal-col" style="flex: 1;">
+                                                <label class="form-label">PACK / FOLDER</label>
+                                                <select name="category_id" class="modal-select pixel-input" style="width: 100%;">
+                                                    <option value="">No Pack / General</option>
+                                                    {% for cat in categories %}
+                                                    <option value="{{ cat.id }}" {% if task.category_id == cat.id %}selected{% endif %}>
+                                                        {{ cat.name }}
+                                                    </option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="modal-col" style="flex: 1;">
+                                                <label class="form-label">PRIORITY</label>
+                                                <select name="priority" class="modal-select pixel-input" style="width: 100%;">
+                                                    <option value="low" {% if task.priority == 'low' %}selected{% endif %}>Casual (Low)</option>
+                                                    <option value="medium" {% if task.priority == 'medium' %}selected{% endif %}>Normal (Medium)</option>
+                                                    <option value="high" {% if task.priority == 'high' %}selected{% endif %}>Boss (Urgent)</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div style="margin-top: 12px;">
+                                            <label class="form-label">DEADLINE / TIME LIMIT</label>
+                                            <input type="datetime-local" name="deadline" class="modal-input pixel-input" value="{{ task.deadline or '' }}" />
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px;">
+                                        <a href="#" class="secondary-btn pixel-btn close-modal-link">CANCEL</a>
+                                        <button type="submit" class="primary-btn pixel-btn">SAVE QUEST</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            {% endif %}
         </main>
 
-        <!-- Empty State Template -->
-        <div class="empty-state hidden pixel-card" id="emptyState">
-            <div class="empty-icon-ring pixel-box">
-                <span class="empty-pixel-icon">🎮</span>
-            </div>
-            <h3 class="empty-title">STAGE CLEAR ★</h3>
-            <p class="empty-desc">No active quests in this pack! Enter a quest above to continue your run.</p>
+        <!-- Fixed Bottom Docked Add Task Bar -->
+        <div class="composer-dock-container">
+            <section class="glass-card composer-card pixel-card composer-docked">
+                <form action="/tasks/add" method="POST">
+                    <input type="hidden" name="filter_category" value="{{ current_category }}">
+                    <input type="hidden" name="filter_status" value="{{ current_status }}">
+                    <input type="hidden" name="filter_search" value="{{ search_query }}">
+
+                    <div class="composer-main">
+                        <div class="input-cmd-prefix">&gt;</div>
+                        <input 
+                            type="text" 
+                            name="text" 
+                            class="composer-input" 
+                            placeholder="ENTER QUEST OR HABIT..." 
+                            required 
+                            autocomplete="off"
+                        />
+                    </div>
+
+                    <!-- Rich Options Toolbar -->
+                    <div class="composer-toolbar">
+                        <div class="toolbar-left">
+                            <!-- Category Select -->
+                            <select name="category_id" class="pixel-select" title="Choose Category Pack">
+                                <option value="">📁 [ General / No Pack ]</option>
+                                {% for cat in categories %}
+                                <option value="{{ cat.id }}" {% if current_category == (cat.id|string) %}selected{% endif %}>
+                                    📁 {{ cat.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+
+                            <!-- Priority Selector -->
+                            <select name="priority" class="pixel-select" title="Difficulty Priority">
+                                <option value="low">⚔️ Low (Casual)</option>
+                                <option value="medium" selected>⚔️ Medium (Normal)</option>
+                                <option value="high">💀 Urgent (Boss)</option>
+                            </select>
+
+                            <!-- Interactive Deadline Picker Button (Pure HTML5 & CSS) -->
+                            <details class="deadline-wrap">
+                                <summary class="action-pill deadline-trigger-pill" title="Click to Set Target Deadline">
+                                    <svg class="pill-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+                                        <line x1="16" x2="16" y1="2" y2="6"/>
+                                        <line x1="8" x2="8" y1="2" y2="6"/>
+                                        <line x1="3" x2="21" y1="10" y2="10"/>
+                                    </svg>
+                                    <span>Set Deadline ▴</span>
+                                </summary>
+
+                                <div class="deadline-popover">
+                                    <div class="popover-header">
+                                        <div class="popover-header-title">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <circle cx="12" cy="12" r="10"></circle>
+                                                <polyline points="12 6 12 12 16 14"></polyline>
+                                            </svg>
+                                            <span>Quick Presets</span>
+                                        </div>
+                                        <label class="popover-quick-clear" title="Clear selection" style="cursor: pointer; font-family: var(--font-pixel-heading); font-size: 8px; color: var(--rose);">
+                                            <input type="radio" name="deadline_preset" value="" class="preset-radio" checked>
+                                            <span>[ CLEAR ]</span>
+                                        </label>
+                                    </div>
+
+                                    <div class="preset-chips-grid">
+                                        <label class="preset-chip">
+                                            <input type="radio" name="deadline_preset" value="today_evening" class="preset-radio">
+                                            <span class="preset-chip-icon">⚡</span>
+                                            <div class="preset-chip-text">
+                                                <span class="preset-chip-name">Evening</span>
+                                                <span class="preset-chip-time">6:00 PM</span>
+                                            </div>
+                                        </label>
+                                        <label class="preset-chip">
+                                            <input type="radio" name="deadline_preset" value="today_night" class="preset-radio">
+                                            <span class="preset-chip-icon">🌙</span>
+                                            <div class="preset-chip-text">
+                                                <span class="preset-chip-name">Tonight</span>
+                                                <span class="preset-chip-time">10:00 PM</span>
+                                            </div>
+                                        </label>
+                                        <label class="preset-chip">
+                                            <input type="radio" name="deadline_preset" value="tomorrow_morning" class="preset-radio">
+                                            <span class="preset-chip-icon">☀️</span>
+                                            <div class="preset-chip-text">
+                                                <span class="preset-chip-name">Tomorrow</span>
+                                                <span class="preset-chip-time">9:00 AM</span>
+                                            </div>
+                                        </label>
+                                        <label class="preset-chip">
+                                            <input type="radio" name="deadline_preset" value="in_2_days" class="preset-radio">
+                                            <span class="preset-chip-icon">📅</span>
+                                            <div class="preset-chip-text">
+                                                <span class="preset-chip-name">In 2 Days</span>
+                                                <span class="preset-chip-time">9:00 AM</span>
+                                            </div>
+                                        </label>
+                                        <label class="preset-chip">
+                                            <input type="radio" name="deadline_preset" value="friday_evening" class="preset-radio">
+                                            <span class="preset-chip-icon">🎯</span>
+                                            <div class="preset-chip-text">
+                                                <span class="preset-chip-name">Friday</span>
+                                                <span class="preset-chip-time">5:00 PM</span>
+                                            </div>
+                                        </label>
+                                        <label class="preset-chip">
+                                            <input type="radio" name="deadline_preset" value="next_monday" class="preset-radio">
+                                            <span class="preset-chip-icon">🗓️</span>
+                                            <div class="preset-chip-text">
+                                                <span class="preset-chip-name">Next Mon</span>
+                                                <span class="preset-chip-time">9:00 AM</span>
+                                            </div>
+                                        </label>
+                                    </div>
+
+                                    <div class="popover-divider-wrap">
+                                        <span class="popover-divider-text">OR CUSTOM DATE &amp; TIME</span>
+                                    </div>
+
+                                    <div class="custom-dt-section">
+                                        <input 
+                                            type="datetime-local" 
+                                            name="deadline" 
+                                            class="custom-datetime-input" 
+                                            placeholder="Pick date & time"
+                                        />
+                                    </div>
+                                </div>
+                            </details>
+
+                            <!-- New Category Modal Button (Pure CSS :target) -->
+                            <a href="#new-category-modal" class="action-pill" title="Create New Quest Pack">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/>
+                                    <line x1="12" x2="12" y1="10" y2="16"/>
+                                    <line x1="9" x2="15" y1="13" y2="13"/>
+                                </svg>
+                                <span>+ New Pack</span>
+                            </a>
+                        </div>
+
+                        <div class="toolbar-right">
+                            <button type="submit" class="primary-btn pixel-btn">
+                                <span>+ ADD QUEST</span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </section>
         </div>
     </div>
 
-    <!-- Create Category Modal -->
-    <div class="modal-backdrop hidden" id="categoryModal">
+    <!-- Create Category Pure CSS Modal -->
+    <div class="modal-backdrop" id="new-category-modal">
         <div class="modal-card pixel-modal">
             <div class="modal-header pixel-header">
                 <h3>CREATE QUEST PACK</h3>
-                <button class="close-modal-btn pixel-btn" id="closeCategoryModalBtn">&times;</button>
+                <a href="#" class="close-modal-link close-modal-btn pixel-btn">&times;</a>
             </div>
-            <div class="modal-body">
-                <label class="form-label" for="newCategoryName">PACK / CATEGORY NAME</label>
-                <input type="text" id="newCategoryName" class="modal-input pixel-input" placeholder="e.g. Daily Boss, Fitness, Deep Work..." autocomplete="off" />
+            <form action="/categories/add" method="POST">
+                <input type="hidden" name="filter_category" value="{{ current_category }}">
+                <input type="hidden" name="filter_status" value="{{ current_status }}">
+                <input type="hidden" name="filter_search" value="{{ search_query }}">
 
-                <label class="form-label">PACK COLOR THEME</label>
-                <div class="color-palette-picker" id="colorPicker">
-                    <button type="button" class="color-swatch active" data-color="#39ff14" style="background: #39ff14;"></button>
-                    <button type="button" class="color-swatch" data-color="#ff007f" style="background: #ff007f;"></button>
-                    <button type="button" class="color-swatch" data-color="#00f0ff" style="background: #00f0ff;"></button>
-                    <button type="button" class="color-swatch" data-color="#ffe600" style="background: #ffe600;"></button>
-                    <button type="button" class="color-swatch" data-color="#8b5cf6" style="background: #8b5cf6;"></button>
-                    <button type="button" class="color-swatch" data-color="#ff3344" style="background: #ff3344;"></button>
-                    <button type="button" class="color-swatch" data-color="#10b981" style="background: #10b981;"></button>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="secondary-btn pixel-btn" id="cancelCategoryModalBtn">CANCEL</button>
-                <button class="primary-btn pixel-btn" id="saveCategoryModalBtn">CREATE PACK</button>
-            </div>
-        </div>
-    </div>
+                <div class="modal-body">
+                    <label class="form-label">PACK / CATEGORY NAME</label>
+                    <input type="text" name="name" class="modal-input pixel-input" placeholder="e.g. Daily Boss, Fitness, Deep Work..." required autocomplete="off" />
 
-    <!-- Edit Task Modal -->
-    <div class="modal-backdrop hidden" id="editTaskModal">
-        <div class="modal-card pixel-modal">
-            <div class="modal-header pixel-header">
-                <h3>EDIT QUEST</h3>
-                <button class="close-modal-btn pixel-btn" id="closeEditModalBtn">&times;</button>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" id="editTaskId" />
-                
-                <label class="form-label" for="editTaskText">QUEST DESCRIPTION</label>
-                <input type="text" id="editTaskText" class="modal-input pixel-input" placeholder="Quest text..." />
-
-                <div class="modal-row">
-                    <div class="modal-col">
-                        <label class="form-label" for="editTaskCategory">PACK / FOLDER</label>
-                        <select id="editTaskCategory" class="modal-select pixel-input"></select>
-                    </div>
-                    <div class="modal-col">
-                        <label class="form-label" for="editTaskPriority">DIFFICULTY / PRIORITY</label>
-                        <select id="editTaskPriority" class="modal-select pixel-input">
-                            <option value="low">CASUAL (Low)</option>
-                            <option value="medium">NORMAL (Medium)</option>
-                            <option value="high">BOSS (Urgent)</option>
-                        </select>
+                    <div style="margin-top: 14px;">
+                        <label class="form-label">THEME COLOR</label>
+                        <div style="display: flex; align-items: center; gap: 12px; margin-top: 6px;">
+                            <input type="color" name="color" value="#39ff14" class="color-input-pixel" />
+                            <span style="font-family: var(--font-pixel-sub); font-size: 11px; color: var(--text-muted);">Choose custom 8-bit neon shade</span>
+                        </div>
                     </div>
                 </div>
-
-                <label class="form-label" for="editTaskDeadline">TIME LIMIT / DEADLINE</label>
-                <input type="datetime-local" id="editTaskDeadline" class="modal-input pixel-input" />
-            </div>
-            <div class="modal-footer">
-                <button class="secondary-btn pixel-btn" id="cancelEditModalBtn">CANCEL</button>
-                <button class="primary-btn pixel-btn" id="saveEditModalBtn">SAVE QUEST</button>
-            </div>
+                <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px;">
+                    <a href="#" class="secondary-btn pixel-btn close-modal-link">CANCEL</a>
+                    <button type="submit" class="primary-btn pixel-btn">CREATE PACK</button>
+                </div>
+            </form>
         </div>
     </div>
-
-    <!-- Toast Notification container -->
-    <div class="toast-container" id="toastContainer"></div>
-
-    <script src="/static/js/app.js"></script>
 </body>
 </html>

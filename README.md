@@ -4,34 +4,31 @@
   <img src="static/icons/icon.svg" width="96" height="96" alt="Orbit Logo" />
 </p>
 
-An ultra-modern, responsive Habit & Task Tracker web application built with **Python (Flask)**, **Semantic HTML5**, **Modern Vanilla CSS**, and **JavaScript**. Designed for seamless compatibility across every device (smartphones, tablets, and desktop), featuring dark/light mode, PWA capabilities, habit streak calculations, and a glassmorphic aesthetic.
+An ultra-modern, responsive Habit & Task Tracker web application built with **Python (Flask)**, **Semantic HTML5**, and **Retro Pixel Vanilla CSS3** with **Zero Client-Side JavaScript**. Designed for seamless speed, instant reliability, and maximum accessibility across every device (smartphones, tablets, and desktop), featuring dark/light mode, CSS `:target` modals, CRT scanlines effect, habit streak calculations, and a retro arcade aesthetic.
 
 ---
 
 ## ✨ Features
 
-- **Cross-Device Responsive Design**: Optimized for desktops, tablets, and mobile screens with iOS safe-area support.
-- **Progressive Web App (PWA)**: Installable directly to your home screen or desktop with offline caching via Service Worker.
-- **Live Momentum & Stats**: Real-time circular progress gauge showing daily completion rate, active tasks, and streak records (🔥).
-- **Intelligent Quick Scheduling**:
-  - One-click presets (*Today 6 PM*, *Tonight 10 PM*, *Tomorrow 9 AM*, *In 2 Days*, *Next Monday*).
-  - Custom datetime selector with overdue countdown badges.
+- **⚡ Zero JavaScript Architecture**: 100% pure HTML5 + CSS3 on the client side with lightning-fast SSR (Server-Side Rendering).
+- **Cross-Device Responsive Design**: Optimized for desktops, tablets, and mobile screens.
+- **Pure CSS Interactive Modals & Toggles**: Modal editing and category creation using CSS `:target` and CRT toggle via CSS checkbox state.
+- **Live Momentum & Stats**: Dynamic SVG circular progress gauge showing completion rate, active quests, and streak records (🔥).
 - **Categorization & Filtering**:
-  - Filter by folder pills with dynamic task counters.
+  - Filter by folder pills with dynamic quest counters.
   - Quick status tabs (*All*, *Active*, *Done*).
-  - Instant live search.
-- **Priorities & Streaks**: Low, Medium, and Urgent priority tags with auto-incrementing streaks.
-- **Task Celebrations**: Confetti particle bursts upon completing tasks.
-- **Themes**: Smooth toggle between sleek dark and clean light modes with local persistence.
+  - Search filter.
+- **Priorities & Streaks**: Casual, Normal, and Boss priority tags with auto-incrementing streaks.
+- **Themes**: Smooth toggle between sleek arcade dark and clean Famicom light modes with cookie persistence.
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Backend**: Python 3, Flask, SQLite3
-- **Frontend**: HTML5, Vanilla CSS3 (Custom Design System & Glassmorphism), Modern JavaScript (ES6+)
-- **PWA**: Web App Manifest (`manifest.json`), Service Worker (`sw.js`)
-- **Typography**: Google Fonts (*Outfit* and *Plus Jakarta Sans*)
+- **Backend**: Python 3, Flask, SQLite3, Jinja2
+- **Frontend**: Pure Semantic HTML5, Vanilla CSS3 (Custom Retro Arcade Design System & CRT Scanlines)
+- **Client Scripting**: **None (Zero JS)**
+- **Typography**: Google Fonts (*Silkscreen*, *Press Start 2P*, *VT323*)
 
 ---
 
