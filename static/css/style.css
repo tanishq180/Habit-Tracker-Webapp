@@ -5,14 +5,17 @@
 :root {
     color-scheme: dark;
 
-    /* Clean Arcade Typography Tokens */
-    --font-pixel-heading: 'Silkscreen', monospace, sans-serif;
-    --font-pixel-sub: 'Silkscreen', monospace, sans-serif;
-    --font-pixel-body: 'Silkscreen', monospace, sans-serif;
-    --font-mono: 'Silkscreen', monospace;
+    /* High-Clarity Modern & Arcade Typography System */
+    --font-sans: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-heading: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-body: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+    --font-retro: 'Silkscreen', monospace, sans-serif;
 
-    --font-heading: var(--font-pixel-heading);
-    --font-body: var(--font-pixel-body);
+    /* Map tokens so all UI components inherit crisp, sharp text */
+    --font-pixel-heading: var(--font-heading);
+    --font-pixel-sub: var(--font-sans);
+    --font-pixel-body: var(--font-body);
 
     /* Arcade Dark Palette (Optimized High-Contrast Neon Dark) */
     --bg-base: #0c081e;
@@ -137,7 +140,6 @@
     margin: 0;
     padding: 0;
     border-radius: 0 !important; /* Authentic 8-bit sharp edges */
-    image-rendering: pixelated;
 }
 
 body {
@@ -150,12 +152,13 @@ body {
     color: var(--text-primary);
     font-family: var(--font-body);
     font-size: 15px;
-    line-height: 1.45;
+    line-height: 1.5;
     min-height: 100vh;
     overflow-x: hidden;
     position: relative;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
 }
 
 /* Pixel Starfield Floating Dots */
@@ -290,17 +293,17 @@ body {
 }
 
 .brand-title {
-    font-family: var(--font-pixel-heading);
+    font-family: var(--font-retro);
     font-size: 24px;
     font-weight: 700;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
     color: var(--text-primary);
     line-height: 1.1;
-    text-shadow: 2px 2px 0px var(--pixel-shadow), 0 0 10px var(--primary-glow);
+    text-shadow: 2px 2px 0px var(--pixel-shadow);
 }
 
 .pixel-cursor {
-    font-family: var(--font-pixel-heading);
+    font-family: var(--font-retro);
     font-size: 22px;
     color: var(--primary);
     animation: pixelBlink 1s infinite steps(1, start);
@@ -312,13 +315,14 @@ body {
 }
 
 .brand-subtitle {
-    font-family: var(--font-pixel-sub);
+    font-family: var(--font-mono);
     font-size: 11px;
+    font-weight: 600;
     letter-spacing: 0.5px;
     color: var(--cyan);
     display: block;
     margin-top: 4px;
-    text-shadow: 1px 1px 0px #000;
+    text-shadow: none;
 }
 
 [data-theme="light"] .brand-subtitle {
@@ -386,8 +390,9 @@ body {
 }
 
 .btn-text-badge {
-    font-family: var(--font-pixel-heading);
-    font-size: 9px;
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 700;
     letter-spacing: 0.5px;
 }
 
@@ -465,11 +470,11 @@ body {
 
 .radial-label {
     position: absolute;
-    font-family: var(--font-pixel-heading);
-    font-size: 11px;
+    font-family: var(--font-mono);
+    font-size: 14px;
     font-weight: 700;
     color: var(--emerald);
-    text-shadow: 1px 1px 0px #000;
+    text-shadow: none;
 }
 
 [data-theme="light"] .radial-label {
@@ -533,8 +538,8 @@ body {
 }
 
 .stat-title {
-    font-family: var(--font-pixel-heading);
-    font-size: 10px;
+    font-family: var(--font-heading);
+    font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.5px;
     color: var(--cyan);
@@ -545,17 +550,19 @@ body {
 }
 
 .pixel-mini-tag {
-    font-family: var(--font-pixel-heading);
-    font-size: 8px;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    font-weight: 700;
     background: var(--primary);
     color: #fff;
-    padding: 2px 4px;
+    padding: 2px 5px;
     border: 1px solid #000;
 }
 
 .stat-desc {
-    font-family: var(--font-pixel-sub);
-    font-size: 11px;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
     color: var(--text-secondary);
     white-space: nowrap;
     overflow: hidden;
@@ -563,12 +570,12 @@ body {
 }
 
 .stat-num {
-    font-family: var(--font-pixel-heading);
-    font-size: 20px;
-    font-weight: 700;
+    font-family: var(--font-heading);
+    font-size: 24px;
+    font-weight: 800;
     line-height: 1.1;
     color: var(--text-primary);
-    text-shadow: 2px 2px 0px var(--pixel-shadow);
+    text-shadow: none;
 }
 
 .streak-num-wrap {
@@ -588,8 +595,9 @@ body {
 }
 
 .stat-label {
-    font-family: var(--font-pixel-sub);
-    font-size: 10px;
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 600;
     letter-spacing: 0.5px;
     color: var(--text-muted);
     margin-top: 3px;
@@ -635,18 +643,18 @@ body {
     background: transparent;
     border: none;
     outline: none;
-    font-family: var(--font-pixel-body);
-    font-size: 20px;
-    font-weight: 600;
+    font-family: var(--font-body);
+    font-size: 16px;
+    font-weight: 500;
     color: var(--text-primary);
-    letter-spacing: 0.5px;
+    letter-spacing: normal;
 }
 
 .composer-input::placeholder {
     color: var(--text-subtle);
-    font-family: var(--font-pixel-heading);
-    font-size: 12px;
-    letter-spacing: 1px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    letter-spacing: normal;
 }
 
 .composer-toolbar {
@@ -677,9 +685,10 @@ body {
     color: #ffffff;
     box-shadow: var(--bevel-outset), var(--shadow-pixel-md);
     padding: 9px 18px;
-    font-family: var(--font-pixel-heading);
-    font-size: 11px;
-    letter-spacing: 0.8px;
+    font-family: var(--font-heading);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
@@ -706,8 +715,9 @@ body {
     color: var(--text-primary);
     box-shadow: var(--bevel-outset), var(--shadow-pixel-sm);
     padding: 8px 14px;
-    font-family: var(--font-pixel-heading);
-    font-size: 10px;
+    font-family: var(--font-heading);
+    font-size: 11.5px;
+    font-weight: 600;
     cursor: pointer;
 }
 
@@ -728,14 +738,14 @@ body {
     box-shadow: var(--bevel-outset), var(--shadow-pixel-sm);
     color: var(--text-primary);
     padding: 7px 12px;
-    font-family: var(--font-pixel-sub);
-    font-size: 11.5px;
+    font-family: var(--font-sans);
+    font-size: 12.5px;
+    font-weight: 600;
     display: inline-flex;
     align-items: center;
     gap: 7px;
     cursor: pointer;
-    transition: transform var(--transition-fast);
-}
+    }
 
 .action-pill:hover, .select-chip:hover {
     background: var(--bg-surface-hover);
@@ -767,10 +777,10 @@ body {
     background: transparent;
     border: 1px solid transparent;
     color: var(--text-muted);
-    font-family: var(--font-pixel-sub);
-    font-size: 11px;
+    font-family: var(--font-heading);
+    font-size: 11.5px;
     font-weight: 700;
-    padding: 5px 10px;
+    padding: 5px 11px;
     cursor: pointer;
 }
 
@@ -826,8 +836,9 @@ details.deadline-wrap[open] > summary {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-family: var(--font-pixel-heading);
-    font-size: 10px;
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 700;
     letter-spacing: 0.5px;
     color: var(--cyan);
     margin-bottom: 10px;
@@ -858,8 +869,9 @@ details.deadline-wrap[open] > summary {
     align-items: center;
     justify-content: space-between;
     cursor: pointer;
-    font-family: var(--font-pixel-body);
-    font-size: 15px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
 }
 
 .category-option-item:hover {
@@ -990,14 +1002,16 @@ details.deadline-wrap[open] > summary {
 }
 
 .preset-chip-name {
-    font-family: var(--font-pixel-heading);
-    font-size: 9px;
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 700;
     display: block;
 }
 
 .preset-chip-time {
-    font-family: var(--font-pixel-sub);
-    font-size: 10px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
     color: inherit;
     opacity: 0.85;
 }
@@ -1009,8 +1023,9 @@ details.deadline-wrap[open] > summary {
 }
 
 .popover-divider-text {
-    font-family: var(--font-pixel-heading);
-    font-size: 8px;
+    font-family: var(--font-heading);
+    font-size: 9.5px;
+    font-weight: 700;
     background: var(--bg-surface-solid);
     padding: 0 6px;
     color: var(--text-muted);
@@ -1028,7 +1043,7 @@ details.deadline-wrap[open] > summary {
     color: var(--text-primary);
     padding: 8px 10px;
     font-family: var(--font-mono);
-    font-size: 16px;
+    font-size: 14px;
     outline: none;
 }
 
@@ -1040,9 +1055,10 @@ details.deadline-wrap[open] > summary {
 
 .popover-btn-cancel, .popover-btn-apply {
     border: 2px solid var(--pixel-border);
-    padding: 6px 12px;
-    font-family: var(--font-pixel-heading);
-    font-size: 9px;
+    padding: 6px 14px;
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 700;
     cursor: pointer;
 }
 
@@ -1067,10 +1083,11 @@ details.deadline-wrap[open] > summary {
     background: var(--rose);
     border: 2px solid var(--pixel-border);
     color: #fff;
-    padding: 3px 6px;
+    padding: 4px 7px;
     cursor: pointer;
-    font-family: var(--font-pixel-heading);
-    font-size: 9px;
+    font-family: var(--font-heading);
+    font-size: 10.5px;
+    font-weight: 700;
 }
 
 /* ==========================================================================
@@ -1100,8 +1117,8 @@ details.deadline-wrap[open] > summary {
     border: 2px solid var(--pixel-border);
     box-shadow: var(--bevel-outset), var(--shadow-pixel-sm);
     padding: 7px 14px;
-    font-family: var(--font-pixel-sub);
-    font-size: 12px;
+    font-family: var(--font-sans);
+    font-size: 13px;
     font-weight: 700;
     color: var(--text-secondary);
     display: inline-flex;
@@ -1132,9 +1149,10 @@ details.deadline-wrap[open] > summary {
 
 .cat-pill .count-badge {
     background: rgba(0, 0, 0, 0.25);
-    padding: 1px 6px;
-    font-family: var(--font-pixel-heading);
-    font-size: 9px;
+    padding: 2px 7px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
     border: 1px solid rgba(0, 0, 0, 0.4);
 }
 
@@ -1149,7 +1167,7 @@ details.deadline-wrap[open] > summary {
     justify-content: center;
     width: 18px;
     height: 18px;
-    font-family: var(--font-pixel-heading);
+    font-family: var(--font-heading);
     font-size: 13px;
     line-height: 1;
     color: var(--text-muted);
@@ -1200,15 +1218,15 @@ details.deadline-wrap[open] > summary {
     background: transparent;
     border: none;
     padding: 8px 4px;
-    font-family: var(--font-pixel-body);
-    font-size: 16px;
+    font-family: var(--font-body);
+    font-size: 15px;
     color: var(--text-primary);
     outline: none;
 }
 
 .search-wrap input::placeholder {
-    font-family: var(--font-pixel-heading);
-    font-size: 10px;
+    font-family: var(--font-body);
+    font-size: 13.5px;
     color: var(--text-subtle);
 }
 
@@ -1225,9 +1243,11 @@ details.deadline-wrap[open] > summary {
     background: transparent;
     border: 1px solid transparent;
     color: var(--text-muted);
-    font-family: var(--font-pixel-heading);
-    font-size: 9px;
-    padding: 6px 12px;
+    font-family: var(--font-heading);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    padding: 6px 14px;
     cursor: pointer;
 }
 
@@ -1281,10 +1301,10 @@ details.deadline-wrap[open] > summary {
 }
 
 .group-title {
-    font-family: var(--font-pixel-heading);
-    font-size: 12px;
+    font-family: var(--font-heading);
+    font-size: 13px;
     font-weight: 700;
-    letter-spacing: 0.8px;
+    letter-spacing: 0.5px;
     color: var(--cyan);
 }
 
@@ -1299,8 +1319,9 @@ details.deadline-wrap[open] > summary {
 }
 
 .group-count {
-    font-family: var(--font-pixel-sub);
-    font-size: 11px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
     color: var(--text-muted);
 }
 
@@ -1392,12 +1413,12 @@ details.deadline-wrap[open] > summary {
 }
 
 .task-text {
-    font-family: var(--font-pixel-body);
-    font-size: 15px;
-    font-weight: 700;
+    font-family: var(--font-body);
+    font-size: 15.5px;
+    font-weight: 600;
     color: var(--text-primary);
     word-break: break-word;
-    letter-spacing: 0.35px;
+    letter-spacing: 0.1px;
     line-height: 1.45;
 }
 
@@ -1417,10 +1438,12 @@ details.deadline-wrap[open] > summary {
 .badge {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    font-family: var(--font-pixel-heading);
-    font-size: 9px;
-    padding: 3px 6px;
+    gap: 5px;
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    padding: 3px 8px;
     border: 1px solid var(--pixel-border);
     box-shadow: 1px 1px 0px #000;
 }
@@ -1553,8 +1576,9 @@ details.deadline-wrap[open] > summary {
 }
 
 .modal-header h3 {
-    font-family: var(--font-pixel-heading);
-    font-size: 13px;
+    font-family: var(--font-heading);
+    font-size: 14px;
+    font-weight: 700;
     color: var(--cyan);
     letter-spacing: 0.5px;
 }
@@ -1569,8 +1593,9 @@ details.deadline-wrap[open] > summary {
     color: #fff;
     width: 28px;
     height: 28px;
-    font-family: var(--font-pixel-heading);
-    font-size: 12px;
+    font-family: var(--font-heading);
+    font-size: 14px;
+    font-weight: 700;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -1579,8 +1604,9 @@ details.deadline-wrap[open] > summary {
 
 .form-label {
     display: block;
-    font-family: var(--font-pixel-heading);
-    font-size: 9px;
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 700;
     letter-spacing: 0.5px;
     color: var(--text-secondary);
     margin-bottom: 6px;
@@ -1592,8 +1618,8 @@ details.deadline-wrap[open] > summary {
     border: 2px solid var(--pixel-border);
     box-shadow: var(--bevel-inset);
     color: var(--text-primary);
-    font-family: var(--font-pixel-body);
-    font-size: 17px;
+    font-family: var(--font-body);
+    font-size: 15px;
     padding: 8px 10px;
     outline: none;
     margin-bottom: 14px;
@@ -1830,8 +1856,9 @@ details.deadline-wrap[open] > summary {
     border: 1px solid var(--emerald);
     color: var(--emerald);
     padding: 4px 8px;
-    font-family: var(--font-pixel-heading);
-    font-size: 9px;
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 700;
     letter-spacing: 0.5px;
     box-shadow: 1px 1px 0px #000;
 }
@@ -1845,8 +1872,10 @@ details.deadline-wrap[open] > summary {
     min-width: 260px;
 }
 .search-btn {
-    padding: 7px 12px;
-    font-size: 9px;
+    padding: 7px 14px;
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 700;
     text-decoration: none;
 }
 
@@ -1897,8 +1926,9 @@ details.deadline-wrap[open] > summary {
 }
 
 .pixel-section-title {
-    font-family: var(--font-pixel-heading);
-    font-size: 11px;
+    font-family: var(--font-heading);
+    font-size: 13px;
+    font-weight: 700;
     letter-spacing: 0.8px;
     color: var(--cyan);
 }
@@ -1908,8 +1938,9 @@ details.deadline-wrap[open] > summary {
 }
 
 .pixel-section-hint {
-    font-family: var(--font-pixel-heading);
-    font-size: 8.5px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
     color: var(--text-muted);
     letter-spacing: 0.5px;
 }
@@ -1982,17 +2013,19 @@ details.deadline-wrap[open] > summary {
 }
 
 .pack-card-name {
-    font-family: var(--font-pixel-heading);
-    font-size: 10px;
-    letter-spacing: 0.5px;
+    font-family: var(--font-heading);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 .pack-card-fraction {
-    font-family: var(--font-pixel-sub);
-    font-size: 10px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
     color: var(--text-muted);
 }
 
@@ -2003,17 +2036,19 @@ details.deadline-wrap[open] > summary {
 }
 
 .pack-card-percent {
-    font-family: var(--font-pixel-heading);
-    font-size: 20px;
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: 800;
     line-height: 1;
     color: var(--text-primary);
-    text-shadow: 1px 1px 0px var(--pixel-shadow);
+    text-shadow: none;
 }
 
 .pack-card-status-label {
-    font-family: var(--font-pixel-heading);
-    font-size: 8px;
-    letter-spacing: 0.5px;
+    font-family: var(--font-heading);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
 }
 
 .pack-card-status-label.status-cleared {
@@ -2047,8 +2082,9 @@ details.deadline-wrap[open] > summary {
 .pack-card-footer {
     display: flex;
     justify-content: space-between;
-    font-family: var(--font-pixel-sub);
-    font-size: 9px;
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 600;
     color: var(--text-muted);
 }
 
@@ -2142,7 +2178,8 @@ details.deadline-wrap[open] > summary {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-size: 10px;
+    font-family: var(--font-heading);
+    font-size: 11.5px;
     font-weight: 700;
 }
 
