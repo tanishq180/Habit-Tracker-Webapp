@@ -14,7 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
-<body>
+<body data-current-status="{{ current_status }}">
     <!-- Background Ambient Glow & Stars -->
     <div class="pixel-stars"></div>
     <div class="ambient-glow glow-1"></div>
@@ -33,14 +33,14 @@
                         <h1 class="brand-title">ORBIT</h1>
                         <span class="pixel-cursor">_</span>
                     </div>
-                    <span class="brand-subtitle">[ LVL 1 • ZERO JS • QUEST & HABIT LOG ]</span>
+                    <span class="brand-subtitle">[ LVL 1 • INSTANT SYNC • QUEST & HABIT LOG ]</span>
                 </div>
             </div>
 
             <div class="header-actions">
-                <!-- Zero-JS Tech Badge -->
-                <div class="no-js-badge pixel-box">
-                    <span>⚡ ZERO JS</span>
+                <!-- Instant Sync Tech Badge -->
+                <div class="no-js-badge pixel-box" title="Optimistic zero-refresh live client sync">
+                    <span>⚡ INSTANT SYNC</span>
                 </div>
 
                 <!-- Live Date Indicator -->
@@ -68,6 +68,22 @@
                     </span>
                     {% endif %}
                 </a>
+
+                <!-- Player Profile Badge -->
+                <div class="user-badge pixel-box" title="Logged in player">
+                    <span class="user-avatar-icon">🎮</span>
+                    <span class="user-name">{{ current_user.username if current_user else session.get('username', 'PLAYER') }}</span>
+                </div>
+
+                <!-- Logout Link -->
+                <a href="{{ url_for('logout') }}" class="icon-btn logout-btn pixel-box" title="Log Out from Orbit">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    <span class="btn-text-badge">EXIT</span>
+                </a>
             </div>
         </header>
 
@@ -78,17 +94,17 @@
                 <div class="radial-wrap">
                     <svg class="radial-svg" width="84" height="84" viewBox="0 0 84 84">
                         <circle class="radial-bg" cx="42" cy="42" r="34" stroke-width="7" fill="none"/>
-                        <circle class="radial-bar" cx="42" cy="42" r="34" stroke-width="7" fill="none"
+                        <circle class="radial-bar" id="statRadialBar" cx="42" cy="42" r="34" stroke-width="7" fill="none"
                             stroke-dasharray="213.6" stroke-dashoffset="{{ stats.radial_offset }}"/>
                     </svg>
-                    <span class="radial-label">{{ stats.completion_rate }}%</span>
+                    <span class="radial-label" id="statRadialLabel">{{ stats.completion_rate }}%</span>
                 </div>
                 <div class="stat-info">
                     <div class="stat-title-badge-wrap">
                         <span class="stat-title">EXP MOMENTUM</span>
                         <span class="pixel-mini-tag">1P</span>
                     </div>
-                    <span class="stat-desc">
+                    <span class="stat-desc" id="statDesc">
                         {% if stats.completion_rate == 100 %}ALL QUESTS CLEARED! ★★★{% else %}Level up by conquering habits!{% endif %}
                     </span>
                 </div>
@@ -101,7 +117,7 @@
                 </div>
                 <div class="stat-info">
                     <div class="streak-num-wrap">
-                        <span class="stat-num">{{ stats.completed }}</span>
+                        <span class="stat-num" id="statQuestsCleared">{{ stats.completed }}</span>
                         <span class="stat-tag-emoji green-tick">✅</span>
                     </div>
                     <span class="stat-label">QUESTS CLEARED</span>
@@ -115,7 +131,7 @@
                 </div>
                 <div class="stat-info">
                     <div class="streak-num-wrap">
-                        <span class="stat-num">{{ stats.best_streak }}</span>
+                        <span class="stat-num" id="statMaxCombo">{{ stats.best_streak }}</span>
                         <span class="streak-flame">🔥</span>
                     </div>
                     <span class="stat-label">MAX COMBO</span>
@@ -129,7 +145,7 @@
                 </div>
                 <div class="stat-info">
                     <div class="streak-num-wrap">
-                        <span class="stat-num">{{ stats.pending }}</span>
+                        <span class="stat-num" id="statActiveQuests">{{ stats.pending }}</span>
                         <span class="stat-tag-emoji voltage-emoji">⚡</span>
                     </div>
                     <span class="stat-label">ACTIVE QUESTS</span>
@@ -137,22 +153,23 @@
             </div>
         </section>
 
-        <!-- Horizontal Pack Mastery Dashboard Section -->
+        <!-- Horizontal Habit Mastery Dashboard Section -->
         <section class="pack-dashboard-section pixel-card">
             <div class="section-title-bar">
                 <div class="section-title-left">
                     <span class="pixel-section-icon">📦</span>
-                    <h2 class="pixel-section-title">PACK PROGRESS RADAR</h2>
+                    <h2 class="pixel-section-title">HABIT PROGRESS RADAR</h2>
                 </div>
-                <span class="pixel-section-hint">[ HORIZONTAL DASHBOARD • CLICK TO FILTER ]</span>
+                <span class="pixel-section-hint">[ HORIZONTAL DASHBOARD • CLICK FOR CALENDAR ]</span>
             </div>
 
             <div class="pack-cards-horizontal-track">
                 {% for cat in categories %}
-                <a href="{{ url_for('index', category=cat.id, status=current_status, search=search_query) }}" 
+                <a href="{{ url_for('pack_detail', category_id=cat.id) }}" 
                    class="pack-dashboard-card pixel-card {% if current_category == (cat.id|string) %}active-pack{% endif %}"
+                   data-category-id="{{ cat.id }}"
                    style="border-top: 4px solid {{ cat.color }};"
-                   title="Filter by {{ cat.name }}">
+                   title="Open {{ cat.name }} Calendar & Habit Log">
                     
                     <div class="pack-card-header">
                         <div class="pack-card-name-wrap">
@@ -179,7 +196,7 @@
 
                     <div class="pack-card-footer">
                         <span>Cleared: {{ cat.completed_tasks }}</span>
-                        <span>Pending: {{ cat.pending_tasks }}</span>
+                        <span class="pack-cal-action">📅 CALENDAR &rarr;</span>
                     </div>
                 </a>
                 {% endfor %}
@@ -192,14 +209,16 @@
             <div class="category-scroll-container">
                 <div class="category-pills">
                     <a href="{{ url_for('index', category='all', status=current_status, search=search_query) }}" 
-                       class="cat-pill pixel-pill {% if current_category == 'all' or not current_category %}active{% endif %}">
-                        <span>[ ALL PACKS ]</span>
+                       class="cat-pill pixel-pill {% if current_category == 'all' or not current_category %}active{% endif %}"
+                       data-category-id="all">
+                        <span>[ ALL HABITS ]</span>
                         <span class="count-badge">{{ cat_count_all }}</span>
                     </a>
 
                     {% for cat in categories %}
                     <a href="{{ url_for('index', category=cat.id, status=current_status, search=search_query) }}" 
-                       class="cat-pill pixel-pill {% if current_category == (cat.id|string) %}active{% endif %}">
+                       class="cat-pill pixel-pill {% if current_category == (cat.id|string) %}active{% endif %}"
+                       data-category-id="{{ cat.id }}">
                         <span style="width: 8px; height: 8px; background: {{ cat.color }}; border: 1px solid #000; display: inline-block;"></span>
                         <span>{{ cat.name }}</span>
                         <span class="count-badge">{{ cat.total_tasks }}</span>
@@ -257,11 +276,12 @@
                         </div>
                         <div class="group-header-actions">
                             <span class="group-count">{{ group_tasks|length }} QUEST{{ 'S' if group_tasks|length != 1 else '' }}</span>
+                            <a href="{{ url_for('pack_detail', category_id=cat_id if cat_id else 0) }}" class="group-cal-btn pixel-btn" title="View Habit Calendar">📅 CALENDAR</a>
                             {% if cat_id %}
-                            <form action="/categories/{{ cat_id }}/delete" method="POST" class="inline-form" onsubmit="return confirm('Delete pack {{ cat_name }}? Tasks will be moved to General.');">
+                            <form action="/categories/{{ cat_id }}/delete" method="POST" class="inline-form" onsubmit="return confirm('Delete habit group {{ cat_name }}? Tasks will be moved to General.');">
                                 <input type="hidden" name="filter_status" value="{{ current_status }}">
                                 <input type="hidden" name="filter_search" value="{{ search_query }}">
-                                <button type="submit" class="group-delete-cat-btn" title="Delete this Pack">🗑️</button>
+                                <button type="submit" class="group-delete-cat-btn" title="Delete this Habit">🗑️</button>
                             </form>
                             {% endif %}
                         </div>
@@ -269,9 +289,13 @@
 
                     <div class="task-list">
                         {% for task in group_tasks %}
-                        <div class="task-card {% if task.completed %}completed{% endif %}">
+                        <div class="task-card {% if task.completed %}completed{% endif %}"
+                             data-task-id="{{ task.id }}"
+                             data-category-id="{{ task.category_id or '' }}"
+                             data-streak="{{ task.streak }}"
+                             data-completed="{{ '1' if task.completed else '0' }}">
                             <!-- Toggle Checkbox Form -->
-                            <form action="/tasks/{{ task.id }}/toggle" method="POST" class="inline-form">
+                            <form action="/tasks/{{ task.id }}/toggle" method="POST" class="inline-form toggle-task-form">
                                 <input type="hidden" name="filter_category" value="{{ current_category }}">
                                 <input type="hidden" name="filter_status" value="{{ current_status }}">
                                 <input type="hidden" name="filter_search" value="{{ search_query }}">
@@ -339,9 +363,9 @@
 
                                         <div class="modal-row" style="display: flex; gap: 10px; margin-top: 12px;">
                                             <div class="modal-col" style="flex: 1;">
-                                                <label class="form-label">PACK / FOLDER</label>
+                                                <label class="form-label">HABIT / FOLDER</label>
                                                 <select name="category_id" class="modal-select pixel-input" style="width: 100%;">
-                                                    <option value="">No Pack / General</option>
+                                                    <option value="">No Habit / General</option>
                                                     {% for cat in categories %}
                                                     <option value="{{ cat.id }}" {% if task.category_id == cat.id %}selected{% endif %}>
                                                         {{ cat.name }}
@@ -402,8 +426,8 @@
                     <div class="composer-toolbar">
                         <div class="toolbar-left">
                             <!-- Category Select -->
-                            <select name="category_id" class="pixel-select" title="Choose Category Pack">
-                                <option value="">📁 [ General / No Pack ]</option>
+                            <select name="category_id" class="pixel-select" title="Choose Habit Category">
+                                <option value="">📁 [ General / No Habit ]</option>
                                 {% for cat in categories %}
                                 <option value="{{ cat.id }}" {% if current_category == (cat.id|string) %}selected{% endif %}>
                                     📁 {{ cat.name }}
@@ -512,13 +536,13 @@
                             </details>
 
                             <!-- New Category Modal Button (Pure CSS :target) -->
-                            <a href="#new-category-modal" class="action-pill" title="Create New Quest Pack">
+                            <a href="#new-category-modal" class="action-pill" title="Create New Habit Group">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/>
                                     <line x1="12" x2="12" y1="10" y2="16"/>
                                     <line x1="9" x2="15" y1="13" y2="13"/>
                                 </svg>
-                                <span>+ New Pack</span>
+                                <span>+ New Habit</span>
                             </a>
                         </div>
 
@@ -537,7 +561,7 @@
     <div class="modal-backdrop" id="new-category-modal">
         <div class="modal-card pixel-modal">
             <div class="modal-header pixel-header">
-                <h3>CREATE QUEST PACK</h3>
+                <h3>CREATE HABIT CATEGORY</h3>
                 <a href="#" class="close-modal-link close-modal-btn pixel-btn">&times;</a>
             </div>
             <form action="/categories/add" method="POST">
@@ -546,8 +570,8 @@
                 <input type="hidden" name="filter_search" value="{{ search_query }}">
 
                 <div class="modal-body">
-                    <label class="form-label">PACK / CATEGORY NAME</label>
-                    <input type="text" name="name" class="modal-input pixel-input" placeholder="e.g. Daily Boss, Fitness, Deep Work..." required autocomplete="off" />
+                    <label class="form-label">HABIT / CATEGORY NAME</label>
+                    <input type="text" name="name" class="modal-input pixel-input" placeholder="e.g. Daily Fitness, Deep Work, Reading..." required autocomplete="off" />
 
                     <div style="margin-top: 14px;">
                         <label class="form-label">THEME COLOR</label>
@@ -559,10 +583,13 @@
                 </div>
                 <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px;">
                     <a href="#" class="secondary-btn pixel-btn close-modal-link">CANCEL</a>
-                    <button type="submit" class="primary-btn pixel-btn">CREATE PACK</button>
+                    <button type="submit" class="primary-btn pixel-btn">CREATE HABIT</button>
                 </div>
             </form>
         </div>
     </div>
+
+    <!-- Client-side Instant Non-Reload Engine -->
+    <script src="/static/js/instant_actions.js" defer></script>
 </body>
 </html>

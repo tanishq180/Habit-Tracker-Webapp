@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="{{ theme }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0c0721">
+    <meta name="description" content="Orbit • Habit Log & Monthly Calendar View">
+
+    <title>Orbit • {{ category.name }} Calendar Log</title>
+
+    <!-- Clear Modern & Retro Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="calendar-page-body" data-today="{{ today_str }}">
+    <!-- Background Ambient Glow & Stars -->
+    <div class="pixel-stars"></div>
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+    <div class="ambient-glow glow-3"></div>
+
+    <div class="app-layout calendar-layout">
+        <!-- Top Navigation Header -->
+        <header class="app-header">
+            <div class="brand">
+                <a href="{{ url_for('index') }}" class="back-hud-btn pixel-btn" title="Return to Main HUD">
+                    <span class="back-arrow">&larr;</span>
+                    <span>HUD</span>
+                </a>
+                <div class="brand-title-wrap" style="margin-left: 8px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span class="pack-color-pill-dot" style="background-color: {{ category.color }};"></span>
+                        <h1 class="brand-title" style="font-size: 20px;">{{ category.name }}</h1>
+                    </div>
+                    <span class="brand-subtitle">[ HABIT CALENDAR • COMPLETION LOG ]</span>
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <!-- Theme Switcher Link -->
+                <a href="{{ url_for('set_theme', theme='light' if theme == 'dark' else 'dark') }}" class="icon-btn theme-toggle pixel-box" title="Toggle Theme (Light / Dark)">
+                    {% if theme == 'light' %}
+                    <span class="theme-btn-content">
+                        <svg class="moon-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M12 3a6 6 0 0 0 9 9 9 0 1 1-9-9Z"/>
+                        </svg>
+                        <span class="btn-text-badge">DARK</span>
+                    </span>
+                    {% else %}
+                    <span class="theme-btn-content">
+                        <svg class="sun-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <circle cx="12" cy="12" r="4"/>
+                            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                        </svg>
+                        <span class="btn-text-badge">LIGHT</span>
+                    </span>
+                    {% endif %}
+                </a>
+
+                <!-- Player Profile Badge -->
+                <div class="user-badge pixel-box" title="Logged in player">
+                    <span class="user-avatar-icon">🎮</span>
+                    <span class="user-name">{{ current_user.username if current_user else session.get('username', 'PLAYER') }}</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Pack Summary & Stats Banner -->
+        <section class="pack-hero-card pixel-card" style="border-top: 5px solid {{ category.color }};">
+            <div class="pack-hero-top">
+                <div class="pack-hero-title-wrap">
+                    <div class="pack-icon-large pixel-box" style="background-color: {{ category.color }};">
+                        <span>📦</span>
+                    </div>
+                    <div>
+                        <div class="pack-tag-row">
+                            <span class="pixel-mini-tag" style="background: {{ category.color }}; color: #000000;">HABIT LOG</span>
+                            <span class="pack-id-badge">[ HABIT ID: #{{ category.id }} ]</span>
+                        </div>
+                        <h2 class="pack-hero-name">{{ category.name }}</h2>
+                    </div>
+                </div>
+
+                <div class="pack-hero-actions">
+                    <a href="{{ url_for('index', category=category.id) }}" class="secondary-btn pixel-btn" title="Filter HUD to this Habit">
+                        <span>🔍 FILTER QUESTS IN HUD</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Stats Ribbon -->
+            <div class="pack-stats-ribbon">
+                <div class="pack-stat-item pixel-box">
+                    <span class="pack-stat-label">TOTAL QUESTS</span>
+                    <span class="pack-stat-val">{{ pack_stats.total_tasks }}</span>
+                </div>
+
+                <div class="pack-stat-item pixel-box">
+                    <span class="pack-stat-label">CLEARED TODAY</span>
+                    <span class="pack-stat-val text-emerald">{{ pack_stats.completed_today }}/{{ pack_stats.total_tasks }}</span>
+                </div>
+
+                <div class="pack-stat-item pixel-box">
+                    <span class="pack-stat-label">MONTH CLEARED DAYS</span>
+                    <span class="pack-stat-val text-emerald">🟩 {{ pack_stats.total_completed_days }} DAYS</span>
+                </div>
+
+                <div class="pack-stat-item pixel-box">
+                    <span class="pack-stat-label">MAX COMBO</span>
+                    <span class="pack-stat-val text-amber">🔥 {{ pack_stats.max_streak }}</span>
+                </div>
+
+                <div class="pack-stat-item pixel-box">
+                    <span class="pack-stat-label">CONSISTENCY</span>
+                    <span class="pack-stat-val text-cyan">{{ pack_stats.consistency_pct }}%</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Calendar Section -->
+        <section class="calendar-section pixel-card">
+            <!-- Calendar Navigation Bar -->
+            <div class="calendar-nav-bar">
+                <div class="cal-nav-left">
+                    <a href="{{ url_for('pack_detail', category_id=category.id, year=prev_year, month=prev_month) }}" 
+                       class="cal-nav-btn pixel-btn" title="Previous Month">
+                        &larr; PREV
+                    </a>
+                    
+                    <h2 class="cal-current-month">
+                        <span class="month-text">{{ month_name.upper() }}</span>
+                        <span class="year-text">{{ year }}</span>
+                    </h2>
+
+                    <a href="{{ url_for('pack_detail', category_id=category.id, year=next_year, month=next_month) }}" 
+                       class="cal-nav-btn pixel-btn" title="Next Month">
+                        NEXT &rarr;
+                    </a>
+                </div>
+
+                <!-- Legend & Quick Jump -->
+                <div class="cal-legend-bar">
+                    <div class="legend-item">
+                        <span class="legend-box legend-completed"></span>
+                        <span>Completed (Green)</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-box legend-missed"></span>
+                        <span>Not Completed</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-box legend-today"></span>
+                        <span>Today</span>
+                    </div>
+                    <a href="{{ url_for('pack_detail', category_id=category.id) }}" class="cal-today-jump pixel-btn">
+                        TODAY
+                    </a>
+                </div>
+            </div>
+
+            <!-- Month Calendar Grid -->
+            <div class="calendar-grid-wrapper">
+                <!-- Weekday Headers -->
+                <div class="calendar-header-row">
+                    <div class="cal-header-cell">SUN</div>
+                    <div class="cal-header-cell">MON</div>
+                    <div class="cal-header-cell">TUE</div>
+                    <div class="cal-header-cell">WED</div>
+                    <div class="cal-header-cell">THU</div>
+                    <div class="cal-header-cell">FRI</div>
+                    <div class="cal-header-cell">SAT</div>
+                </div>
+
+                <!-- Calendar Days Matrix -->
+                <div class="calendar-days-grid" id="calendarDaysGrid">
+                    {% for week in calendar_weeks %}
+                        {% for day_cell in week %}
+                            {% if day_cell.day == 0 %}
+                            <div class="cal-day-cell cal-empty-cell"></div>
+                            {% else %}
+                            <div class="cal-day-cell pixel-card status-{{ day_cell.status }} {% if day_cell.is_today %}is-today{% endif %}"
+                                 data-date="{{ day_cell.date_str }}"
+                                 data-day="{{ day_cell.day }}"
+                                 data-status="{{ day_cell.status }}"
+                                 data-completed-count="{{ day_cell.completed_count }}"
+                                 data-total-count="{{ day_cell.total_count }}"
+                                 data-is-today="{{ '1' if day_cell.is_today else '0' }}"
+                                 data-is-future="{{ '1' if day_cell.is_future else '0' }}"
+                                 data-tasks='{{ day_cell.day_tasks | tojson }}'
+                                 title="Click to view quests for {{ day_cell.date_str }}">
+                                
+                                <div class="day-cell-top">
+                                    <span class="day-number">{{ "%02d"|format(day_cell.day) }}</span>
+                                    {% if day_cell.is_today %}
+                                    <span class="today-marker">TODAY</span>
+                                    {% endif %}
+                                </div>
+
+                                <div class="day-cell-content">
+                                    {% if day_cell.is_future %}
+                                    <span class="day-future-label">&bull; &bull; &bull;</span>
+                                    {% elif day_cell.status == 'fully_completed' %}
+                                    <div class="day-badge-wrap">
+                                        <span class="day-status-icon">✓</span>
+                                        <span class="day-badge-text">CLEARED ★</span>
+                                    </div>
+                                    <span class="day-fraction-text">{{ day_cell.completed_count }}/{{ day_cell.total_count }}</span>
+                                    {% elif day_cell.status == 'partially_completed' %}
+                                    <div class="day-badge-wrap">
+                                        <span class="day-status-icon">✓</span>
+                                        <span class="day-badge-text">PARTIAL</span>
+                                    </div>
+                                    <span class="day-fraction-text">{{ day_cell.completed_count }}/{{ day_cell.total_count }}</span>
+                                    {% else %}
+                                    <div class="day-badge-wrap day-missed-wrap">
+                                        <span class="day-missed-icon">✕</span>
+                                        <span class="day-missed-text">MISSED</span>
+                                    </div>
+                                    <span class="day-fraction-text">0/{{ day_cell.total_count }}</span>
+                                    {% endif %}
+                                </div>
+
+                                <div class="day-glow-bar"></div>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <!-- Selected Day Detailed Quest Log Panel -->
+        <section class="day-detail-section pixel-card" id="dayDetailSection">
+            <div class="day-detail-header">
+                <div class="day-detail-title-wrap">
+                    <span class="pixel-section-icon">📜</span>
+                    <div>
+                        <h3 class="day-detail-title" id="selectedDateHeader">
+                            QUEST LOG FOR <span id="selectedDateTitle" class="highlight-date">{{ today_str }}</span>
+                        </h3>
+                        <span class="day-detail-subtitle" id="selectedDateSummary">
+                            Click any day in the calendar to inspect or log completed habits.
+                        </span>
+                    </div>
+                </div>
+
+                <div class="day-detail-status-pill pixel-box" id="selectedDateStatusPill">
+                    <span id="selectedDateStatusText">TODAY</span>
+                </div>
+            </div>
+
+            <!-- List of Quests on Selected Date -->
+            <div class="day-task-list" id="dayTaskList">
+                {% if not tasks %}
+                <div class="empty-pack-state">
+                    <span>No quests found in this habit yet! Add quests in the HUD to start tracking consistency.</span>
+                </div>
+                {% else %}
+                    {% for task in tasks %}
+                    <div class="task-card day-log-card {% if task.completed %}completed{% endif %}" id="log-card-{{ task.id }}" data-task-id="{{ task.id }}">
+                        <!-- Toggle Button for Selected Date -->
+                        <button type="button" class="task-checkbox-btn cal-task-toggle-btn" 
+                                data-task-id="{{ task.id }}" 
+                                title="Toggle quest completion on selected date">
+                            {% if task.completed %}✓{% endif %}
+                        </button>
+
+                        <div class="task-content">
+                            <span class="task-text">{{ task.text }}</span>
+                            <div class="task-meta">
+                                <span class="badge priority-{{ task.priority }}">
+                                    {% if task.priority == 'high' %}💀 BOSS{% elif task.priority == 'low' %}⚔️ CASUAL{% else %}⚔️ NORMAL{% endif %}
+                                </span>
+
+                                {% if task.streak > 0 %}
+                                <span class="badge streak-badge">
+                                    🔥 {{ task.streak }} STREAK
+                                </span>
+                                {% endif %}
+
+                                {% if task.formatted_deadline %}
+                                <span class="badge deadline-badge {% if task.is_overdue %}overdue{% endif %}">
+                                    ⏰ {{ task.formatted_deadline }}
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="log-card-status">
+                            <span class="log-status-tag {% if task.completed %}tag-done{% else %}tag-pending{% endif %}" id="log-tag-{{ task.id }}">
+                                {% if task.completed %}🟩 CLEARED{% else %}✕ NOT COMPLETED{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </section>
+
+        <!-- Per-Task Monthly Habit Consistency Heatmap -->
+        <section class="task-matrix-section pixel-card">
+            <div class="section-title-bar">
+                <div class="section-title-left">
+                    <span class="pixel-section-icon">📊</span>
+                    <h2 class="pixel-section-title">PER-QUEST HABIT MATRIX</h2>
+                </div>
+                <span class="pixel-section-hint">[ MONTHLY DAILY TRACKER • GREEN = COMPLETED ]</span>
+            </div>
+
+            <div class="matrix-card-list">
+                {% for hist in task_histories %}
+                <div class="matrix-task-row pixel-card">
+                    <div class="matrix-task-info">
+                        <div class="matrix-task-title-wrap">
+                            <span class="matrix-task-name">{{ hist.task.text }}</span>
+                            <div class="matrix-task-badges">
+                                <span class="badge priority-{{ hist.task.priority }}">
+                                    {% if hist.task.priority == 'high' %}💀 BOSS{% elif hist.task.priority == 'low' %}⚔️ CASUAL{% else %}⚔️ NORMAL{% endif %}
+                                </span>
+                                {% if hist.task.streak > 0 %}
+                                <span class="badge streak-badge">🔥 {{ hist.task.streak }} STREAK</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="matrix-task-stats">
+                            <span class="matrix-pct">{{ hist.consistency_pct }}%</span>
+                            <span class="matrix-days-count">{{ hist.completed_days }}/{{ pack_stats.days_in_month }} Days Cleared</span>
+                        </div>
+                    </div>
+
+                    <!-- Pixel Day Track (1..N days in month) -->
+                    <div class="matrix-day-blocks-track">
+                        {% for day_log in hist.day_logs %}
+                        <div class="matrix-day-block {% if day_log.is_today %}block-today{% endif %} {% if day_log.is_future %}block-future{% elif day_log.completed %}block-completed{% else %}block-missed{% endif %}"
+                             title="{{ day_log.date_str }}: {% if day_log.is_future %}Future{% elif day_log.completed %}Cleared (Green) ✓{% else %}Not Completed ✕{% endif %}">
+                            <span class="block-day-num">{{ day_log.day }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+
+    <!-- Calendar Client Script -->
+    <script>
+    (function () {
+        // Retro Audio synthesizer
+        let audioCtx = null;
+        function getAudioContext() {
+            if (!audioCtx) {
+                const AudioClass = window.AudioContext || window.webkitAudioContext;
+                if (AudioClass) audioCtx = new AudioClass();
+            }
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+            return audioCtx;
+        }
+
+        function playCoinSound() {
+            try {
+                const ctx = getAudioContext();
+                if (!ctx) return;
+                const now = ctx.currentTime;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'square';
+                gain.gain.setValueAtTime(0.08, now);
+                osc.frequency.setValueAtTime(987.77, now);
+                osc.frequency.setValueAtTime(1318.51, now + 0.08);
+                gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.35);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.35);
+            } catch (_) {}
+        }
+
+        function playBlipSound(freq = 440) {
+            try {
+                const ctx = getAudioContext();
+                if (!ctx) return;
+                const now = ctx.currentTime;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(freq, now);
+                gain.gain.setValueAtTime(0.05, now);
+                gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.06);
+            } catch (_) {}
+        }
+
+        const todayStr = document.body.dataset.today;
+        let selectedDate = todayStr;
+
+        // Find initial selected day element
+        const allDayCells = document.querySelectorAll('.cal-day-cell[data-date]');
+        let activeCell = document.querySelector(`.cal-day-cell[data-date="${todayStr}"]`) || allDayCells[0];
+
+        function selectDay(cell) {
+            if (!cell) return;
+            allDayCells.forEach(c => c.classList.remove('selected-day'));
+            cell.classList.add('selected-day');
+
+            selectedDate = cell.dataset.date;
+            const dateTitle = document.getElementById('selectedDateTitle');
+            if (dateTitle) dateTitle.textContent = selectedDate;
+
+            const isToday = cell.dataset.isToday === '1';
+            const isFuture = cell.dataset.isFuture === '1';
+            const statusPill = document.getElementById('selectedDateStatusText');
+            if (statusPill) {
+                if (isToday) {
+                    statusPill.textContent = 'TODAY';
+                    statusPill.parentElement.className = 'day-detail-status-pill pixel-box pill-today';
+                } else if (isFuture) {
+                    statusPill.textContent = 'FUTURE';
+                    statusPill.parentElement.className = 'day-detail-status-pill pixel-box pill-future';
+                } else if (cell.dataset.status === 'fully_completed' || cell.dataset.status === 'partially_completed') {
+                    statusPill.textContent = `CLEARED (${cell.dataset.completedCount}/${cell.dataset.totalCount})`;
+                    statusPill.parentElement.className = 'day-detail-status-pill pixel-box pill-cleared';
+                } else {
+                    statusPill.textContent = 'NOT COMPLETED';
+                    statusPill.parentElement.className = 'day-detail-status-pill pixel-box pill-missed';
+                }
+            }
+
+            // Parse tasks JSON for this day
+            try {
+                const dayTasks = JSON.parse(cell.dataset.tasks || '[]');
+                dayTasks.forEach(dt => {
+                    const card = document.getElementById(`log-card-${dt.id}`);
+                    const toggleBtn = card ? card.querySelector('.cal-task-toggle-btn') : null;
+                    const tag = document.getElementById(`log-tag-${dt.id}`);
+
+                    if (card && toggleBtn && tag) {
+                        card.classList.toggle('completed', dt.completed_on_day);
+                        toggleBtn.textContent = dt.completed_on_day ? '✓' : '';
+                        if (dt.completed_on_day) {
+                            tag.className = 'log-status-tag tag-done';
+                            tag.textContent = '🟩 CLEARED';
+                        } else {
+                            tag.className = 'log-status-tag tag-pending';
+                            tag.textContent = '✕ NOT COMPLETED';
+                        }
+                    }
+                });
+            } catch (err) {
+                console.error('Error rendering day tasks:', err);
+            }
+        }
+
+        // Add click listeners to day cells
+        allDayCells.forEach(cell => {
+            cell.addEventListener('click', () => {
+                playBlipSound(520);
+                selectDay(cell);
+            });
+        });
+
+        if (activeCell) {
+            selectDay(activeCell);
+        }
+
+        // Toggle task completion on selected date
+        document.addEventListener('click', async (e) => {
+            const toggleBtn = e.target.closest('.cal-task-toggle-btn');
+            if (!toggleBtn) return;
+
+            e.preventDefault();
+            const taskId = toggleBtn.dataset.taskId;
+            const card = document.getElementById(`log-card-${taskId}`);
+            const tag = document.getElementById(`log-tag-${taskId}`);
+            if (!card || !tag) return;
+
+            const wasCompleted = card.classList.contains('completed');
+            const newCompleted = !wasCompleted;
+
+            // Optimistic UI toggle
+            card.classList.toggle('completed', newCompleted);
+            toggleBtn.textContent = newCompleted ? '✓' : '';
+            if (newCompleted) {
+                tag.className = 'log-status-tag tag-done';
+                tag.textContent = '🟩 CLEARED';
+                playCoinSound();
+            } else {
+                tag.className = 'log-status-tag tag-pending';
+                tag.textContent = '✕ NOT COMPLETED';
+                playBlipSound(320);
+            }
+
+            // Send request to toggle date
+            try {
+                const res = await fetch(`/api/tasks/${taskId}/toggle-date`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ date: selectedDate })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    // Update active day cell's task state
+                    const curCell = document.querySelector(`.cal-day-cell[data-date="${selectedDate}"]`);
+                    if (curCell) {
+                        try {
+                            const tasksData = JSON.parse(curCell.dataset.tasks || '[]');
+                            const targetTask = tasksData.find(t => t.id == taskId);
+                            if (targetTask) {
+                                targetTask.completed_on_day = data.completed;
+                                curCell.dataset.tasks = JSON.stringify(tasksData);
+                            }
+
+                            // Recalculate completed count
+                            const completedCount = tasksData.filter(t => t.completed_on_day).length;
+                            const totalCount = tasksData.length;
+                            curCell.dataset.completedCount = completedCount;
+
+                            // Update cell styling
+                            curCell.classList.remove('status-fully_completed', 'status-partially_completed', 'status-missed');
+                            const fractionEl = curCell.querySelector('.day-fraction-text');
+                            const badgeWrap = curCell.querySelector('.day-cell-content');
+
+                            if (completedCount === totalCount && totalCount > 0) {
+                                curCell.classList.add('status-fully_completed');
+                                curCell.dataset.status = 'fully_completed';
+                                if (badgeWrap) {
+                                    badgeWrap.innerHTML = `
+                                        <div class="day-badge-wrap">
+                                            <span class="day-status-icon">✓</span>
+                                            <span class="day-badge-text">CLEARED ★</span>
+                                        </div>
+                                        <span class="day-fraction-text">${completedCount}/${totalCount}</span>
+                                    `;
+                                }
+                            } else if (completedCount > 0) {
+                                curCell.classList.add('status-partially_completed');
+                                curCell.dataset.status = 'partially_completed';
+                                if (badgeWrap) {
+                                    badgeWrap.innerHTML = `
+                                        <div class="day-badge-wrap">
+                                            <span class="day-status-icon">✓</span>
+                                            <span class="day-badge-text">PARTIAL</span>
+                                        </div>
+                                        <span class="day-fraction-text">${completedCount}/${totalCount}</span>
+                                    `;
+                                }
+                            } else {
+                                curCell.classList.add('status-missed');
+                                curCell.dataset.status = 'missed';
+                                if (badgeWrap) {
+                                    badgeWrap.innerHTML = `
+                                        <div class="day-badge-wrap day-missed-wrap">
+                                            <span class="day-missed-icon">✕</span>
+                                            <span class="day-missed-text">MISSED</span>
+                                        </div>
+                                        <span class="day-fraction-text">0/${totalCount}</span>
+                                    `;
+                                }
+                            }
+                        } catch (_) {}
+                    }
+                }
+            } catch (err) {
+                console.error('Date toggle error:', err);
+            }
+        });
+    })();
+    </script>
+</body>
+</html>
