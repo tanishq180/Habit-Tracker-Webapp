@@ -6,6 +6,7 @@ const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
 const { DatabaseSync } = require('node:sqlite');
 
 const app = express();
@@ -963,6 +964,31 @@ app.post(['/habits/:category_id/tasks/:task_id/toggle-date', '/packs/:category_i
 // =========================================================================
 // Start Server
 // =========================================================================
+function getLocalNetworkIps() {
+  const ips = [];
+  const ifaces = os.networkInterfaces();
+  for (const name of Object.keys(ifaces)) {
+    for (const net of ifaces[name]) {
+      if (net.family === 'IPv4' && !net.internal) {
+        ips.push({ name, address: net.address });
+      }
+    }
+  }
+  return ips;
+}
+
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`★ Orbit Node.js Server running on http://127.0.0.1:${PORT}`);
+  const networks = getLocalNetworkIps();
+  console.log(`\n======================================================`);
+  console.log(` ★ Orbit Habit & Task Tracker is LIVE!`);
+  console.log(`======================================================`);
+  console.log(` ➜ Local URL:    http://localhost:${PORT}`);
+  if (networks.length > 0) {
+    networks.forEach(net => {
+      console.log(` ➜ Wi-Fi/Network: http://${net.address}:${PORT}  (${net.name})`);
+    });
+  } else {
+    console.log(` ➜ Wi-Fi/Network: http://0.0.0.0:${PORT}`);
+  }
+  console.log(`======================================================\n`);
 });
