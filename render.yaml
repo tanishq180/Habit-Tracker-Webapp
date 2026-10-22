@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: orbit-habit-tracker
+    runtime: node
+    plan: free
+    buildCommand: cd backend && npm install
+    startCommand: node backend/server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
