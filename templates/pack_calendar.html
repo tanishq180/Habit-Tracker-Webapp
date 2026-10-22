@@ -180,16 +180,9 @@
                             {% if day_cell.day == 0 %}
                             <div class="cal-day-cell cal-empty-cell"></div>
                             {% else %}
-                            <div class="cal-day-cell pixel-card status-{{ day_cell.status }} {% if day_cell.is_today %}is-today{% endif %}"
-                                 data-date="{{ day_cell.date_str }}"
-                                 data-day="{{ day_cell.day }}"
-                                 data-status="{{ day_cell.status }}"
-                                 data-completed-count="{{ day_cell.completed_count }}"
-                                 data-total-count="{{ day_cell.total_count }}"
-                                 data-is-today="{{ '1' if day_cell.is_today else '0' }}"
-                                 data-is-future="{{ '1' if day_cell.is_future else '0' }}"
-                                 data-tasks='{{ day_cell.day_tasks | tojson }}'
-                                 title="Click to view quests for {{ day_cell.date_str }}">
+                            <a href="{{ url_for('pack_detail', category_id=category.id, year=year, month=month, date=day_cell.date_str) }}#dayDetailSection"
+                               class="cal-day-cell pixel-card status-{{ day_cell.status }} {% if day_cell.is_today %}is-today{% endif %} {% if day_cell.date_str == selected_date %}selected-day{% endif %}"
+                               title="Click to view quests for {{ day_cell.date_str }}">
                                 
                                 <div class="day-cell-top">
                                     <span class="day-number">{{ "%02d"|format(day_cell.day) }}</span>
@@ -223,7 +216,7 @@
                                 </div>
 
                                 <div class="day-glow-bar"></div>
-                            </div>
+                            </a>
                             {% endif %}
                         {% endfor %}
                     {% endfor %}
@@ -238,34 +231,38 @@
                     <span class="pixel-section-icon">📜</span>
                     <div>
                         <h3 class="day-detail-title" id="selectedDateHeader">
-                            QUEST LOG FOR <span id="selectedDateTitle" class="highlight-date">{{ today_str }}</span>
+                            QUEST LOG FOR <span class="highlight-date">{{ selected_date }}</span>
                         </h3>
-                        <span class="day-detail-subtitle" id="selectedDateSummary">
+                        <span class="day-detail-subtitle">
                             Click any day in the calendar to inspect or log completed habits.
                         </span>
                     </div>
                 </div>
 
-                <div class="day-detail-status-pill pixel-box" id="selectedDateStatusPill">
-                    <span id="selectedDateStatusText">TODAY</span>
+                <div class="day-detail-status-pill pixel-box {{ selected_day_pill_class }}">
+                    <span>{{ selected_day_status_text }}</span>
                 </div>
             </div>
 
             <!-- List of Quests on Selected Date -->
-            <div class="day-task-list" id="dayTaskList">
-                {% if not tasks %}
+            <div class="day-task-list">
+                {% if not selected_date_tasks %}
                 <div class="empty-pack-state">
                     <span>No quests found in this habit yet! Add quests in the HUD to start tracking consistency.</span>
                 </div>
                 {% else %}
-                    {% for task in tasks %}
-                    <div class="task-card day-log-card {% if task.completed %}completed{% endif %}" id="log-card-{{ task.id }}" data-task-id="{{ task.id }}">
-                        <!-- Toggle Button for Selected Date -->
-                        <button type="button" class="task-checkbox-btn cal-task-toggle-btn" 
-                                data-task-id="{{ task.id }}" 
-                                title="Toggle quest completion on selected date">
-                            {% if task.completed %}✓{% endif %}
-                        </button>
+                    {% for task in selected_date_tasks %}
+                    <div class="task-card day-log-card {% if task.completed_on_day %}completed{% endif %}">
+                        <!-- Toggle Button Form for Selected Date -->
+                        <form action="{{ url_for('toggle_task_date_form', category_id=category.id, task_id=task.id) }}" method="POST" class="inline-form">
+                            <input type="hidden" name="date" value="{{ selected_date }}">
+                            <input type="hidden" name="year" value="{{ year }}">
+                            <input type="hidden" name="month" value="{{ month }}">
+                            <button type="submit" class="task-checkbox-btn cal-task-toggle-btn" 
+                                    title="Toggle quest completion on {{ selected_date }}">
+                                {% if task.completed_on_day %}✓{% endif %}
+                            </button>
+                        </form>
 
                         <div class="task-content">
                             <span class="task-text">{{ task.text }}</span>
@@ -289,8 +286,8 @@
                         </div>
 
                         <div class="log-card-status">
-                            <span class="log-status-tag {% if task.completed %}tag-done{% else %}tag-pending{% endif %}" id="log-tag-{{ task.id }}">
-                                {% if task.completed %}🟩 CLEARED{% else %}✕ NOT COMPLETED{% endif %}
+                            <span class="log-status-tag {% if task.completed_on_day %}tag-done{% else %}tag-pending{% endif %}">
+                                {% if task.completed_on_day %}🟩 CLEARED{% else %}✕ NOT COMPLETED{% endif %}
                             </span>
                         </div>
                     </div>
@@ -346,235 +343,5 @@
         </section>
     </div>
 
-    <!-- Calendar Client Script -->
-    <script>
-    (function () {
-        // Retro Audio synthesizer
-        let audioCtx = null;
-        function getAudioContext() {
-            if (!audioCtx) {
-                const AudioClass = window.AudioContext || window.webkitAudioContext;
-                if (AudioClass) audioCtx = new AudioClass();
-            }
-            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-            return audioCtx;
-        }
-
-        function playCoinSound() {
-            try {
-                const ctx = getAudioContext();
-                if (!ctx) return;
-                const now = ctx.currentTime;
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.type = 'square';
-                gain.gain.setValueAtTime(0.08, now);
-                osc.frequency.setValueAtTime(987.77, now);
-                osc.frequency.setValueAtTime(1318.51, now + 0.08);
-                gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.35);
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.start(now);
-                osc.stop(now + 0.35);
-            } catch (_) {}
-        }
-
-        function playBlipSound(freq = 440) {
-            try {
-                const ctx = getAudioContext();
-                if (!ctx) return;
-                const now = ctx.currentTime;
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.type = 'square';
-                osc.frequency.setValueAtTime(freq, now);
-                gain.gain.setValueAtTime(0.05, now);
-                gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.start(now);
-                osc.stop(now + 0.06);
-            } catch (_) {}
-        }
-
-        const todayStr = document.body.dataset.today;
-        let selectedDate = todayStr;
-
-        // Find initial selected day element
-        const allDayCells = document.querySelectorAll('.cal-day-cell[data-date]');
-        let activeCell = document.querySelector(`.cal-day-cell[data-date="${todayStr}"]`) || allDayCells[0];
-
-        function selectDay(cell) {
-            if (!cell) return;
-            allDayCells.forEach(c => c.classList.remove('selected-day'));
-            cell.classList.add('selected-day');
-
-            selectedDate = cell.dataset.date;
-            const dateTitle = document.getElementById('selectedDateTitle');
-            if (dateTitle) dateTitle.textContent = selectedDate;
-
-            const isToday = cell.dataset.isToday === '1';
-            const isFuture = cell.dataset.isFuture === '1';
-            const statusPill = document.getElementById('selectedDateStatusText');
-            if (statusPill) {
-                if (isToday) {
-                    statusPill.textContent = 'TODAY';
-                    statusPill.parentElement.className = 'day-detail-status-pill pixel-box pill-today';
-                } else if (isFuture) {
-                    statusPill.textContent = 'FUTURE';
-                    statusPill.parentElement.className = 'day-detail-status-pill pixel-box pill-future';
-                } else if (cell.dataset.status === 'fully_completed' || cell.dataset.status === 'partially_completed') {
-                    statusPill.textContent = `CLEARED (${cell.dataset.completedCount}/${cell.dataset.totalCount})`;
-                    statusPill.parentElement.className = 'day-detail-status-pill pixel-box pill-cleared';
-                } else {
-                    statusPill.textContent = 'NOT COMPLETED';
-                    statusPill.parentElement.className = 'day-detail-status-pill pixel-box pill-missed';
-                }
-            }
-
-            // Parse tasks JSON for this day
-            try {
-                const dayTasks = JSON.parse(cell.dataset.tasks || '[]');
-                dayTasks.forEach(dt => {
-                    const card = document.getElementById(`log-card-${dt.id}`);
-                    const toggleBtn = card ? card.querySelector('.cal-task-toggle-btn') : null;
-                    const tag = document.getElementById(`log-tag-${dt.id}`);
-
-                    if (card && toggleBtn && tag) {
-                        card.classList.toggle('completed', dt.completed_on_day);
-                        toggleBtn.textContent = dt.completed_on_day ? '✓' : '';
-                        if (dt.completed_on_day) {
-                            tag.className = 'log-status-tag tag-done';
-                            tag.textContent = '🟩 CLEARED';
-                        } else {
-                            tag.className = 'log-status-tag tag-pending';
-                            tag.textContent = '✕ NOT COMPLETED';
-                        }
-                    }
-                });
-            } catch (err) {
-                console.error('Error rendering day tasks:', err);
-            }
-        }
-
-        // Add click listeners to day cells
-        allDayCells.forEach(cell => {
-            cell.addEventListener('click', () => {
-                playBlipSound(520);
-                selectDay(cell);
-            });
-        });
-
-        if (activeCell) {
-            selectDay(activeCell);
-        }
-
-        // Toggle task completion on selected date
-        document.addEventListener('click', async (e) => {
-            const toggleBtn = e.target.closest('.cal-task-toggle-btn');
-            if (!toggleBtn) return;
-
-            e.preventDefault();
-            const taskId = toggleBtn.dataset.taskId;
-            const card = document.getElementById(`log-card-${taskId}`);
-            const tag = document.getElementById(`log-tag-${taskId}`);
-            if (!card || !tag) return;
-
-            const wasCompleted = card.classList.contains('completed');
-            const newCompleted = !wasCompleted;
-
-            // Optimistic UI toggle
-            card.classList.toggle('completed', newCompleted);
-            toggleBtn.textContent = newCompleted ? '✓' : '';
-            if (newCompleted) {
-                tag.className = 'log-status-tag tag-done';
-                tag.textContent = '🟩 CLEARED';
-                playCoinSound();
-            } else {
-                tag.className = 'log-status-tag tag-pending';
-                tag.textContent = '✕ NOT COMPLETED';
-                playBlipSound(320);
-            }
-
-            // Send request to toggle date
-            try {
-                const res = await fetch(`/api/tasks/${taskId}/toggle-date`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({ date: selectedDate })
-                });
-
-                if (res.ok) {
-                    const data = await res.json();
-                    // Update active day cell's task state
-                    const curCell = document.querySelector(`.cal-day-cell[data-date="${selectedDate}"]`);
-                    if (curCell) {
-                        try {
-                            const tasksData = JSON.parse(curCell.dataset.tasks || '[]');
-                            const targetTask = tasksData.find(t => t.id == taskId);
-                            if (targetTask) {
-                                targetTask.completed_on_day = data.completed;
-                                curCell.dataset.tasks = JSON.stringify(tasksData);
-                            }
-
-                            // Recalculate completed count
-                            const completedCount = tasksData.filter(t => t.completed_on_day).length;
-                            const totalCount = tasksData.length;
-                            curCell.dataset.completedCount = completedCount;
-
-                            // Update cell styling
-                            curCell.classList.remove('status-fully_completed', 'status-partially_completed', 'status-missed');
-                            const fractionEl = curCell.querySelector('.day-fraction-text');
-                            const badgeWrap = curCell.querySelector('.day-cell-content');
-
-                            if (completedCount === totalCount && totalCount > 0) {
-                                curCell.classList.add('status-fully_completed');
-                                curCell.dataset.status = 'fully_completed';
-                                if (badgeWrap) {
-                                    badgeWrap.innerHTML = `
-                                        <div class="day-badge-wrap">
-                                            <span class="day-status-icon">✓</span>
-                                            <span class="day-badge-text">CLEARED ★</span>
-                                        </div>
-                                        <span class="day-fraction-text">${completedCount}/${totalCount}</span>
-                                    `;
-                                }
-                            } else if (completedCount > 0) {
-                                curCell.classList.add('status-partially_completed');
-                                curCell.dataset.status = 'partially_completed';
-                                if (badgeWrap) {
-                                    badgeWrap.innerHTML = `
-                                        <div class="day-badge-wrap">
-                                            <span class="day-status-icon">✓</span>
-                                            <span class="day-badge-text">PARTIAL</span>
-                                        </div>
-                                        <span class="day-fraction-text">${completedCount}/${totalCount}</span>
-                                    `;
-                                }
-                            } else {
-                                curCell.classList.add('status-missed');
-                                curCell.dataset.status = 'missed';
-                                if (badgeWrap) {
-                                    badgeWrap.innerHTML = `
-                                        <div class="day-badge-wrap day-missed-wrap">
-                                            <span class="day-missed-icon">✕</span>
-                                            <span class="day-missed-text">MISSED</span>
-                                        </div>
-                                        <span class="day-fraction-text">0/${totalCount}</span>
-                                    `;
-                                }
-                            }
-                        } catch (_) {}
-                    }
-                }
-            } catch (err) {
-                console.error('Date toggle error:', err);
-            }
-        });
-    })();
-    </script>
-</body>
+    </body>
 </html>

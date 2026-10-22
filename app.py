@@ -554,14 +554,6 @@ def add_no_cache_headers(response):
         response.headers['Pragma'] = 'no-cache'
     return response
 
-# PWA Static Assets Routing
-@app.route('/sw.js')
-def service_worker():
-    response = make_response(send_from_directory('static', 'sw.js'))
-    response.headers['Content-Type'] = 'application/javascript'
-    response.headers['Service-Worker-Allowed'] = '/'
-    return response
-
 @app.route('/manifest.json')
 def manifest():
     return send_from_directory('static', 'manifest.json')
@@ -976,10 +968,47 @@ def pack_detail(category_id):
         'days_in_month': days_in_month
     }
 
+    raw_date = request.args.get('date', '').strip()
+    if raw_date and re.match(r'^\d{4}-\d{2}-\d{2}$', raw_date):
+        selected_date = raw_date
+    else:
+        if year == today.year and month == today.month:
+            selected_date = today_str
+        else:
+            selected_date = f"{year:04d}-{month:02d}-01"
+
+    is_selected_today = (selected_date == today_str)
+    is_selected_future = (selected_date > today_str)
+    selected_completed_task_ids = completions_by_date.get(selected_date, set())
+    selected_completed_count = len(selected_completed_task_ids)
+
+    if is_selected_future:
+        selected_day_status_text = 'FUTURE'
+        selected_day_pill_class = 'pill-future'
+    elif total_tasks_count > 0 and selected_completed_count == total_tasks_count:
+        selected_day_status_text = f'CLEARED ({selected_completed_count}/{total_tasks_count})'
+        selected_day_pill_class = 'pill-cleared'
+    elif selected_completed_count > 0:
+        selected_day_status_text = f'CLEARED ({selected_completed_count}/{total_tasks_count})'
+        selected_day_pill_class = 'pill-cleared'
+    else:
+        selected_day_status_text = 'TODAY' if is_selected_today else 'NOT COMPLETED'
+        selected_day_pill_class = 'pill-today' if is_selected_today else 'pill-missed'
+
+    selected_date_tasks = []
+    for t in tasks:
+        t_copy = dict(t)
+        t_copy['completed_on_day'] = (t['id'] in selected_completed_task_ids)
+        selected_date_tasks.append(t_copy)
+
     return render_template(
         'pack_calendar.html',
         category=category,
         tasks=tasks,
+        selected_date_tasks=selected_date_tasks,
+        selected_date=selected_date,
+        selected_day_status_text=selected_day_status_text,
+        selected_day_pill_class=selected_day_pill_class,
         pack_stats=pack_stats,
         calendar_weeks=calendar_weeks,
         task_histories=task_histories,
@@ -994,6 +1023,52 @@ def pack_detail(category_id):
         theme=theme,
         current_user=get_current_user()
     )
+
+@app.route('/habits/<int:category_id>/tasks/<int:task_id>/toggle-date', methods=['POST'])
+@app.route('/packs/<int:category_id>/tasks/<int:task_id>/toggle-date', methods=['POST'])
+@login_required
+def toggle_task_date_form(category_id, task_id):
+    user_id = session['user_id']
+    date_str = request.form.get('date') or date.today().isoformat()
+    year = request.form.get('year')
+    month = request.form.get('month')
+
+    conn = get_db_connection()
+    task = conn.execute('SELECT * FROM tasks WHERE id = ? AND user_id = ?', (task_id, user_id)).fetchone()
+    if task:
+        existing = conn.execute(
+            'SELECT id FROM task_completions WHERE task_id = ? AND user_id = ? AND completion_date = ?',
+            (task_id, user_id, date_str)
+        ).fetchone()
+
+        today_str = date.today().isoformat()
+        if existing:
+            conn.execute(
+                'DELETE FROM task_completions WHERE task_id = ? AND user_id = ? AND completion_date = ?',
+                (task_id, user_id, date_str)
+            )
+            if date_str == today_str:
+                new_streak = max(0, task['streak'] - 1)
+                conn.execute('UPDATE tasks SET completed = 0, streak = ? WHERE id = ? AND user_id = ?', (new_streak, task_id, user_id))
+        else:
+            conn.execute(
+                'INSERT OR IGNORE INTO task_completions (task_id, user_id, completion_date) VALUES (?, ?, ?)',
+                (task_id, user_id, date_str)
+            )
+            if date_str == today_str:
+                new_streak = task['streak'] + 1
+                conn.execute('UPDATE tasks SET completed = 1, streak = ?, completed_at = ? WHERE id = ? AND user_id = ?',
+                             (new_streak, datetime.now().isoformat(), task_id, user_id))
+
+        conn.commit()
+    conn.close()
+
+    redirect_args = {'category_id': category_id, 'date': date_str}
+    if year:
+        redirect_args['year'] = year
+    if month:
+        redirect_args['month'] = month
+    return redirect(url_for('pack_detail', **redirect_args) + '#dayDetailSection')
 
 @app.route('/api/tasks/<int:task_id>/toggle-date', methods=['POST'])
 @login_required
@@ -1235,4 +1310,4 @@ def get_stats():
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=True)
+    app.run(host='0.0.0.0', port=port, debug=False)

@@ -33,14 +33,14 @@
                         <h1 class="brand-title">ORBIT</h1>
                         <span class="pixel-cursor">_</span>
                     </div>
-                    <span class="brand-subtitle">[ LVL 1 • INSTANT SYNC • QUEST & HABIT LOG ]</span>
+                    <span class="brand-subtitle">[ LVL 1 • ZERO JS • QUEST & HABIT LOG ]</span>
                 </div>
             </div>
 
             <div class="header-actions">
-                <!-- Instant Sync Tech Badge -->
-                <div class="no-js-badge pixel-box" title="Optimistic zero-refresh live client sync">
-                    <span>⚡ INSTANT SYNC</span>
+                <!-- Pure Zero-JS Tech Badge -->
+                <div class="no-js-badge pixel-box" title="Pure Python, Semantic HTML5, and Retro Pixel CSS3">
+                    <span>⚡ ZERO JS</span>
                 </div>
 
                 <!-- Live Date Indicator -->
@@ -278,7 +278,7 @@
                             <span class="group-count">{{ group_tasks|length }} QUEST{{ 'S' if group_tasks|length != 1 else '' }}</span>
                             <a href="{{ url_for('pack_detail', category_id=cat_id if cat_id else 0) }}" class="group-cal-btn pixel-btn" title="View Habit Calendar">📅 CALENDAR</a>
                             {% if cat_id %}
-                            <form action="/categories/{{ cat_id }}/delete" method="POST" class="inline-form" onsubmit="return confirm('Delete habit group {{ cat_name }}? Tasks will be moved to General.');">
+                            <form action="/categories/{{ cat_id }}/delete" method="POST" class="inline-form">
                                 <input type="hidden" name="filter_status" value="{{ current_status }}">
                                 <input type="hidden" name="filter_search" value="{{ search_query }}">
                                 <button type="submit" class="group-delete-cat-btn" title="Delete this Habit">🗑️</button>
@@ -589,7 +589,5 @@
         </div>
     </div>
 
-    <!-- Client-side Instant Non-Reload Engine -->
-    <script src="/static/js/instant_actions.js" defer></script>
 </body>
 </html>
