@@ -313,6 +313,66 @@ function formatDeadline(isoStr) {
 }
 
 // =========================================================================
+// Category & Stats Helpers for Progress Radar & Momentum
+// =========================================================================
+function getCategoriesData(userId) {
+  const rows = db.prepare(`
+    SELECT c.*, 
+           COUNT(t.id) as total_tasks,
+           SUM(CASE WHEN t.completed = 1 THEN 1 ELSE 0 END) as completed_tasks,
+           SUM(CASE WHEN t.completed = 0 THEN 1 ELSE 0 END) as pending_tasks
+    FROM categories c
+    LEFT JOIN tasks t ON c.id = t.category_id AND t.user_id = ?
+    WHERE c.user_id = ?
+    GROUP BY c.id
+    ORDER BY c.id ASC
+  `).all(userId, userId);
+
+  return rows.map(r => {
+    const total = Number(r.total_tasks) || 0;
+    const completed = Number(r.completed_tasks) || 0;
+    const pending = total - completed;
+    const rate = total > 0 ? Math.round((completed / total) * 100) : 0;
+    return {
+      ...r,
+      total_tasks: total,
+      completed_tasks: completed,
+      pending_tasks: pending,
+      completion_rate: rate
+    };
+  });
+}
+
+function getStatsData(userId) {
+  const total = db.prepare('SELECT COUNT(*) as c FROM tasks WHERE user_id = ?').get(userId)?.c || 0;
+  const completed = db.prepare('SELECT COUNT(*) as c FROM tasks WHERE completed = 1 AND user_id = ?').get(userId)?.c || 0;
+  const pending = total - completed;
+  const rate = total > 0 ? Math.round((completed / total) * 100) : 0;
+  const maxStreak = db.prepare('SELECT COALESCE(MAX(streak), 0) as s FROM tasks WHERE user_id = ?').get(userId)?.s || 0;
+  const highPriority = db.prepare("SELECT COUNT(*) as c FROM tasks WHERE priority = 'high' AND completed = 0 AND user_id = ?").get(userId)?.c || 0;
+  const nowIso = new Date().toISOString().slice(0, 16);
+  const overdue = db.prepare("SELECT COUNT(*) as c FROM tasks WHERE completed = 0 AND deadline != '' AND deadline IS NOT NULL AND deadline < ? AND user_id = ?").get(nowIso, userId)?.c || 0;
+
+  const circumference = 213.6;
+  const radialOffset = (circumference * (1 - rate / 100)).toFixed(1);
+
+  return {
+    total,
+    total_tasks: total,
+    completed,
+    completed_tasks: completed,
+    pending,
+    active_tasks: pending,
+    completion_rate: rate,
+    best_streak: maxStreak,
+    max_streak: maxStreak,
+    high_priority: highPriority,
+    overdue,
+    radial_offset: radialOffset
+  };
+}
+
+// =========================================================================
 // Authentication Routes
 // =========================================================================
 app.get('/login', (req, res) => {
@@ -430,35 +490,10 @@ app.get('/', loginRequired, (req, res) => {
   const filterStatus = req.query.status || 'all';
   const searchQuery = (req.query.search || '').trim();
 
-  // Fetch categories with dynamic quest counts
-  const categoriesRaw = db.prepare(`
-    SELECT c.*, COUNT(t.id) as total_tasks,
-           SUM(CASE WHEN t.completed = 1 THEN 1 ELSE 0 END) as completed_tasks
-    FROM categories c
-    LEFT JOIN tasks t ON t.category_id = c.id AND t.user_id = ?
-    WHERE c.user_id = ?
-    GROUP BY c.id
-    ORDER BY c.id ASC
-  `).all(userId, userId);
-
-  // Fetch all tasks for stats
-  const allUserTasks = db.prepare('SELECT * FROM tasks WHERE user_id = ?').all(userId);
-  const totalTasks = allUserTasks.length;
-  const completedTasks = allUserTasks.filter(t => t.completed === 1).length;
-  const activeTasks = totalTasks - completedTasks;
-  const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-  const maxStreak = allUserTasks.reduce((max, t) => Math.max(max, t.streak || 0), 0);
-  const circumference = 213.6;
-  const radialOffset = (circumference * (1 - completionRate / 100)).toFixed(1);
-
-  const stats = {
-    total_tasks: totalTasks,
-    completed_tasks: completedTasks,
-    active_tasks: activeTasks,
-    completion_rate: completionRate,
-    max_streak: maxStreak,
-    radial_offset: radialOffset
-  };
+  // Fetch categories with dynamic quest counts & completion rate for Progress Radar
+  const categories = getCategoriesData(userId);
+  const stats = getStatsData(userId);
+  const catCountAll = stats.total;
 
   // Build query for filtered tasks
   let taskQuery = `
@@ -532,8 +567,9 @@ app.get('/', loginRequired, (req, res) => {
 
   res.render('index.html', {
     tasks: processedTasks,
-    categories: categoriesRaw,
+    categories,
     stats,
+    cat_count_all: catCountAll,
     category_groups: categoryGroups,
     current_category: filterCategory,
     current_status: filterStatus,
@@ -596,7 +632,9 @@ app.post('/tasks/:id/toggle', loginRequired, (req, res) => {
       LEFT JOIN categories c ON t.category_id = c.id
       WHERE t.id = ? AND t.user_id = ?
     `).get(taskId, userId);
-    return res.json({ success: true, task: updated });
+    const stats = getStatsData(userId);
+    const categories = getCategoriesData(userId);
+    return res.json({ success: true, task: updated, stats, categories });
   }
 
   const filterCategory = req.body.filter_category || 'all';
@@ -628,6 +666,12 @@ app.post('/tasks/:id/delete', loginRequired, (req, res) => {
   const userId = req.session.userId;
   const taskId = Number(req.params.id);
   db.prepare('DELETE FROM tasks WHERE id = ? AND user_id = ?').run(taskId, userId);
+
+  if (req.xhr || req.headers.accept?.includes('application/json')) {
+    const stats = getStatsData(userId);
+    const categories = getCategoriesData(userId);
+    return res.json({ success: true, stats, categories });
+  }
 
   const filterCategory = req.body.filter_category || 'all';
   const filterStatus = req.body.filter_status || 'all';
