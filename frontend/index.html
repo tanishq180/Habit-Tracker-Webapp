@@ -267,18 +267,18 @@
                 <p class="empty-desc">No quests found in this view! Enter a quest above to continue your run.</p>
             </div>
             {% else %}
-                {% for (cat_id, cat_name, cat_color), group_tasks in tasks_by_category.items() %}
+                {% for group in category_groups %}
                 <div class="category-group">
                     <div class="group-header">
                         <div class="group-title-wrap">
-                            <span class="group-color-dot" style="background-color: {{ cat_color }};"></span>
-                            <span class="group-title">{{ cat_name }}</span>
+                            <span class="group-color-dot" style="background-color: {{ group.cat_color }};"></span>
+                            <span class="group-title">{{ group.cat_name }}</span>
                         </div>
                         <div class="group-header-actions">
-                            <span class="group-count">{{ group_tasks|length }} QUEST{{ 'S' if group_tasks|length != 1 else '' }}</span>
-                            <a href="{{ url_for('pack_detail', category_id=cat_id if cat_id else 0) }}" class="group-cal-btn pixel-btn" title="View Habit Calendar">📅 CALENDAR</a>
-                            {% if cat_id %}
-                            <form action="/categories/{{ cat_id }}/delete" method="POST" class="inline-form">
+                            <span class="group-count">{{ group.tasks|length }} QUEST{{ 'S' if group.tasks|length != 1 else '' }}</span>
+                            <a href="{{ url_for('pack_detail', category_id=group.cat_id if group.cat_id else 0) }}" class="group-cal-btn pixel-btn" title="View Habit Calendar">📅 CALENDAR</a>
+                            {% if group.cat_id %}
+                            <form action="/categories/{{ group.cat_id }}/delete" method="POST" class="inline-form">
                                 <input type="hidden" name="filter_status" value="{{ current_status }}">
                                 <input type="hidden" name="filter_search" value="{{ search_query }}">
                                 <button type="submit" class="group-delete-cat-btn" title="Delete this Habit">🗑️</button>
@@ -288,7 +288,7 @@
                     </div>
 
                     <div class="task-list">
-                        {% for task in group_tasks %}
+                        {% for task in group.tasks %}
                         <div class="task-card {% if task.completed %}completed{% endif %}"
                              data-task-id="{{ task.id }}"
                              data-category-id="{{ task.category_id or '' }}"
@@ -589,5 +589,8 @@
         </div>
     </div>
 
+    <!-- Frontend Interactive Client Scripts -->
+    <script src="/js/instant_actions.js" defer></script>
+    <script src="/js/app.js" defer></script>
 </body>
 </html>
