@@ -12,7 +12,19 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'orbit-arcade-session-secret-2026-key-!#891')
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'habits.db')
+DEFAULT_DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'habits.db')
+IS_SERVERLESS = bool(os.environ.get('AWS_LAMBDA_FUNCTION_NAME') or os.environ.get('NETLIFY') or os.environ.get('VERCEL'))
+
+if IS_SERVERLESS:
+    DB_PATH = os.path.join('/tmp', 'habits.db')
+    if not os.path.exists(DB_PATH) and os.path.exists(DEFAULT_DB_PATH):
+        try:
+            import shutil
+            shutil.copyfile(DEFAULT_DB_PATH, DB_PATH)
+        except Exception:
+            pass
+else:
+    DB_PATH = DEFAULT_DB_PATH
 
 def get_db_connection():
     conn = sqlite3.connect(DB_PATH)
