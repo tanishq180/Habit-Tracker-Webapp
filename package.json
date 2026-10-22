@@ -1,0 +1,11 @@
+{
+  "name": "orbit-habit-tracker",
+  "version": "1.0.0",
+  "description": "Orbit Habit & Task Mastery Web App",
+  "private": true,
+  "scripts": {
+    "postinstall": "cd backend && npm install",
+    "build": "cd backend && npm install",
+    "start": "node backend/server.js"
+  }
+}
