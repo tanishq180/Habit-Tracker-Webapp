@@ -1,0 +1,130 @@
+================================================================================
+                    ORBIT • HABIT & TASK TRACKER
+                        HOW TO RUN GUIDE
+================================================================================
+
+Orbit is a full-stack Habit & Task Tracker application built with:
+  - Frontend: Semantic HTML5, Vanilla CSS3 (Arcade/Glassmorphism), Vanilla JS (ES6+)
+  - Backend:  Python 3 (Flask, SQLite3, Werkzeug)
+
+No Node.js or npm is needed. Only Python 3 is required.
+
+--------------------------------------------------------------------------------
+1. PREREQUISITES
+--------------------------------------------------------------------------------
+- Python 3.8 or higher installed on your system.
+  Verify by running in your terminal/cmd:
+    python --version
+    python -m pip --version
+
+--------------------------------------------------------------------------------
+2. STEP-BY-STEP SETUP & EXECUTION
+--------------------------------------------------------------------------------
+
+STEP 1: Open your terminal or command prompt and navigate to the project folder:
+  cd "Habit Tracker"
+
+STEP 2: (Optional but recommended) Create and activate a Python virtual environment:
+
+  On Windows (Command Prompt or PowerShell):
+    python -m venv venv
+    .\venv\Scripts\activate
+
+  On macOS / Linux:
+    python3 -m venv venv
+    source venv/bin/activate
+
+STEP 3: Install the required Python packages:
+  pip install -r backend/requirements.txt
+
+  Note: The dependencies are lightweight (Flask and Werkzeug).
+  SQLite3 is already built directly into Python.
+
+STEP 4: Start the backend server:
+  python backend/app.py
+
+  (On Linux/macOS you can also run: python3 backend/app.py)
+
+  When started successfully, the terminal will display:
+  ======================================================
+   ★ Orbit Habit & Task Tracker is LIVE! (Python Flask)
+  ======================================================
+   ➜ Local URL:    http://127.0.0.1:5000
+   ➜ Guest Login:  player1 / orbit123
+  ======================================================
+
+STEP 5: Open your web browser and visit:
+  http://127.0.0.1:5000
+  (or http://localhost:5000)
+
+--------------------------------------------------------------------------------
+3. LOGGING IN & ACCESSING TEST ACCOUNTS
+--------------------------------------------------------------------------------
+
+Option A: Instant 1-Click Demo Guest Access
+  - On the login screen, click the neon green button:
+    "★ 1-CLICK DEMO GUEST [INSTANT ACCESS]"
+  - This immediately logs you into the pre-seeded pilot profile with starter
+    habits ("DAILY BOSS", "MAIN QUESTS", "SIDE QUESTS") and sample quests.
+
+Option B: Manual Demo Credentials
+  - Username: player1
+  - Password: orbit123
+
+Option C: Create Your Own Character
+  - Click "★ NEW PLAYER" or "Create player profile"
+  - Enter your desired pilot tag, optional email, and passcode (min 4 chars)
+  - You will be automatically provisioned a private account with seeded starter habits.
+
+--------------------------------------------------------------------------------
+4. KEY FEATURES & CONTROLS
+--------------------------------------------------------------------------------
+
+- Add Quests:
+  Type your habit/quest in the docked bottom composer, choose difficulty
+  (Casual, Normal, Boss), select a habit group, pick a deadline preset or custom
+  date/time, and press Enter or click "+ ADD QUEST".
+
+- Instant Non-Reload Toggle:
+  Click the pixel checkbox next to any quest. It will trigger an 8-bit sound
+  synthesizer blip, animate floating EXP (+100 EXP!), and dynamically update
+  the circular SVG momentum radar without reloading the page.
+
+- Habit Calendar & Streak Heatmap:
+  Click "📅 CALENDAR" on any habit card or category header to open the full monthly
+  view. View every day in green (cleared) or red (missed), inspect day details,
+  and track horizontal per-quest consistency percentages.
+
+- Custom Habit Categories:
+  Click "+ New Habit" in the bottom dock toolbar to open the modal and create
+  a new category with your custom 8-bit neon color.
+
+- Dark / Light Theme Toggle:
+  Click the theme button in the top navigation bar to switch between Arcade Dark
+  and Famicom Light aesthetics.
+
+--------------------------------------------------------------------------------
+5. STOPPING THE SERVER
+--------------------------------------------------------------------------------
+To stop the server at any time, go to your terminal window where the app is
+running and press:
+  Ctrl + C
+
+--------------------------------------------------------------------------------
+6. TROUBLESHOOTING
+--------------------------------------------------------------------------------
+- "Port 5000 is already in use":
+  You can run the server on a custom port by setting the PORT environment variable:
+    On Windows (PowerShell):
+      $env:PORT="5050"; python backend/app.py
+    On Windows (CMD):
+      set PORT=5050 && python backend/app.py
+    On Linux/macOS:
+      PORT=5050 python3 backend/app.py
+  Then open: http://127.0.0.1:5050
+
+- "python is not recognized as an internal or external command":
+  Make sure Python is added to your system PATH during installation, or invoke
+  via `py backend/app.py`.
+
+================================================================================
