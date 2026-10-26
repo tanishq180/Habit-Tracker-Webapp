@@ -47,15 +47,15 @@ STEP 4: Start the backend server:
 
   When started successfully, the terminal will display:
   ======================================================
-   ★ Orbit Habit & Task Tracker is LIVE! (Python Flask)
+   * Orbit Habit & Task Tracker is LIVE! (Python Flask)
   ======================================================
-   ➜ Local URL:    http://127.0.0.1:5000
-   ➜ Guest Login:  player1 / orbit123
+   -> Local URL:    http://127.0.0.1:5000
+   -> Guest Login:  player1 / orbit123
   ======================================================
 
 STEP 5: Open your web browser and visit:
   http://127.0.0.1:5000
-  (or http://localhost:5000)
+  (Tip: Using 127.0.0.1 connects instantly in 0ms, avoiding Windows IPv6 localhost lookup latency)
 
 --------------------------------------------------------------------------------
 3. LOGGING IN & ACCESSING TEST ACCOUNTS

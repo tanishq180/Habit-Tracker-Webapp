@@ -50,6 +50,8 @@ def get_db():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
+    conn.execute("PRAGMA journal_mode = WAL")
+    conn.execute("PRAGMA synchronous = NORMAL")
     return conn
 
 def init_db():
@@ -99,6 +101,11 @@ def init_db():
             FOREIGN KEY (task_id) REFERENCES tasks (id) ON DELETE CASCADE,
             FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
         );
+
+        CREATE INDEX IF NOT EXISTS idx_tasks_user ON tasks(user_id);
+        CREATE INDEX IF NOT EXISTS idx_tasks_category ON tasks(category_id);
+        CREATE INDEX IF NOT EXISTS idx_completions_user_date ON task_completions(user_id, completion_date);
+        CREATE INDEX IF NOT EXISTS idx_completions_task ON task_completions(task_id);
     """)
 
     # Ensure demo user player1 (orbit123)
@@ -345,6 +352,13 @@ def serve_manifest():
 @app.route('/favicon.ico')
 def serve_favicon():
     return send_from_directory(os.path.join(FRONTEND_DIR, 'icons'), 'icon.svg')
+
+@app.after_request
+def add_caching_headers(response):
+    # Enable browser caching for static files for instant 0ms loads
+    if request.path.startswith(('/css/', '/js/', '/icons/', '/static/')):
+        response.headers['Cache-Control'] = 'public, max-age=86400'
+    return response
 
 # =============================================================================
 # Authentication Routes
@@ -1102,11 +1116,20 @@ def api_stats():
 init_db()
 
 if __name__ == '__main__':
+    if hasattr(sys.stdout, 'reconfigure'):
+        try:
+            sys.stdout.reconfigure(encoding='utf-8')
+        except Exception:
+            pass
+
     port = int(os.environ.get('PORT', 5000))
+    host = os.environ.get('HOST', '0.0.0.0')
+
     print("\n" + "=" * 54)
-    print(" ★ Orbit Habit & Task Tracker is LIVE! (Python Flask)")
+    print(" * Orbit Habit & Task Tracker is LIVE! (Python Flask)")
     print("=" * 54)
-    print(f" ➜ Local URL:    http://127.0.0.1:{port}")
-    print(f" ➜ Guest Login:  player1 / orbit123")
+    print(f" -> Local URL:    http://127.0.0.1:{port}")
+    print(f" -> Guest Login:  player1 / orbit123")
     print("=" * 54 + "\n")
-    app.run(host='0.0.0.0', port=port, debug=False)
+
+    app.run(host=host, port=port, debug=False, threaded=True)
