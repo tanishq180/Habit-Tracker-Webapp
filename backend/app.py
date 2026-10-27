@@ -188,12 +188,22 @@ def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'user_id' not in session:
-            if request.path.startswith('/api/'):
-                return jsonify({'error': 'Unauthorized', 'message': 'Please log in to continue.'}), 401
-            next_param = f"?next={quote_plus(request.full_path)}" if request.method == 'GET' else ''
-            return redirect(f"/login{next_param}")
+            # Auto-authenticate default user (player1) for frictionless experience
+            conn = get_db()
+            player1 = conn.execute("SELECT id, username FROM users WHERE username = 'player1'").fetchone()
+            conn.close()
+            if player1:
+                session.permanent = True
+                session['user_id'] = player1['id']
+                session['username'] = player1['username']
+            else:
+                if request.path.startswith('/api/'):
+                    return jsonify({'error': 'Unauthorized', 'message': 'Please log in to continue.'}), 401
+                next_param = f"?next={quote_plus(request.full_path)}" if request.method == 'GET' else ''
+                return redirect(f"/login{next_param}")
         return f(*args, **kwargs)
     return decorated_function
+
 
 def get_current_user():
     if 'user_id' not in session:
@@ -561,25 +571,74 @@ def index():
 @login_required
 def add_task():
     user_id = session['user_id']
-    text = (request.form.get('text') or '').strip()
-    category_id = request.form.get('category_id')
-    cat_val = int(category_id) if category_id and category_id.isdigit() else None
-    priority = request.form.get('priority') or 'medium'
-    deadline = resolve_deadline(request.form.get('deadline'), request.form.get('deadline_preset'))
+    is_ajax = (
+        request.headers.get('Accept') == 'application/json' or
+        request.headers.get('X-Requested-With') == 'XMLHttpRequest' or
+        request.is_json
+    )
+    data = request.get_json(silent=True) if request.is_json else request.form
+    text = (data.get('text') or '').strip()
+    category_id = data.get('category_id')
 
-    if text:
-        conn = get_db()
-        conn.execute(
+    conn = get_db()
+    cat_val = None
+    if category_id:
+        try:
+            cand = int(category_id)
+            if conn.execute("SELECT id FROM categories WHERE id = ? AND user_id = ?", (cand, user_id)).fetchone():
+                cat_val = cand
+        except (ValueError, TypeError):
+            cat_val = None
+
+    priority = data.get('priority') or 'medium'
+    deadline = resolve_deadline(data.get('deadline'), data.get('deadline_preset'))
+
+    if not text:
+        conn.close()
+        if is_ajax:
+            return jsonify({'error': 'Please enter a habit or quest name'}), 400
+        return redirect(url_for('index'))
+
+    try:
+        cursor = conn.cursor()
+        cursor.execute(
             "INSERT INTO tasks (text, category_id, priority, deadline, user_id) VALUES (?, ?, ?, ?, ?)",
             (text, cat_val, priority, deadline, user_id)
         )
+        task_id = cursor.lastrowid
         conn.commit()
+
+        if is_ajax:
+            task_row = conn.execute("""
+                SELECT t.*, c.name as category_name, c.color as category_color, c.icon as category_icon
+                FROM tasks t
+                LEFT JOIN categories c ON t.category_id = c.id
+                WHERE t.id = ?
+            """, (task_id,)).fetchone()
+            task_dict = dict(task_row) if task_row else {'id': task_id, 'text': text}
+            task_dict['formatted_deadline'] = format_deadline(deadline)
+            stats = get_stats_data(conn, user_id)
+            categories = get_categories_data(conn, user_id)
+            conn.close()
+            return jsonify({
+                'success': True,
+                'task': task_dict,
+                'stats': stats,
+                'categories': categories,
+                **task_dict
+            }), 201
+
         conn.close()
+    except Exception as e:
+        conn.close()
+        if is_ajax:
+            return jsonify({'error': f'Database error: {str(e)}'}), 500
 
     filter_cat = request.form.get('filter_category', 'all')
     filter_status = request.form.get('filter_status', 'all')
     filter_search = request.form.get('filter_search', '')
     return redirect(url_for('index', category=filter_cat, status=filter_status, search=filter_search))
+
 
 @app.route('/tasks/<int:task_id>/toggle', methods=['POST'])
 @login_required
@@ -1029,32 +1088,56 @@ def api_tasks():
     conn = get_db()
 
     if request.method == 'POST':
-        data = request.get_json() or {}
-        text = (data.get('text') or request.form.get('text') or '').strip()
-        category_id = data.get('category_id') or request.form.get('category_id')
-        cat_val = int(category_id) if category_id else None
-        priority = data.get('priority') or request.form.get('priority') or 'medium'
+        data = request.get_json(silent=True) or request.form or {}
+        text = (data.get('text') or '').strip()
+        category_id = data.get('category_id')
+
+        cat_val = None
+        if category_id:
+            try:
+                cand = int(category_id)
+                if conn.execute("SELECT id FROM categories WHERE id = ? AND user_id = ?", (cand, user_id)).fetchone():
+                    cat_val = cand
+            except (ValueError, TypeError):
+                cat_val = None
+
+        priority = data.get('priority') or 'medium'
         deadline = resolve_deadline(data.get('deadline'), data.get('deadline_preset'))
 
         if not text:
             conn.close()
             return jsonify({'error': 'Task text is required'}), 400
 
-        cursor = conn.cursor()
-        cursor.execute(
-            "INSERT INTO tasks (text, category_id, priority, deadline, user_id) VALUES (?, ?, ?, ?, ?)",
-            (text, cat_val, priority, deadline, user_id)
-        )
-        task_id = cursor.lastrowid
-        conn.commit()
-        row = conn.execute("""
-            SELECT t.*, c.name as category_name, c.color as category_color, c.icon as category_icon
-            FROM tasks t
-            LEFT JOIN categories c ON t.category_id = c.id
-            WHERE t.id = ?
-        """, (task_id,)).fetchone()
-        conn.close()
-        return jsonify(dict(row)), 201
+        try:
+            cursor = conn.cursor()
+            cursor.execute(
+                "INSERT INTO tasks (text, category_id, priority, deadline, user_id) VALUES (?, ?, ?, ?, ?)",
+                (text, cat_val, priority, deadline, user_id)
+            )
+            task_id = cursor.lastrowid
+            conn.commit()
+            row = conn.execute("""
+                SELECT t.*, c.name as category_name, c.color as category_color, c.icon as category_icon
+                FROM tasks t
+                LEFT JOIN categories c ON t.category_id = c.id
+                WHERE t.id = ?
+            """, (task_id,)).fetchone()
+            task_dict = dict(row) if row else {'id': task_id, 'text': text}
+            task_dict['formatted_deadline'] = format_deadline(deadline)
+            stats = get_stats_data(conn, user_id)
+            categories = get_categories_data(conn, user_id)
+            conn.close()
+            return jsonify({
+                'success': True,
+                'task': task_dict,
+                'stats': stats,
+                'categories': categories,
+                **task_dict
+            }), 201
+        except Exception as e:
+            conn.close()
+            return jsonify({'error': f'Failed to create quest: {str(e)}'}), 500
+
 
     task_rows = conn.execute("""
         SELECT t.*, c.name as category_name, c.color as category_color, c.icon as category_icon

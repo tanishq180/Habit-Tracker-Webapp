@@ -19,8 +19,7 @@
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body class="auth-page-body">
-    <!-- Background Ambient Glow & Stars -->
-    <div class="pixel-stars"></div>
+    <!-- Background Ambient Glow -->
     <div class="ambient-glow glow-1"></div>
     <div class="ambient-glow glow-2"></div>
     <div class="ambient-glow glow-3"></div>
@@ -30,17 +29,21 @@
             <!-- Auth Header Bar -->
             <div class="auth-header">
                 <div class="brand">
-                    <div class="logo-mark pixel-box">
-                        <span class="retro-logo-icon">★</span>
+                    <div class="logo-mark">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
+                            <path d="M2 12h20"></path>
+                        </svg>
                     </div>
                     <div>
                         <div class="brand-title-wrap">
                             <h1 class="brand-title">ORBIT</h1>
-                            <span class="pixel-cursor">_</span>
                         </div>
-                        <span class="brand-subtitle">[ AUTHENTICATION GATEWAY • LVL 1 ]</span>
+                        <span class="brand-subtitle">Habits &amp; Daily Goals</span>
                     </div>
                 </div>
+
 
                 <!-- Theme Switcher -->
                 <a href="{{ url_for('set_theme', theme='light' if theme == 'dark' else 'dark') }}" class="icon-btn theme-toggle pixel-box" title="Toggle Theme">

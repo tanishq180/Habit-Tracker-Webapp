@@ -19,8 +19,7 @@
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body data-current-status="{{ current_status }}">
-    <!-- Background Ambient Glow & Stars -->
-    <div class="pixel-stars"></div>
+    <!-- Background Ambient Glow -->
     <div class="ambient-glow glow-1"></div>
     <div class="ambient-glow glow-2"></div>
     <div class="ambient-glow glow-3"></div>
@@ -29,29 +28,28 @@
         <!-- Top Navigation Bar -->
         <header class="app-header">
             <div class="brand">
-                <div class="logo-mark pixel-box">
-                    <span class="retro-logo-icon">★</span>
+                <div class="logo-mark">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
+                        <path d="M2 12h20"></path>
+                    </svg>
                 </div>
                 <div>
                     <div class="brand-title-wrap">
                         <h1 class="brand-title">ORBIT</h1>
-                        <span class="pixel-cursor">_</span>
                     </div>
-                    <span class="brand-subtitle">[ LVL 1 • ZERO JS • QUEST & HABIT LOG ]</span>
+                    <span class="brand-subtitle">Habits &amp; Daily Goals</span>
                 </div>
             </div>
 
             <div class="header-actions">
-                <!-- Pure Zero-JS Tech Badge -->
-                <div class="no-js-badge pixel-box" title="Pure Python, Semantic HTML5, and Retro Pixel CSS3">
-                    <span>⚡ ZERO JS</span>
-                </div>
-
                 <!-- Live Date Indicator -->
-                <div class="date-badge pixel-box">
+                <div class="date-badge">
                     <span class="pixel-icon">📅</span>
                     <span>{{ current_date_str }}</span>
                 </div>
+
 
                 <!-- Theme Switcher Link (Optimized) -->
                 <a href="{{ url_for('set_theme', theme='light' if theme == 'dark' else 'dark', category=current_category, status=current_status, search=search_query) }}" class="icon-btn theme-toggle pixel-box" title="Toggle Theme (Light / Dark)">
@@ -406,160 +404,110 @@
             {% endif %}
         </main>
 
-        <!-- Fixed Bottom Docked Add Task Bar -->
-        <div class="composer-dock-container">
-            <section class="glass-card composer-card pixel-card composer-docked">
-                <form action="/tasks/add" method="POST">
-                    <input type="hidden" name="filter_category" value="{{ current_category }}">
-                    <input type="hidden" name="filter_status" value="{{ current_status }}">
-                    <input type="hidden" name="filter_search" value="{{ search_query }}">
-
-                    <div class="composer-main">
-                        <div class="input-cmd-prefix">&gt;</div>
-                        <input 
-                            type="text" 
-                            name="text" 
-                            class="composer-input" 
-                            placeholder="ENTER QUEST OR HABIT..." 
-                            required 
-                            autocomplete="off"
-                        />
-                    </div>
-
-                    <!-- Rich Options Toolbar -->
-                    <div class="composer-toolbar">
-                        <div class="toolbar-left">
-                            <!-- Category Select -->
-                            <select name="category_id" class="pixel-select" title="Choose Habit Category">
-                                <option value="">📁 [ General / No Habit ]</option>
-                                {% for cat in categories %}
-                                <option value="{{ cat.id }}" {% if current_category == (cat.id|string) %}selected{% endif %}>
-                                    📁 {{ cat.name }}
-                                </option>
-                                {% endfor %}
-                            </select>
-
-                            <!-- Priority Selector -->
-                            <select name="priority" class="pixel-select" title="Difficulty Priority">
-                                <option value="low">⚔️ Low (Casual)</option>
-                                <option value="medium" selected>⚔️ Medium (Normal)</option>
-                                <option value="high">💀 Urgent (Boss)</option>
-                            </select>
-
-                            <!-- Interactive Deadline Picker Button (Pure HTML5 & CSS) -->
-                            <details class="deadline-wrap">
-                                <summary class="action-pill deadline-trigger-pill" title="Click to Set Target Deadline">
-                                    <svg class="pill-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
-                                        <line x1="16" x2="16" y1="2" y2="6"/>
-                                        <line x1="8" x2="8" y1="2" y2="6"/>
-                                        <line x1="3" x2="21" y1="10" y2="10"/>
-                                    </svg>
-                                    <span>Set Deadline ▴</span>
-                                </summary>
-
-                                <div class="deadline-popover">
-                                    <div class="popover-header">
-                                        <div class="popover-header-title">
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <circle cx="12" cy="12" r="10"></circle>
-                                                <polyline points="12 6 12 12 16 14"></polyline>
-                                            </svg>
-                                            <span>Quick Presets</span>
-                                        </div>
-                                        <label class="popover-quick-clear" title="Clear selection" style="cursor: pointer; font-family: var(--font-pixel-heading); font-size: 8px; color: var(--rose);">
-                                            <input type="radio" name="deadline_preset" value="" class="preset-radio" checked>
-                                            <span>[ CLEAR ]</span>
-                                        </label>
-                                    </div>
-
-                                    <div class="preset-chips-grid">
-                                        <label class="preset-chip">
-                                            <input type="radio" name="deadline_preset" value="today_evening" class="preset-radio">
-                                            <span class="preset-chip-icon">⚡</span>
-                                            <div class="preset-chip-text">
-                                                <span class="preset-chip-name">Evening</span>
-                                                <span class="preset-chip-time">6:00 PM</span>
-                                            </div>
-                                        </label>
-                                        <label class="preset-chip">
-                                            <input type="radio" name="deadline_preset" value="today_night" class="preset-radio">
-                                            <span class="preset-chip-icon">🌙</span>
-                                            <div class="preset-chip-text">
-                                                <span class="preset-chip-name">Tonight</span>
-                                                <span class="preset-chip-time">10:00 PM</span>
-                                            </div>
-                                        </label>
-                                        <label class="preset-chip">
-                                            <input type="radio" name="deadline_preset" value="tomorrow_morning" class="preset-radio">
-                                            <span class="preset-chip-icon">☀️</span>
-                                            <div class="preset-chip-text">
-                                                <span class="preset-chip-name">Tomorrow</span>
-                                                <span class="preset-chip-time">9:00 AM</span>
-                                            </div>
-                                        </label>
-                                        <label class="preset-chip">
-                                            <input type="radio" name="deadline_preset" value="in_2_days" class="preset-radio">
-                                            <span class="preset-chip-icon">📅</span>
-                                            <div class="preset-chip-text">
-                                                <span class="preset-chip-name">In 2 Days</span>
-                                                <span class="preset-chip-time">9:00 AM</span>
-                                            </div>
-                                        </label>
-                                        <label class="preset-chip">
-                                            <input type="radio" name="deadline_preset" value="friday_evening" class="preset-radio">
-                                            <span class="preset-chip-icon">🎯</span>
-                                            <div class="preset-chip-text">
-                                                <span class="preset-chip-name">Friday</span>
-                                                <span class="preset-chip-time">5:00 PM</span>
-                                            </div>
-                                        </label>
-                                        <label class="preset-chip">
-                                            <input type="radio" name="deadline_preset" value="next_monday" class="preset-radio">
-                                            <span class="preset-chip-icon">🗓️</span>
-                                            <div class="preset-chip-text">
-                                                <span class="preset-chip-name">Next Mon</span>
-                                                <span class="preset-chip-time">9:00 AM</span>
-                                            </div>
-                                        </label>
-                                    </div>
-
-                                    <div class="popover-divider-wrap">
-                                        <span class="popover-divider-text">OR CUSTOM DATE &amp; TIME</span>
-                                    </div>
-
-                                    <div class="custom-dt-section">
-                                        <input 
-                                            type="datetime-local" 
-                                            name="deadline" 
-                                            class="custom-datetime-input" 
-                                            placeholder="Pick date & time"
-                                        />
-                                    </div>
-                                </div>
-                            </details>
-
-                            <!-- New Category Modal Button (Pure CSS :target) -->
-                            <a href="#new-category-modal" class="action-pill" title="Create New Habit Group">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/>
-                                    <line x1="12" x2="12" y1="10" y2="16"/>
-                                    <line x1="9" x2="15" y1="13" y2="13"/>
-                                </svg>
-                                <span>+ New Habit</span>
-                            </a>
-                        </div>
-
-                        <div class="toolbar-right">
-                            <button type="submit" class="primary-btn pixel-btn">
-                                <span>+ ADD QUEST</span>
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </section>
-        </div>
     </div>
+
+    <!-- Fixed Bottom Floating Add Habit Bar -->
+    <div class="composer-dock-container">
+        <section class="glass-card composer-card composer-docked">
+            <form action="/tasks/add" method="POST" id="addHabitForm">
+                <input type="hidden" name="filter_category" value="{{ current_category }}">
+                <input type="hidden" name="filter_status" value="{{ current_status }}">
+                <input type="hidden" name="filter_search" value="{{ search_query }}">
+
+                <div class="composer-main">
+                    <div class="input-cmd-prefix">✦</div>
+                    <input 
+                        type="text" 
+                        name="text" 
+                        id="habitTextInput"
+                        class="composer-input" 
+                        placeholder="Add a new habit or quest... (Press Enter to save)" 
+                        required 
+                        autocomplete="off"
+                    />
+                </div>
+
+                <!-- Options Toolbar -->
+                <div class="composer-toolbar">
+                    <div class="toolbar-left">
+                        <!-- Category Select -->
+                        <select name="category_id" id="habitCategorySelect" class="pixel-select" title="Choose Habit Category">
+                            <option value="">📁 General Habits</option>
+                            {% for cat in categories %}
+                            <option value="{{ cat.id }}" {% if current_category == (cat.id|string) %}selected{% endif %}>
+                                📁 {{ cat.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+
+                        <!-- Priority Selector -->
+                        <select name="priority" id="habitPrioritySelect" class="pixel-select" title="Difficulty Priority">
+                            <option value="low">⚔️ Low (Casual)</option>
+                            <option value="medium" selected>⚔️ Medium (Normal)</option>
+                            <option value="high">🔥 Urgent (Boss)</option>
+                        </select>
+
+                        <!-- Direct Deadline Picker (No Quick Presets) -->
+                        <details class="deadline-wrap" id="deadlineDetails">
+                            <summary class="action-pill deadline-trigger-pill" id="deadlineSummary" title="Set Target Deadline">
+                                <svg class="pill-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+                                    <line x1="16" x2="16" y1="2" y2="6"/>
+                                    <line x1="8" x2="8" y1="2" y2="6"/>
+                                    <line x1="3" x2="21" y1="10" y2="10"/>
+                                </svg>
+                                <span id="deadlineBtnLabel">Set Deadline</span>
+                            </summary>
+
+                            <div class="deadline-popover">
+                                <div class="popover-header">
+                                    <div class="popover-header-title">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+                                            <line x1="16" x2="16" y1="2" y2="6"/>
+                                            <line x1="8" x2="8" y1="2" y2="6"/>
+                                            <line x1="3" x2="21" y1="10" y2="10"/>
+                                        </svg>
+                                        <span>TARGET DEADLINE</span>
+                                    </div>
+                                    <button type="button" class="popover-quick-clear" id="clearDeadlineBtn" title="Clear deadline" style="cursor: pointer; background: none; border: none; font-family: var(--font-heading); font-size: 11px; font-weight: 700; color: var(--rose);">
+                                        <span>CLEAR</span>
+                                    </button>
+                                </div>
+
+                                <div class="custom-dt-section">
+                                    <input 
+                                        type="datetime-local" 
+                                        name="deadline" 
+                                        id="taskDeadlineInput"
+                                        class="custom-datetime-input" 
+                                        placeholder="Pick date & time"
+                                    />
+                                </div>
+                            </div>
+                        </details>
+
+                        <!-- New Category Modal Button -->
+                        <a href="#new-category-modal" class="action-pill" title="Create New Habit Group">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/>
+                                <line x1="12" x2="12" y1="10" y2="16"/>
+                                <line x1="9" x2="15" y1="13" y2="13"/>
+                            </svg>
+                            <span>+ New Habit</span>
+                        </a>
+                    </div>
+
+                    <div class="toolbar-right">
+                        <button type="submit" id="addHabitSubmitBtn" class="primary-btn pixel-btn">
+                            <span>+ ADD QUEST</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+
 
     <!-- Create Category Pure CSS Modal -->
     <div class="modal-backdrop" id="new-category-modal">

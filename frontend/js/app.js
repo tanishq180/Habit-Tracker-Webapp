@@ -511,13 +511,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 showToast('Quest added to log!');
                 await refreshData();
             } else {
-                showToast('Failed to add quest');
+                const errData = await res.json().catch(() => ({}));
+                showToast(errData.error || errData.message || 'Failed to add quest');
             }
         } catch (err) {
             console.error(err);
             showToast('Error connecting to server');
         }
     };
+
 
     addTaskBtn.addEventListener('click', handleAddTask);
     taskInput.addEventListener('keydown', (e) => {

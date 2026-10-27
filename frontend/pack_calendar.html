@@ -19,8 +19,7 @@
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body class="calendar-page-body" data-today="{{ today_str }}">
-    <!-- Background Ambient Glow & Stars -->
-    <div class="pixel-stars"></div>
+    <!-- Background Ambient Glow -->
     <div class="ambient-glow glow-1"></div>
     <div class="ambient-glow glow-2"></div>
     <div class="ambient-glow glow-3"></div>
@@ -29,18 +28,19 @@
         <!-- Top Navigation Header -->
         <header class="app-header">
             <div class="brand">
-                <a href="{{ url_for('index') }}" class="back-hud-btn pixel-btn" title="Return to Main HUD">
+                <a href="{{ url_for('index') }}" class="back-hud-btn pixel-btn" title="Return to Dashboard">
                     <span class="back-arrow">&larr;</span>
-                    <span>HUD</span>
+                    <span>DASHBOARD</span>
                 </a>
                 <div class="brand-title-wrap" style="margin-left: 8px;">
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <span class="pack-color-pill-dot" style="background-color: {{ category.color }};"></span>
                         <h1 class="brand-title" style="font-size: 20px;">{{ category.name }}</h1>
                     </div>
-                    <span class="brand-subtitle">[ HABIT CALENDAR • COMPLETION LOG ]</span>
+                    <span class="brand-subtitle">Habit Calendar &amp; Completion Log</span>
                 </div>
             </div>
+
 
             <div class="header-actions">
                 <!-- Theme Switcher Link -->

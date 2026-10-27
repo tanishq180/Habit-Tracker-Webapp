@@ -356,4 +356,134 @@
             console.error('Task delete error:', err);
         }
     });
+
+    // -------------------------------------------------------------------------
+    // 6. Toast Notification Helper
+    // -------------------------------------------------------------------------
+    function showToast(message, isError = false) {
+        let toast = document.getElementById('orbitToast');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'orbitToast';
+            toast.className = 'orbit-toast';
+            document.body.appendChild(toast);
+        }
+        toast.textContent = message;
+        toast.style.background = isError ? 'rgba(239, 68, 68, 0.95)' : 'rgba(16, 185, 129, 0.95)';
+        toast.classList.add('show');
+        clearTimeout(toast._timer);
+        toast._timer = setTimeout(() => {
+            toast.classList.remove('show');
+        }, 2800);
+    }
+
+    // -------------------------------------------------------------------------
+    // 7. Deadline Clear & Input Sync
+    // -------------------------------------------------------------------------
+    const clearDeadlineBtn = document.getElementById('clearDeadlineBtn');
+    const taskDeadlineInput = document.getElementById('taskDeadlineInput');
+    const deadlineDetails = document.getElementById('deadlineDetails');
+    const deadlineBtnLabel = document.getElementById('deadlineBtnLabel');
+
+    if (clearDeadlineBtn && taskDeadlineInput) {
+        clearDeadlineBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            taskDeadlineInput.value = '';
+            if (deadlineBtnLabel) deadlineBtnLabel.textContent = 'Set Deadline';
+            if (deadlineDetails) deadlineDetails.removeAttribute('open');
+        });
+    }
+
+    if (taskDeadlineInput && deadlineBtnLabel) {
+        taskDeadlineInput.addEventListener('change', () => {
+            if (taskDeadlineInput.value) {
+                try {
+                    const dt = new Date(taskDeadlineInput.value);
+                    const formatted = dt.toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                    deadlineBtnLabel.textContent = `⏰ ${formatted}`;
+                } catch (_) {
+                    deadlineBtnLabel.textContent = 'Deadline Set ⏰';
+                }
+            } else {
+                deadlineBtnLabel.textContent = 'Set Deadline';
+            }
+        });
+    }
+
+    // -------------------------------------------------------------------------
+    // 8. Intercept Floating Composer Submit (Instant Task Addition)
+    // -------------------------------------------------------------------------
+    const addHabitForm = document.getElementById('addHabitForm');
+    const habitTextInput = document.getElementById('habitTextInput');
+    const habitCategorySelect = document.getElementById('habitCategorySelect');
+    const habitPrioritySelect = document.getElementById('habitPrioritySelect');
+    const addHabitSubmitBtn = document.getElementById('addHabitSubmitBtn');
+
+    if (addHabitForm && habitTextInput) {
+        addHabitForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const text = habitTextInput.value.trim();
+            if (!text) {
+                habitTextInput.focus();
+                showToast('Please type a habit or quest name', true);
+                return;
+            }
+
+            const category_id = habitCategorySelect ? habitCategorySelect.value : '';
+            const priority = habitPrioritySelect ? habitPrioritySelect.value : 'medium';
+            const deadline = taskDeadlineInput ? taskDeadlineInput.value : '';
+
+            if (addHabitSubmitBtn) {
+                addHabitSubmitBtn.disabled = true;
+                addHabitSubmitBtn.style.opacity = '0.6';
+            }
+
+            try {
+                const res = await fetch('/tasks/add', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({
+                        text,
+                        category_id: category_id || null,
+                        priority,
+                        deadline
+                    })
+                });
+
+                if (res.ok) {
+                    playCoinSound();
+                    habitTextInput.value = '';
+                    if (taskDeadlineInput) taskDeadlineInput.value = '';
+                    if (deadlineBtnLabel) deadlineBtnLabel.textContent = 'Set Deadline';
+                    if (deadlineDetails) deadlineDetails.removeAttribute('open');
+
+                    showToast('Quest added to log!');
+                    const data = await res.json();
+                    if (data.stats) updateStatsUI(data.stats);
+                    if (data.categories) updateCategoriesUI(data.categories);
+
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 400);
+                } else {
+                    const errData = await res.json().catch(() => ({}));
+                    showToast(errData.error || errData.message || 'Failed to add quest', true);
+                }
+            } catch (err) {
+                console.error('Error adding quest:', err);
+                showToast('Network error connecting to server', true);
+            } finally {
+                if (addHabitSubmitBtn) {
+                    addHabitSubmitBtn.disabled = false;
+                    addHabitSubmitBtn.style.opacity = '1';
+                }
+            }
+        });
+    }
 })();
+

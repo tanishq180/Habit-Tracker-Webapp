@@ -1,154 +1,156 @@
 /* ==========================================================================
-   Orbit • Retro Pixel-Art Theme & Modern Arcade Design System
+   Orbit • Modern Glassmorphic Habit & Task Mastery Design System
    ========================================================================== */
 
 :root {
     color-scheme: dark;
 
-    /* High-Clarity Modern & Arcade Typography System */
+    /* High-Clarity Modern Typography System */
     --font-sans: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     --font-heading: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     --font-body: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
-    --font-retro: 'Silkscreen', monospace, sans-serif;
+    --font-retro: var(--font-heading);
 
-    /* Map tokens so all UI components inherit crisp, sharp text */
+    /* Mapped typography tokens */
     --font-pixel-heading: var(--font-heading);
     --font-pixel-sub: var(--font-sans);
     --font-pixel-body: var(--font-body);
 
-    /* Arcade Dark Palette (Optimized High-Contrast Neon Dark) */
-    --bg-base: #0c081e;
-    --bg-grid-line: rgba(147, 51, 234, 0.14);
-    --bg-surface: #140d30;
-    --bg-surface-solid: #1a113d;
-    --bg-surface-hover: #241753;
-    --bg-surface-elevated: #2a1b63;
-    --bg-input: #0f0925;
+    /* Modern Dark Glassmorphism Palette */
+    --bg-base: #0b0f19;
+    --bg-grid-line: transparent;
+    --bg-surface: rgba(18, 25, 41, 0.78);
+    --bg-surface-solid: #131b2e;
+    --bg-surface-hover: rgba(28, 38, 62, 0.85);
+    --bg-surface-elevated: #1b253d;
+    --bg-input: rgba(11, 15, 25, 0.75);
 
-    --text-primary: #ffffff;
-    --text-secondary: #e2e8f0;
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
     --text-muted: #94a3b8;
     --text-subtle: #64748b;
 
-    /* Pixel Art Borders & Shadows */
-    --pixel-border: #000000;
-    --pixel-border-light: rgba(255, 255, 255, 0.25);
-    --pixel-shadow: #000000;
-    --box-border-size: 3px;
+    /* Modern Glass Borders & Soft Elevation Shadows */
+    --pixel-border: rgba(255, 255, 255, 0.08);
+    --pixel-border-light: rgba(255, 255, 255, 0.14);
+    --pixel-shadow: rgba(0, 0, 0, 0.35);
+    --box-border-size: 1px;
 
-    /* 8-Bit Vibrant Neon Accents */
-    --primary: #ff007f;             /* Arcade Neon Magenta */
-    --primary-hover: #ff2a9d;
-    --primary-light: rgba(255, 0, 127, 0.2);
-    --primary-glow: rgba(255, 0, 127, 0.5);
+    /* Vibrant Accents */
+    --primary: #6366f1;             /* Modern Indigo */
+    --primary-hover: #4f46e5;
+    --primary-light: rgba(99, 102, 241, 0.15);
+    --primary-glow: rgba(99, 102, 241, 0.4);
 
-    --emerald: #10b981;             /* 1-UP Neon Emerald */
-    --emerald-bg: rgba(16, 185, 129, 0.18);
-    --emerald-glow: rgba(16, 185, 129, 0.4);
+    --emerald: #10b981;             /* Success Emerald */
+    --emerald-bg: rgba(16, 185, 129, 0.14);
+    --emerald-glow: rgba(16, 185, 129, 0.3);
 
-    --amber: #f59e0b;               /* Star Coin Gold */
-    --amber-bg: rgba(245, 158, 11, 0.18);
-    --amber-glow: rgba(245, 158, 11, 0.35);
+    --amber: #f59e0b;               /* Warning / Streak Amber */
+    --amber-bg: rgba(245, 158, 11, 0.14);
+    --amber-glow: rgba(245, 158, 11, 0.3);
 
-    --rose: #ef4444;                /* Urgent Red */
-    --rose-bg: rgba(239, 68, 68, 0.2);
-    --rose-glow: rgba(239, 68, 68, 0.4);
+    --rose: #f43f5e;                /* Urgent Rose */
+    --rose-bg: rgba(244, 63, 94, 0.14);
+    --rose-glow: rgba(244, 63, 94, 0.3);
 
     --cyan: #06b6d4;                /* Cyber Cyan */
-    --cyan-bg: rgba(6, 182, 212, 0.18);
-    --cyan-glow: rgba(6, 182, 212, 0.35);
+    --cyan-bg: rgba(6, 182, 212, 0.14);
+    --cyan-glow: rgba(6, 182, 212, 0.3);
 
     --indigo: #8b5cf6;
-    --indigo-bg: rgba(139, 92, 246, 0.2);
+    --indigo-bg: rgba(139, 92, 246, 0.14);
 
-    /* 8-Bit Stepped Shadows & Bevels */
-    --shadow-pixel-sm: 2px 2px 0px var(--pixel-shadow);
-    --shadow-pixel-md: 4px 4px 0px var(--pixel-shadow);
-    --shadow-pixel-lg: 6px 6px 0px var(--pixel-shadow);
-    --shadow-pixel-pressed: 1px 1px 0px var(--pixel-shadow);
+    /* Soft Natural Drop Shadows */
+    --shadow-pixel-sm: 0 2px 6px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.18);
+    --shadow-pixel-md: 0 8px 24px -4px rgba(0, 0, 0, 0.28), 0 2px 6px rgba(0, 0, 0, 0.15);
+    --shadow-pixel-lg: 0 16px 36px -6px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.2);
+    --shadow-pixel-pressed: 0 1px 3px rgba(0, 0, 0, 0.24);
 
-    --bevel-outset: inset 2px 2px 0px rgba(255, 255, 255, 0.3), inset -2px -2px 0px rgba(0, 0, 0, 0.55);
-    --bevel-inset: inset 2px 2px 0px rgba(0, 0, 0, 0.7), inset -2px -2px 0px rgba(255, 255, 255, 0.12);
+    --bevel-outset: none;
+    --bevel-inset: none;
 
-    /* Sharp Pixel Art Radii */
-    --radius-sm: 0px;
-    --radius-md: 0px;
-    --radius-lg: 0px;
-    --radius-xl: 0px;
-    --radius-full: 0px;
+    /* Smooth Modern Radii */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 22px;
+    --radius-full: 9999px;
 
-    --transition-fast: 0.1s steps(2, start);
-    --transition-smooth: 0.15s steps(3, start);
+    --transition-fast: 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    --transition-smooth: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Optimized Clean Retro Light Theme (Famicom / Game Boy Color) */
+/* Modern Clean Light Theme */
 [data-theme="light"] {
     color-scheme: light;
 
     --bg-base: #f8fafc;
-    --bg-grid-line: rgba(148, 163, 184, 0.22);
-    --bg-surface: #ffffff;
+    --bg-grid-line: transparent;
+    --bg-surface: rgba(255, 255, 255, 0.88);
     --bg-surface-solid: #ffffff;
     --bg-surface-hover: #f1f5f9;
     --bg-surface-elevated: #ffffff;
-    --bg-input: #f8fafc;
+    --bg-input: #ffffff;
 
     --text-primary: #0f172a;
     --text-secondary: #334155;
     --text-muted: #64748b;
     --text-subtle: #94a3b8;
 
-    --pixel-border: #0f172a;
-    --pixel-border-light: rgba(15, 23, 42, 0.16);
-    --pixel-shadow: #0f172a;
+    --pixel-border: rgba(15, 23, 42, 0.09);
+    --pixel-border-light: rgba(15, 23, 42, 0.14);
+    --pixel-shadow: rgba(0, 0, 0, 0.08);
 
-    --primary: #e11d48;             /* Famicom Crimson */
-    --primary-hover: #be123c;
-    --primary-light: rgba(225, 29, 72, 0.12);
-    --primary-glow: rgba(225, 29, 72, 0.25);
+    --primary: #4f46e5;             /* Indigo */
+    --primary-hover: #4338ca;
+    --primary-light: rgba(79, 70, 229, 0.1);
+    --primary-glow: rgba(79, 70, 229, 0.2);
 
     --emerald: #059669;
-    --emerald-bg: rgba(5, 150, 105, 0.12);
-    --emerald-glow: rgba(5, 150, 105, 0.25);
+    --emerald-bg: rgba(5, 150, 105, 0.1);
+    --emerald-glow: rgba(5, 150, 105, 0.2);
 
     --amber: #d97706;
-    --amber-bg: rgba(217, 119, 6, 0.12);
-    --amber-glow: rgba(217, 119, 6, 0.25);
+    --amber-bg: rgba(217, 119, 6, 0.1);
+    --amber-glow: rgba(217, 119, 6, 0.2);
 
-    --rose: #dc2626;
-    --rose-bg: rgba(220, 38, 38, 0.12);
-    --rose-glow: rgba(220, 38, 38, 0.25);
+    --rose: #e11d48;
+    --rose-bg: rgba(225, 29, 72, 0.1);
+    --rose-glow: rgba(225, 29, 72, 0.2);
 
     --cyan: #0284c7;
-    --cyan-bg: rgba(2, 132, 199, 0.12);
-    --cyan-glow: rgba(2, 132, 199, 0.25);
+    --cyan-bg: rgba(2, 132, 199, 0.1);
+    --cyan-glow: rgba(2, 132, 199, 0.2);
 
     --indigo: #6d28d9;
-    --indigo-bg: rgba(109, 40, 217, 0.12);
+    --indigo-bg: rgba(109, 40, 217, 0.1);
 
-    --bevel-outset: inset 2px 2px 0px rgba(255, 255, 255, 0.95), inset -2px -2px 0px rgba(15, 23, 42, 0.18);
-    --bevel-inset: inset 2px 2px 0px rgba(15, 23, 42, 0.14), inset -2px -2px 0px rgba(255, 255, 255, 0.9);
+    --shadow-pixel-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    --shadow-pixel-md: 0 6px 18px -3px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
+    --shadow-pixel-lg: 0 14px 32px -4px rgba(0, 0, 0, 0.1), 0 4px 10px rgba(0, 0, 0, 0.05);
+
+    --bevel-outset: none;
+    --bevel-inset: none;
 }
 
 /* ==========================================================================
-   CSS Reset & Base Pixel Setup
+   CSS Reset & Base Setup
    ========================================================================== */
 
 *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    border-radius: 0 !important; /* Authentic 8-bit sharp edges */
 }
 
 body {
     background-color: var(--bg-base);
     background-image: 
-        linear-gradient(var(--bg-grid-line) 1px, transparent 1px),
-        linear-gradient(90deg, var(--bg-grid-line) 1px, transparent 1px);
-    background-size: 28px 28px;
-    background-position: -1px -1px;
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99, 102, 241, 0.18), transparent 70%),
+        radial-gradient(ellipse 60% 40% at 90% 80%, rgba(6, 182, 212, 0.1), transparent 60%);
+    background-attachment: fixed;
     color: var(--text-primary);
     font-family: var(--font-body);
     font-size: 15px;
@@ -161,23 +163,11 @@ body {
     text-rendering: optimizeLegibility;
 }
 
-/* Pixel Starfield Floating Dots */
+/* Hide retro pixel stars */
 .pixel-stars {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-    background-image: 
-        radial-gradient(2px 2px at 20px 30px, #ffffff, rgba(0,0,0,0)),
-        radial-gradient(2px 2px at 90px 140px, var(--amber), rgba(0,0,0,0)),
-        radial-gradient(2px 2px at 220px 70px, var(--cyan), rgba(0,0,0,0)),
-        radial-gradient(2px 2px at 450px 220px, var(--primary), rgba(0,0,0,0)),
-        radial-gradient(2px 2px at 700px 120px, #ffffff, rgba(0,0,0,0)),
-        radial-gradient(2px 2px at 850px 310px, var(--emerald), rgba(0,0,0,0));
-    background-repeat: repeat;
-    background-size: 880px 480px;
-    opacity: 0.35;
+    display: none !important;
 }
+
 
 /* Background Ambient Glows (GPU Accelerated & Fast) */
 .ambient-glow {
@@ -225,23 +215,29 @@ body {
     padding: 34px 20px 200px;
 }
 
-/* Pixel Card Baseline */
+/* Modern Card Baseline */
 .glass-card, .pixel-card {
     background: var(--bg-surface);
-    border: var(--box-border-size) solid var(--pixel-border);
-    box-shadow: var(--bevel-outset), var(--shadow-pixel-md);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--pixel-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-pixel-md);
     position: relative;
-    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .glass-card:hover, .pixel-card:hover {
-    box-shadow: var(--bevel-outset), var(--shadow-pixel-lg);
+    box-shadow: var(--shadow-pixel-lg);
+    border-color: var(--pixel-border-light);
 }
 
-/* Generic Pixel Box */
+/* Modern Rounded Box */
 .pixel-box {
-    border: 2px solid var(--pixel-border);
-    box-shadow: var(--bevel-outset), var(--shadow-pixel-sm);
+    border: 1px solid var(--pixel-border);
+    border-radius: var(--radius-md);
+    background: var(--bg-surface);
+    box-shadow: var(--shadow-pixel-sm);
 }
 
 /* ==========================================================================
@@ -264,27 +260,16 @@ body {
 }
 
 .logo-mark {
-    width: 48px;
-    height: 48px;
-    background: var(--primary);
-    border: 3px solid var(--pixel-border);
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, var(--primary), var(--indigo));
+    border-radius: var(--radius-md);
     color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: var(--bevel-outset), var(--shadow-pixel-sm);
-    font-size: 22px;
-}
-
-.retro-logo-icon {
-    font-size: 24px;
-    color: var(--amber);
-    animation: starTwinkle 2s infinite steps(2, start);
-}
-
-@keyframes starTwinkle {
-    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 2px var(--amber)); }
-    50% { transform: scale(1.18) rotate(8deg); filter: drop-shadow(0 0 8px var(--amber)); }
+    box-shadow: 0 4px 16px var(--primary-glow);
+    font-size: 20px;
 }
 
 .brand-title-wrap {
@@ -294,40 +279,32 @@ body {
 }
 
 .brand-title {
-    font-family: var(--font-retro);
-    font-size: 24px;
-    font-weight: 700;
-    letter-spacing: 2px;
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
     color: var(--text-primary);
     line-height: 1.1;
-    text-shadow: 2px 2px 0px var(--pixel-shadow);
+    text-shadow: none;
 }
 
 .pixel-cursor {
-    font-family: var(--font-retro);
-    font-size: 22px;
-    color: var(--primary);
-    animation: pixelBlink 1s infinite steps(1, start);
-}
-
-@keyframes pixelBlink {
-    0%, 49% { opacity: 1; }
-    50%, 100% { opacity: 0; }
+    display: none !important;
 }
 
 .brand-subtitle {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    color: var(--cyan);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0px;
+    color: var(--text-muted);
     display: block;
-    margin-top: 4px;
+    margin-top: 3px;
     text-shadow: none;
 }
 
 [data-theme="light"] .brand-subtitle {
-    color: var(--primary);
+    color: var(--text-muted);
     text-shadow: none;
 }
 
@@ -1675,17 +1652,42 @@ details.deadline-wrap[open] > summary {
 
 .toast {
     background: var(--bg-surface-solid);
-    border: 3px solid var(--pixel-border);
-    box-shadow: var(--bevel-outset), var(--shadow-pixel-md);
+    border: 1px solid var(--pixel-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-pixel-md);
     padding: 10px 16px;
-    font-family: var(--font-pixel-heading);
-    font-size: 10px;
-    letter-spacing: 0.5px;
+    font-family: var(--font-heading);
+    font-size: 12px;
     color: var(--text-primary);
     display: flex;
     align-items: center;
     gap: 8px;
 }
+
+.orbit-toast {
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 10000;
+    padding: 10px 22px;
+    border-radius: var(--radius-full);
+    color: #ffffff;
+    font-family: var(--font-heading);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+    transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.orbit-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
 
 /* Loading & Empty States */
 .loading-state, .empty-state {
@@ -2095,12 +2097,12 @@ details.deadline-wrap[open] > summary {
 
 .composer-dock-container {
     position: fixed;
-    bottom: 0;
+    bottom: 24px;
     left: 0;
     right: 0;
-    z-index: 350;
+    z-index: 999;
     pointer-events: none;
-    padding: 0 16px 12px;
+    padding: 0 20px;
     display: flex;
     justify-content: center;
 }
@@ -2108,46 +2110,88 @@ details.deadline-wrap[open] > summary {
 .composer-docked {
     pointer-events: auto;
     width: 100%;
-    max-width: 890px;
-    margin: 0;
-    padding: 10px 16px 12px;
-    background: var(--bg-surface-solid);
-    border: var(--box-border-size) solid var(--pixel-border);
-    border-top: 4px solid var(--primary);
-    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.75), var(--shadow-pixel-lg), var(--bevel-outset);
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 12px 18px 14px;
+    background: rgba(18, 25, 41, 0.94);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 20px 48px -8px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.08), 0 0 35px -8px rgba(99, 102, 241, 0.22);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.composer-docked:focus-within {
+    border-color: rgba(99, 102, 241, 0.45);
+    box-shadow: 0 24px 54px -8px rgba(0, 0, 0, 0.7), 0 0 0 2px rgba(99, 102, 241, 0.25), 0 0 45px -5px rgba(99, 102, 241, 0.35);
 }
 
 .composer-docked .composer-main {
     margin-bottom: 8px;
-    padding: 6px 12px;
+    padding: 7px 14px;
+    background: var(--bg-input);
+    border: 1px solid var(--pixel-border);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .composer-docked .composer-input {
+    font-size: 15px;
+    color: var(--text-primary);
+    background: transparent;
+    border: none;
+    outline: none;
+    width: 100%;
+    font-family: var(--font-body);
+}
+
+.composer-docked .input-cmd-prefix {
+    color: var(--primary);
     font-size: 16px;
+    font-weight: 700;
 }
 
 .composer-docked .composer-toolbar {
-    padding-top: 8px;
+    padding-top: 4px;
+    gap: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.composer-docked .toolbar-left {
+    display: flex;
+    align-items: center;
     gap: 8px;
+    flex-wrap: wrap;
 }
 
 /* Ensure dropdown popovers in the bottom docked bar open upwards so they don't get clipped */
 .composer-docked .deadline-popover,
 .composer-docked .category-dropdown-menu {
-    bottom: calc(100% + 8px);
+    bottom: calc(100% + 12px);
     top: auto;
-    box-shadow: var(--bevel-outset), 0 -8px 24px rgba(0, 0, 0, 0.85), var(--shadow-pixel-lg);
+    border-radius: var(--radius-lg);
+    background: rgba(19, 27, 46, 0.96);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
 @media (max-width: 768px) {
     .composer-dock-container {
-        padding: 0 8px 8px;
+        padding: 0 12px;
+        bottom: 14px;
     }
     .composer-docked {
-        padding: 8px 10px;
+        padding: 10px 14px 12px;
     }
     .composer-docked .composer-main {
-        padding: 5px 8px;
+        padding: 6px 10px;
         margin-bottom: 6px;
     }
     .composer-docked .composer-input {
@@ -2163,12 +2207,16 @@ details.deadline-wrap[open] > summary {
         gap: 6px;
     }
     .composer-docked .toolbar-right {
-        margin-top: 4px;
+        margin-top: 6px;
+    }
+    .composer-docked .toolbar-right button {
+        width: 100%;
     }
     .app-layout {
-        padding-bottom: 240px;
+        padding-bottom: 250px;
     }
 }
+
 
 /* ==========================================================================
    Theme Optimization Overrides (Light & Dark Polish)
@@ -2237,11 +2285,12 @@ details.deadline-wrap[open] > summary {
 
 [data-theme="light"] .task-card {
     background: #ffffff;
-    border-color: #0f172a;
+    border-color: rgba(15, 23, 42, 0.08);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
 }
 
 [data-theme="light"] .task-card.completed {
-    background: #f1f5f9;
+    background: #f8fafc;
     opacity: 0.75;
 }
 
@@ -2250,16 +2299,17 @@ details.deadline-wrap[open] > summary {
 }
 
 [data-theme="light"] .composer-docked {
-    background: #ffffff;
-    border-color: #0f172a;
-    box-shadow: 0 -8px 24px rgba(15, 23, 42, 0.12), var(--shadow-pixel-lg), var(--bevel-outset);
+    background: rgba(255, 255, 255, 0.94);
+    border-color: rgba(15, 23, 42, 0.1);
+    box-shadow: 0 16px 40px -8px rgba(15, 23, 42, 0.15), 0 0 0 1px rgba(15, 23, 42, 0.04);
 }
 
 [data-theme="light"] .category-dropdown-menu,
 [data-theme="light"] .deadline-popover,
 [data-theme="light"] .modal-card {
     background: #ffffff;
-    border-color: #0f172a;
+    border-color: rgba(15, 23, 42, 0.1);
+    box-shadow: 0 16px 36px -4px rgba(15, 23, 42, 0.12);
 }
 
 [data-theme="light"] .ambient-glow {
@@ -2267,7 +2317,7 @@ details.deadline-wrap[open] > summary {
 }
 
 [data-theme="light"] .pixel-stars {
-    opacity: 0.12;
+    display: none !important;
 }
 
 [data-theme="light"] .custom-datetime-input,
@@ -2276,7 +2326,7 @@ details.deadline-wrap[open] > summary {
 [data-theme="light"] .search-wrap,
 [data-theme="light"] .composer-main {
     background: #f8fafc;
-    border-color: #0f172a;
+    border-color: rgba(15, 23, 42, 0.1);
     color: #0f172a;
 }
 
@@ -2287,6 +2337,7 @@ details.deadline-wrap[open] > summary {
 [data-theme="light"] .composer-input::placeholder {
     color: #94a3b8;
 }
+
 
 /* Dark Mode Polish */
 [data-theme="dark"] .badge.deadline-badge {
