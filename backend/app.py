@@ -70,7 +70,7 @@ def init_db():
         CREATE TABLE IF NOT EXISTS categories (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
-            color TEXT DEFAULT '#6366f1',
+            color TEXT DEFAULT '#3b82f6',
             icon TEXT DEFAULT 'folder',
             user_id INTEGER,
             FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
@@ -128,9 +128,9 @@ def init_db():
 
 def seed_user_starter_data(cursor, user_id):
     categories = [
-        {'name': 'DAILY BOSS', 'color': '#ff0055', 'icon': 'zap'},
-        {'name': 'MAIN QUESTS', 'color': '#00f0ff', 'icon': 'crosshair'},
-        {'name': 'SIDE QUESTS', 'color': '#ffe600', 'icon': 'compass'}
+        {'name': 'DAILY BOSS', 'color': '#ff003c', 'icon': 'zap'},
+        {'name': 'MAIN QUESTS', 'color': '#3b82f6', 'icon': 'crosshair'},
+        {'name': 'SIDE QUESTS', 'color': '#38bdf8', 'icon': 'compass'}
     ]
 
     cat_map = {}
@@ -531,7 +531,7 @@ def index():
 
         cat_id = t.get('category_id') or 0
         cat_name = t.get('category_name') or 'General Quests'
-        cat_color = t.get('category_color') or '#a855f7'
+        cat_color = t.get('category_color') or '#3b82f6'
         group_key = (cat_id, cat_name, cat_color)
 
         if group_key not in category_groups_map:
@@ -746,7 +746,7 @@ def delete_task(task_id):
 def add_category():
     user_id = session['user_id']
     name = (request.form.get('name') or '').strip()
-    color = request.form.get('color') or '#39ff14'
+    color = request.form.get('color') or '#3b82f6'
 
     if name:
         conn = get_db()
@@ -783,7 +783,7 @@ def pack_detail(category_id):
 
     conn = get_db()
     if category_id == 0:
-        category = {'id': 0, 'name': 'General Quests', 'color': '#a855f7', 'icon': 'folder'}
+        category = {'id': 0, 'name': 'General Quests', 'color': '#3b82f6', 'icon': 'folder'}
         task_rows = conn.execute(
             "SELECT * FROM tasks WHERE (category_id IS NULL OR category_id = 0) AND user_id = ? ORDER BY id ASC",
             (user_id,)
@@ -1053,7 +1053,7 @@ def api_categories():
     if request.method == 'POST':
         data = request.get_json() or {}
         name = (data.get('name') or request.form.get('name') or '').strip()
-        color = data.get('color') or request.form.get('color') or '#39ff14'
+        color = data.get('color') or request.form.get('color') or '#3b82f6'
         if not name:
             conn.close()
             return jsonify({'error': 'Category name required'}), 400

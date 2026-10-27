@@ -695,7 +695,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     } else {
                         taskCategorySelect.value = '';
                         selectedCategoryLabel.textContent = 'Category';
-                        categoryDot.style.background = '#39ff14';
+                        categoryDot.style.background = '#3b82f6';
                     }
                 }
                 await refreshData();
@@ -780,7 +780,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!cat) return;
         taskCategorySelect.value = cat.id;
         selectedCategoryLabel.textContent = cat.name;
-        categoryDot.style.background = cat.color || '#6366f1';
+        categoryDot.style.background = cat.color || '#3b82f6';
         if (categoryOptionsList) {
             categoryOptionsList.querySelectorAll('.category-option-item').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.id == cat.id);
