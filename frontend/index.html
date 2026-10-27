@@ -18,6 +18,63 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@600;700&family=Silkscreen:wght@400;700&display=swap">
     </noscript>
     <link rel="stylesheet" href="/static/css/style.css">
+    <script>
+        // Immediate synchronous theme restoration to prevent any visual mismatch
+        (function() {
+            var theme = localStorage.getItem('orbit_theme');
+            if (!theme) {
+                var m = document.cookie.match(/orbit_theme=([^;]+)/);
+                if (m) theme = m[1];
+            }
+            if (theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+            }
+        })();
+
+        // Instant 1-Click Theme Toggle Function (0ms delay, no reload)
+        function toggleThemeInstant(e) {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            var cur = document.documentElement.getAttribute('data-theme') || 'dark';
+            var next = cur === 'dark' ? 'light' : 'dark';
+
+            // 1. Instant DOM attribute switch
+            document.documentElement.setAttribute('data-theme', next);
+
+            // 2. Persist in LocalStorage & Cookie immediately
+            try {
+                localStorage.setItem('orbit_theme', next);
+                document.cookie = 'orbit_theme=' + next + '; path=/; max-age=31536000; SameSite=Lax';
+            } catch (_) {}
+
+            // 3. Update all toggle button UI states on screen
+            var buttons = document.querySelectorAll('.theme-toggle');
+            for (var i = 0; i < buttons.length; i++) {
+                var content = buttons[i].querySelector('.theme-btn-content');
+                if (content) {
+                    if (next === 'light') {
+                        content.innerHTML = '<svg class="moon-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 3a6 6 0 0 0 9 9 9 0 1 1-9-9Z"/></svg><span class="btn-text-badge">DARK</span>';
+                    } else {
+                        content.innerHTML = '<svg class="sun-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg><span class="btn-text-badge">LIGHT</span>';
+                    }
+                }
+            }
+
+            // 4. Background notify backend
+            try {
+                fetch('/set-theme/' + next, { credentials: 'same-origin' }).catch(function(){});
+            } catch (_) {}
+        }
+
+        // Clean out any stale service workers
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(regs) {
+                for (var i = 0; i < regs.length; i++) regs[i].unregister();
+            });
+        }
+    </script>
 </head>
 <body data-current-status="{{ current_status }}">
     <!-- Background Ambient Glow -->
@@ -52,8 +109,8 @@
                 </div>
 
 
-                <!-- Theme Switcher Link (Optimized) -->
-                <a href="{{ url_for('set_theme', theme='light' if theme == 'dark' else 'dark', category=current_category, status=current_status, search=search_query) }}" class="icon-btn theme-toggle pixel-box" title="Toggle Theme (Light / Dark)">
+                <!-- Theme Switcher Button (Instant 1-Click Toggle) -->
+                <button type="button" class="icon-btn theme-toggle pixel-box" id="themeToggleBtn" onclick="toggleThemeInstant(event)" title="Toggle Theme (Light / Dark)">
                     {% if theme == 'light' %}
                     <span class="theme-btn-content">
                         <svg class="moon-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -70,7 +127,7 @@
                         <span class="btn-text-badge">LIGHT</span>
                     </span>
                     {% endif %}
-                </a>
+                </button>
 
                 <!-- Player Profile Badge -->
                 <div class="user-badge pixel-box" title="Logged in player">
@@ -560,6 +617,6 @@
     </div>
 
     <!-- Frontend Interactive Client Scripts -->
-    <script src="/js/instant_actions.js" defer></script>
+    <script src="/js/instant_actions.js?v=20261027_3" defer></script>
 </body>
 </html>

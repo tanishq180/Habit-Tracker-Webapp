@@ -365,9 +365,12 @@ def serve_favicon():
 
 @app.after_request
 def add_caching_headers(response):
-    # Enable browser caching for static files for instant 0ms loads
-    if request.path.startswith(('/css/', '/js/', '/icons/', '/static/')):
-        response.headers['Cache-Control'] = 'public, max-age=86400'
+    if response.mimetype == 'text/html' or request.path.startswith('/js/'):
+        response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+    elif request.path.startswith(('/css/', '/icons/', '/static/')):
+        response.headers['Cache-Control'] = 'public, max-age=3600'
     return response
 
 # =============================================================================
@@ -470,13 +473,6 @@ def set_theme(theme):
         resp = make_response(redirect(referrer))
     resp.set_cookie('orbit_theme', theme_val, max_age=365*24*60*60, path='/')
     return resp
-
-@app.after_request
-def add_cache_headers(response):
-    if response.mimetype == 'text/html':
-        response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
-        response.headers['Pragma'] = 'no-cache'
-    return response
 
 # =============================================================================
 # Main HUD Dashboard (GET /)
