@@ -462,10 +462,21 @@ def logout():
 @app.route('/set-theme/<theme>', endpoint='set_theme')
 def set_theme(theme):
     theme_val = 'light' if theme == 'light' else 'dark'
-    referrer = request.referrer or url_for('index')
-    resp = make_response(redirect(referrer))
+    is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest' or 'application/json' in request.headers.get('Accept', '')
+    if is_ajax:
+        resp = make_response(jsonify({'theme': theme_val}))
+    else:
+        referrer = request.referrer or url_for('index')
+        resp = make_response(redirect(referrer))
     resp.set_cookie('orbit_theme', theme_val, max_age=365*24*60*60, path='/')
     return resp
+
+@app.after_request
+def add_cache_headers(response):
+    if response.mimetype == 'text/html':
+        response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+        response.headers['Pragma'] = 'no-cache'
+    return response
 
 # =============================================================================
 # Main HUD Dashboard (GET /)

@@ -95,15 +95,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Theme Handling
-    const savedTheme = localStorage.getItem('orbit_theme') || 'dark';
-    document.documentElement.setAttribute('data-theme', savedTheme);
+    const savedTheme = localStorage.getItem('orbit_theme');
+    if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    }
 
-    themeToggleBtn.addEventListener('click', () => {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', nextTheme);
-        localStorage.setItem('orbit_theme', nextTheme);
-    });
+    if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+            const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', nextTheme);
+            localStorage.setItem('orbit_theme', nextTheme);
+            document.cookie = `orbit_theme=${nextTheme}; path=/; max-age=31536000; SameSite=Lax`;
+        });
+    }
 
     // Color Swatches Selection for Category Creation
     colorSwatches.forEach(swatch => {

@@ -5,77 +5,74 @@
 
 (function () {
     // -------------------------------------------------------------------------
-    // 1. Retro 8-Bit Web Audio Engine
+    // 1. Instant 1-Click Theme Switcher (Zero Reload, 1-Click Instant Toggle)
     // -------------------------------------------------------------------------
-    let audioCtx = null;
-    function getAudioContext() {
-        if (!audioCtx) {
-            const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-            if (AudioContextClass) {
-                audioCtx = new AudioContextClass();
+    document.addEventListener('click', (e) => {
+        const themeBtn = e.target.closest('.theme-toggle');
+        if (!themeBtn) return;
+
+        e.preventDefault();
+
+        const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+        const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+        // 1. Instant DOM attribute toggle
+        document.documentElement.setAttribute('data-theme', nextTheme);
+
+        // 2. Persist in localStorage and Cookie
+        try {
+            localStorage.setItem('orbit_theme', nextTheme);
+            document.cookie = `orbit_theme=${nextTheme}; path=/; max-age=31536000; SameSite=Lax`;
+        } catch (_) {}
+
+        // 3. Update all theme toggle buttons on the screen
+        document.querySelectorAll('.theme-toggle').forEach(btn => {
+            const content = btn.querySelector('.theme-btn-content');
+            if (content) {
+                if (nextTheme === 'light') {
+                    content.innerHTML = `
+                        <svg class="moon-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M12 3a6 6 0 0 0 9 9 9 0 1 1-9-9Z"/>
+                        </svg>
+                        <span class="btn-text-badge">DARK</span>
+                    `;
+                } else {
+                    content.innerHTML = `
+                        <svg class="sun-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <circle cx="12" cy="12" r="4"/>
+                            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                        </svg>
+                        <span class="btn-text-badge">LIGHT</span>
+                    `;
+                }
             }
+            btn.href = `/set-theme/${nextTheme === 'dark' ? 'light' : 'dark'}`;
+        });
+
+        // 4. Background sync with backend
+        fetch(`/set-theme/${nextTheme}`, { credentials: 'same-origin' }).catch(() => {});
+    });
+
+    // 1-Click Quick Color Swatches in Modals
+    document.addEventListener('click', (e) => {
+        const swatch = e.target.closest('.quick-color-swatch');
+        if (!swatch) return;
+        const color = swatch.dataset.color;
+        if (!color) return;
+        const parent = swatch.closest('.color-picker-group') || swatch.parentElement;
+        const input = parent ? parent.querySelector('input[type="color"]') : document.querySelector('input[type="color"]');
+        if (input) {
+            input.value = color;
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            input.dispatchEvent(new Event('change', { bubbles: true }));
         }
-        if (audioCtx && audioCtx.state === 'suspended') {
-            audioCtx.resume();
-        }
-        return audioCtx;
-    }
+        parent.querySelectorAll('.quick-color-swatch').forEach(s => s.classList.remove('selected'));
+        swatch.classList.add('selected');
+    });
 
-    function playCoinSound() {
-        try {
-            const ctx = getAudioContext();
-            if (!ctx) return;
-            const now = ctx.currentTime;
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.type = 'square';
-            gain.gain.setValueAtTime(0.08, now);
-            osc.frequency.setValueAtTime(987.77, now); // B5
-            osc.frequency.setValueAtTime(1318.51, now + 0.08); // E6
-            gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.35);
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.start(now);
-            osc.stop(now + 0.35);
-        } catch (_) {}
-    }
-
-    function playBlipSound(pitch = 440) {
-        try {
-            const ctx = getAudioContext();
-            if (!ctx) return;
-            const now = ctx.currentTime;
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.type = 'square';
-            osc.frequency.setValueAtTime(pitch, now);
-            gain.gain.setValueAtTime(0.05, now);
-            gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.start(now);
-            osc.stop(now + 0.06);
-        } catch (_) {}
-    }
-
-    function playDeleteSound() {
-        try {
-            const ctx = getAudioContext();
-            if (!ctx) return;
-            const now = ctx.currentTime;
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(280, now);
-            osc.frequency.setValueAtTime(140, now + 0.08);
-            gain.gain.setValueAtTime(0.06, now);
-            gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.2);
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.start(now);
-            osc.stop(now + 0.2);
-        } catch (_) {}
-    }
+    const playCoinSound = () => {};
+    const playBlipSound = () => {};
+    const playDeleteSound = () => {};
 
     // -------------------------------------------------------------------------
     // 2. Floating Pixel EXP Burst

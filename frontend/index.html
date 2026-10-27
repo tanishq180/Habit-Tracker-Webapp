@@ -535,11 +535,19 @@
                     <label class="form-label">HABIT / CATEGORY NAME</label>
                     <input type="text" name="name" class="modal-input pixel-input" placeholder="e.g. Daily Fitness, Deep Work, Reading..." required autocomplete="off" />
 
-                    <div style="margin-top: 14px;">
+                    <div style="margin-top: 14px;" class="color-picker-group">
                         <label class="form-label">THEME COLOR</label>
-                        <div style="display: flex; align-items: center; gap: 12px; margin-top: 6px;">
-                            <input type="color" name="color" value="#39ff14" class="color-input-pixel" />
-                            <span style="font-family: var(--font-pixel-sub); font-size: 11px; color: var(--text-muted);">Choose custom 8-bit neon shade</span>
+                        <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px; flex-wrap: wrap;">
+                            <button type="button" class="quick-color-swatch selected" data-color="#3b82f6" style="background: #3b82f6;" title="Cyber Blue"></button>
+                            <button type="button" class="quick-color-swatch" data-color="#ff003c" style="background: #ff003c;" title="Neon Red"></button>
+                            <button type="button" class="quick-color-swatch" data-color="#38bdf8" style="background: #38bdf8;" title="Electric Cyan"></button>
+                            <button type="button" class="quick-color-swatch" data-color="#00f59b" style="background: #00f59b;" title="Neon Mint"></button>
+                            <button type="button" class="quick-color-swatch" data-color="#f59e0b" style="background: #f59e0b;" title="Amber Gold"></button>
+                            <button type="button" class="quick-color-swatch" data-color="#ff2a55" style="background: #ff2a55;" title="Neon Rose"></button>
+                            <div style="display: flex; align-items: center; gap: 6px; margin-left: 6px;">
+                                <input type="color" name="color" id="categoryColorInput" value="#3b82f6" class="color-input-pixel" title="Custom color picker" />
+                                <span style="font-family: var(--font-pixel-sub); font-size: 11px; color: var(--text-muted);">Custom</span>
+                            </div>
                         </div>
                     </div>
                 </div>
