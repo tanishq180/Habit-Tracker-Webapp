@@ -123,6 +123,71 @@
             </div>
         </section>
 
+        <!-- Entire Category Quests Board Section -->
+        <section class="category-tasks-section pixel-card">
+            <div class="category-tasks-header">
+                <div class="category-tasks-title-wrap">
+                    <span class="pixel-section-icon">📋</span>
+                    <div>
+                        <h2 class="category-tasks-title">ALL {{ category.name | upper }} QUESTS</h2>
+                        <span class="brand-subtitle" style="font-size: 11.5px;">Master daily consistency by ticking off quests</span>
+                    </div>
+                </div>
+
+                <div class="category-tasks-counts">
+                    <span class="category-count-pill">TOTAL: {{ pack_stats.total_tasks }}</span>
+                    <span class="category-count-pill active">CLEARED TODAY: {{ pack_stats.completed_today }}/{{ pack_stats.total_tasks }}</span>
+                </div>
+            </div>
+
+            <!-- Task List Grid -->
+            {% if tasks|length == 0 %}
+            <div class="empty-pack-state" style="padding: 32px 20px; text-align: center; color: var(--text-muted);">
+                <span style="font-size: 28px; display: block; margin-bottom: 8px;">🎯</span>
+                <span style="font-size: 14px; font-weight: 600;">No quests in {{ category.name }} yet!</span>
+                <p style="font-size: 12px; color: var(--text-subtle); margin-top: 4px;">Use the floating bar at the bottom to add your first quest.</p>
+            </div>
+            {% else %}
+            <div class="task-list-grid">
+                {% for task in tasks %}
+                <div class="task-card {% if task.completed %}completed{% endif %}">
+                    <!-- Toggle Quest Completion for Today -->
+                    <form action="{{ url_for('toggle_task', task_id=task.id) }}" method="POST" class="inline-form">
+                        <input type="hidden" name="redirect_url" value="{{ request.full_path }}">
+                        <button type="submit" class="task-checkbox-btn {% if task.completed %}checked{% endif %}" title="Toggle quest completion today">
+                            {% if task.completed %}✓{% endif %}
+                        </button>
+                    </form>
+
+                    <div class="task-content">
+                        <span class="task-text">{{ task.text }}</span>
+                        <div class="task-meta">
+                            <span class="badge priority-{{ task.priority }}">
+                                {% if task.priority == 'high' %}🔥 BOSS{% elif task.priority == 'low' %}🛡️ CASUAL{% else %}⚔️ NORMAL{% endif %}
+                            </span>
+                            {% if task.streak > 0 %}
+                            <span class="badge streak-badge">🔥 {{ task.streak }} STREAK</span>
+                            {% endif %}
+                            {% if task.formatted_deadline %}
+                            <span class="badge deadline-badge {% if task.is_overdue %}overdue{% endif %}">
+                                ⏰ {{ task.formatted_deadline }}
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="task-actions">
+                        <form action="{{ url_for('delete_task', task_id=task.id) }}" method="POST" class="inline-form" onsubmit="return confirm('Delete this habit quest?');">
+                            <input type="hidden" name="redirect_url" value="{{ request.full_path }}">
+                            <button type="submit" class="action-icon-btn delete-btn" title="Delete quest">🗑️</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </section>
+
         <!-- Main Calendar Section -->
         <section class="calendar-section pixel-card">
             <!-- Calendar Navigation Bar -->
@@ -347,5 +412,118 @@
         </section>
     </div>
 
+    <!-- Fixed Bottom Floating Add Habit Bar For This Category -->
+    <div class="composer-dock-container">
+        <section class="glass-card composer-card composer-docked">
+            <form action="/tasks/add" method="POST" id="addCategoryHabitForm">
+                <input type="hidden" name="category_id" value="{{ category.id }}">
+                <input type="hidden" name="redirect_url" value="{{ request.full_path }}">
+                
+                <div class="composer-main">
+                    <div class="input-cmd-prefix">✦</div>
+                    <input 
+                        type="text" 
+                        name="text" 
+                        id="categoryHabitTextInput"
+                        class="composer-input" 
+                        placeholder="Add a new quest to {{ category.name }}... (Press Enter to save)" 
+                        required 
+                        autocomplete="off"
+                    />
+                </div>
+
+                <!-- Options Toolbar -->
+                <div class="composer-toolbar">
+                    <div class="toolbar-left">
+                        <span class="pack-badge-inline" style="background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.4); padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; color: {{ category.color }};">
+                            📁 {{ category.name }}
+                        </span>
+
+                        <select name="priority" id="categoryHabitPrioritySelect" class="pixel-select" title="Difficulty Priority">
+                            <option value="low">⚔️ Low (Casual)</option>
+                            <option value="medium" selected>⚔️ Medium (Normal)</option>
+                            <option value="high">🔥 Urgent (Boss)</option>
+                        </select>
+
+                        <!-- Direct Deadline Picker -->
+                        <details class="deadline-wrap" id="catDeadlineDetails">
+                            <summary class="action-pill deadline-trigger-pill" id="catDeadlineSummary" title="Set Target Deadline">
+                                <svg class="pill-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+                                    <line x1="16" x2="16" y1="2" y2="6"/>
+                                    <line x1="8" x2="8" y1="2" y2="6"/>
+                                    <line x1="3" x2="21" y1="10" y2="10"/>
+                                </svg>
+                                <span id="catDeadlineBtnLabel">Set Deadline</span>
+                            </summary>
+
+                            <div class="deadline-popover">
+                                <div class="popover-header">
+                                    <div class="popover-header-title">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+                                            <line x1="16" x2="16" y1="2" y2="6"/>
+                                            <line x1="8" x2="8" y1="2" y2="6"/>
+                                            <line x1="3" x2="21" y1="10" y2="10"/>
+                                        </svg>
+                                        <span>TARGET DEADLINE</span>
+                                    </div>
+                                    <button type="button" class="popover-quick-clear" id="catClearDeadlineBtn" title="Clear deadline" style="cursor: pointer; background: none; border: none; font-family: var(--font-heading); font-size: 11px; font-weight: 700; color: var(--rose);">
+                                        <span>CLEAR</span>
+                                    </button>
+                                </div>
+
+                                <div class="custom-dt-section">
+                                    <input 
+                                        type="datetime-local" 
+                                        name="deadline" 
+                                        id="catTaskDeadlineInput"
+                                        class="custom-datetime-input" 
+                                        placeholder="Pick date & time"
+                                    />
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+
+                    <div class="toolbar-right">
+                        <button type="submit" id="addCategoryHabitSubmitBtn" class="primary-btn pixel-btn">
+                            <span>+ ADD TO {{ category.name | upper }}</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const dtInput = document.getElementById('catTaskDeadlineInput');
+        const label = document.getElementById('catDeadlineBtnLabel');
+        const clearBtn = document.getElementById('catClearDeadlineBtn');
+        const details = document.getElementById('catDeadlineDetails');
+
+        if (dtInput && label) {
+            dtInput.addEventListener('change', () => {
+                if (dtInput.value) {
+                    const d = new Date(dtInput.value);
+                    label.textContent = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                } else {
+                    label.textContent = 'Set Deadline';
+                }
+            });
+        }
+
+        if (clearBtn && dtInput && label) {
+            clearBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dtInput.value = '';
+                label.textContent = 'Set Deadline';
+                if (details) details.removeAttribute('open');
+            });
+        }
+    });
+    </script>
     </body>
 </html>

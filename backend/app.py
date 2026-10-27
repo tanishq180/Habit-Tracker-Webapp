@@ -634,6 +634,10 @@ def add_task():
         if is_ajax:
             return jsonify({'error': f'Database error: {str(e)}'}), 500
 
+    redirect_url = request.form.get('redirect_url')
+    if redirect_url:
+        return redirect(redirect_url)
+
     filter_cat = request.form.get('filter_category', 'all')
     filter_status = request.form.get('filter_status', 'all')
     filter_search = request.form.get('filter_search', '')
@@ -688,6 +692,10 @@ def toggle_task(task_id):
         return jsonify({'success': True, 'task': updated_task, 'stats': stats, 'categories': categories})
 
     conn.close()
+    redirect_url = request.form.get('redirect_url')
+    if redirect_url:
+        return redirect(redirect_url)
+
     filter_cat = request.form.get('filter_category', 'all')
     filter_status = request.form.get('filter_status', 'all')
     filter_search = request.form.get('filter_search', '')
@@ -712,6 +720,10 @@ def edit_task(task_id):
         conn.commit()
         conn.close()
 
+    redirect_url = request.form.get('redirect_url')
+    if redirect_url:
+        return redirect(redirect_url)
+
     filter_cat = request.form.get('filter_category', 'all')
     filter_status = request.form.get('filter_status', 'all')
     filter_search = request.form.get('filter_search', '')
@@ -733,6 +745,10 @@ def delete_task(task_id):
         return jsonify({'success': True, 'stats': stats, 'categories': categories})
 
     conn.close()
+    redirect_url = request.form.get('redirect_url')
+    if redirect_url:
+        return redirect(redirect_url)
+
     filter_cat = request.form.get('filter_category', 'all')
     filter_status = request.form.get('filter_status', 'all')
     filter_search = request.form.get('filter_search', '')

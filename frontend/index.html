@@ -161,18 +161,20 @@
             <div class="section-title-bar">
                 <div class="section-title-left">
                     <span class="pixel-section-icon">📦</span>
-                    <h2 class="pixel-section-title">HABIT PROGRESS RADAR</h2>
+                    <h2 class="pixel-section-title">CATEGORY DASHBOARDS</h2>
                 </div>
-                <span class="pixel-section-hint">[ HORIZONTAL DASHBOARD • CLICK FOR CALENDAR ]</span>
+                <span class="pixel-section-hint">[ CLICK TO OPEN DASHBOARD &amp; CALENDAR IN NEW TAB ↗ ]</span>
             </div>
 
             <div class="pack-cards-horizontal-track">
                 {% for cat in categories %}
                 <a href="{{ url_for('pack_detail', category_id=cat.id) }}" 
+                   target="_blank" 
+                   rel="noopener noreferrer"
                    class="pack-dashboard-card pixel-card {% if current_category == (cat.id|string) %}active-pack{% endif %}"
                    data-category-id="{{ cat.id }}"
                    style="border-top: 4px solid {{ cat.color }};"
-                   title="Open {{ cat.name }} Calendar & Habit Log">
+                   title="Open {{ cat.name }} Dashboard & Calendar in a new tab">
                     
                     <div class="pack-card-header">
                         <div class="pack-card-name-wrap">
@@ -199,7 +201,7 @@
 
                     <div class="pack-card-footer">
                         <span>Cleared: {{ cat.completed_tasks }}</span>
-                        <span class="pack-cal-action">📅 CALENDAR &rarr;</span>
+                        <span class="pack-cal-action">📅 OPEN DASHBOARD ↗</span>
                     </div>
                 </a>
                 {% endfor %}
@@ -219,13 +221,20 @@
                     </a>
 
                     {% for cat in categories %}
-                    <a href="{{ url_for('index', category=cat.id, status=current_status, search=search_query) }}" 
-                       class="cat-pill pixel-pill {% if current_category == (cat.id|string) %}active{% endif %}"
-                       data-category-id="{{ cat.id }}">
-                        <span style="width: 8px; height: 8px; background: {{ cat.color }}; border: 1px solid #000; display: inline-block;"></span>
-                        <span>{{ cat.name }}</span>
-                        <span class="count-badge">{{ cat.total_tasks }}</span>
-                    </a>
+                    <div class="cat-pill-wrapper">
+                        <a href="{{ url_for('index', category=cat.id, status=current_status, search=search_query) }}" 
+                           class="cat-pill pixel-pill {% if current_category == (cat.id|string) %}active{% endif %}"
+                           data-category-id="{{ cat.id }}">
+                            <span style="width: 8px; height: 8px; background: {{ cat.color }}; border-radius: 50%; display: inline-block;"></span>
+                            <span>{{ cat.name }}</span>
+                            <span class="count-badge">{{ cat.total_tasks }}</span>
+                        </a>
+                        <a href="{{ url_for('pack_detail', category_id=cat.id) }}" 
+                           target="_blank" 
+                           rel="noopener noreferrer"
+                           class="cat-pill-tab-btn" 
+                           title="Open {{ cat.name }} Dashboard & Calendar in new tab">↗</a>
+                    </div>
                     {% endfor %}
                 </div>
             </div>

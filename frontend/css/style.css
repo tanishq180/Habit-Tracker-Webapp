@@ -2733,10 +2733,112 @@ details.deadline-wrap[open] > summary {
 .calendar-layout {
     max-width: 1080px;
     margin: 0 auto;
-    padding: 24px 20px 80px;
+    padding: 24px 20px 220px;
     display: flex;
     flex-direction: column;
     gap: 24px;
+}
+
+/* Category Quests Board Section in Dashboard */
+.category-tasks-section {
+    padding: 22px 24px;
+    background: var(--bg-surface);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--pixel-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-pixel-md);
+}
+
+.category-tasks-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    gap: 12px;
+    border-bottom: 1px solid rgba(59, 130, 246, 0.16);
+    padding-bottom: 14px;
+}
+
+.category-tasks-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.category-tasks-title {
+    font-family: var(--font-heading);
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+    color: #ffffff;
+}
+
+.category-tasks-counts {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.category-count-pill {
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--pixel-border);
+    background: var(--bg-surface-elevated);
+    color: var(--text-muted);
+}
+
+.category-count-pill.active {
+    background: rgba(37, 99, 235, 0.2);
+    border-color: rgba(59, 130, 246, 0.45);
+    color: #93c5fd;
+    box-shadow: 0 0 10px rgba(37, 99, 235, 0.25);
+}
+
+/* Category Pill Wrapper with Direct New Tab ↗ Trigger */
+.cat-pill-wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: rgba(13, 19, 34, 0.7);
+    border: 1px solid var(--pixel-border);
+    border-radius: var(--radius-full);
+    padding: 2px 5px 2px 2px;
+    transition: all var(--transition-fast);
+}
+
+.cat-pill-wrapper:hover {
+    border-color: rgba(59, 130, 246, 0.5);
+    background: rgba(19, 28, 49, 0.9);
+}
+
+.cat-pill-tab-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(59, 130, 246, 0.18);
+    border: 1px solid rgba(59, 130, 246, 0.35);
+    color: #93c5fd;
+    font-size: 11px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all var(--transition-fast);
+}
+
+.cat-pill-tab-btn:hover {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #ffffff;
+    box-shadow: 0 0 10px rgba(255, 0, 60, 0.55);
+    transform: scale(1.12);
 }
 
 /* Return to HUD Button */

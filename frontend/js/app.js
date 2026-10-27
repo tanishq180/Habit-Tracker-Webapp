@@ -5,79 +5,13 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
-    // 8-Bit Web Audio API Synthesizer Engine
+    // Clean Audio No-Ops (SFX Disabled)
     // ==========================================
-    let audioCtx = null;
-    let sfxEnabled = localStorage.getItem('orbit_sfx') !== 'false';
-
-    function initAudio() {
-        if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        if (audioCtx.state === 'suspended') {
-            audioCtx.resume();
-        }
-    }
-
-    function playTone(freq, duration, type = 'square', gainVal = 0.08) {
-        if (!sfxEnabled) return;
-        try {
-            initAudio();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = type;
-            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-            gain.gain.setValueAtTime(gainVal, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start();
-            osc.stop(audioCtx.currentTime + duration);
-        } catch {}
-    }
-
-    // 8-bit Mario/Arcade Coin sound on task complete! (B5 -> E6)
-    function playCoinSound() {
-        if (!sfxEnabled) return;
-        try {
-            initAudio();
-            const now = audioCtx.currentTime;
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = 'square';
-            gain.gain.setValueAtTime(0.08, now);
-            osc.frequency.setValueAtTime(987.77, now);
-            osc.frequency.setValueAtTime(1318.51, now + 0.08);
-            gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.38);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start(now);
-            osc.stop(now + 0.38);
-        } catch {}
-    }
-
-    // 8-bit Blip for button clicks / navigation
-    function playBlipSound(pitch = 540) {
-        playTone(pitch, 0.05, 'square', 0.05);
-    }
-
-    // 8-bit Level Up / 100% Fanfare
-    function playFanfareSound() {
-        if (!sfxEnabled) return;
-        const notes = [523.25, 659.25, 783.99, 1046.50];
-        notes.forEach((freq, idx) => {
-            setTimeout(() => playTone(freq, 0.12, 'square', 0.07), idx * 80);
-        });
-    }
-
-    // 8-bit Delete buzz
-    function playDeleteSound() {
-        if (!sfxEnabled) return;
-        const notes = [320, 240, 160];
-        notes.forEach((freq, idx) => {
-            setTimeout(() => playTone(freq, 0.08, 'sawtooth', 0.06), idx * 60);
-        });
-    }
+    const playTone = () => {};
+    const playCoinSound = () => {};
+    const playBlipSound = () => {};
+    const playFanfareSound = () => {};
+    const playDeleteSound = () => {};
 
     // Floating Pixel EXP Animation (+100 EXP!)
     function showFloatingExp(x, y, text = '+100 EXP! ⚡') {
@@ -104,9 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let selectedCategoryColor = '#39ff14';
 
     // DOM Elements
-    const sfxToggleBtn = document.getElementById('sfxToggleBtn');
-    const crtToggleBtn = document.getElementById('crtToggleBtn');
-    const crtOverlay = document.getElementById('crtOverlay');
     const themeToggleBtn = document.getElementById('themeToggleBtn');
     const headerDateText = document.getElementById('headerDateText');
     const statRadialBar = document.getElementById('statRadialBar');
@@ -172,43 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', nextTheme);
         localStorage.setItem('orbit_theme', nextTheme);
-        playBlipSound(580);
     });
-
-    // 8-Bit Arcade SFX Toggle Handling
-    if (sfxToggleBtn) {
-        sfxToggleBtn.classList.toggle('active', sfxEnabled);
-        sfxToggleBtn.addEventListener('click', () => {
-            sfxEnabled = !sfxEnabled;
-            localStorage.setItem('orbit_sfx', sfxEnabled);
-            sfxToggleBtn.classList.toggle('active', sfxEnabled);
-            if (sfxEnabled) {
-                playCoinSound();
-                showToast('SFX: ON 🔊');
-            } else {
-                showToast('SFX: MUTED 🔇');
-            }
-        });
-    }
-
-    // Vintage CRT Scanlines Screen Toggle Handling
-    let crtEnabled = localStorage.getItem('orbit_crt') !== 'false';
-    if (crtOverlay) {
-        crtOverlay.classList.toggle('crt-off', !crtEnabled);
-    }
-    if (crtToggleBtn) {
-        crtToggleBtn.classList.toggle('active', crtEnabled);
-        crtToggleBtn.addEventListener('click', () => {
-            crtEnabled = !crtEnabled;
-            localStorage.setItem('orbit_crt', crtEnabled);
-            crtToggleBtn.classList.toggle('active', crtEnabled);
-            if (crtOverlay) {
-                crtOverlay.classList.toggle('crt-off', !crtEnabled);
-            }
-            playBlipSound(620);
-            showToast(crtEnabled ? 'CRT SCANLINES: ON 📺' : 'CRT SCANLINES: OFF');
-        });
-    }
 
     // Color Swatches Selection for Category Creation
     colorSwatches.forEach(swatch => {
