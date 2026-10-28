@@ -19,7 +19,7 @@
     </noscript>
     <link rel="stylesheet" href="/static/css/style.css">
     <script>
-        // Immediate synchronous theme restoration to prevent any visual mismatch
+        // Canonical Theme & Color Management (Guaranteed 1-Click Instant Execution)
         (function() {
             var theme = localStorage.getItem('orbit_theme');
             if (!theme) {
@@ -31,12 +31,32 @@
             }
         })();
 
-        // Instant 1-Click Theme Toggle Function (0ms delay, no reload)
-        function toggleThemeInstant(e) {
-            if (e) {
-                e.preventDefault();
-                e.stopPropagation();
+        function updateThemeButtons(theme) {
+            var buttons = document.querySelectorAll('.theme-toggle');
+            for (var i = 0; i < buttons.length; i++) {
+                var content = buttons[i].querySelector('.theme-btn-content');
+                if (content) {
+                    if (theme === 'light') {
+                        content.innerHTML = '<svg class="moon-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 3a6 6 0 0 0 9 9 9 0 1 1-9-9Z"/></svg><span class="btn-text-badge">DARK</span>';
+                    } else {
+                        content.innerHTML = '<svg class="sun-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg><span class="btn-text-badge">LIGHT</span>';
+                    }
+                }
             }
+            var meta = document.querySelector('meta[name="theme-color"]');
+            if (meta) meta.setAttribute('content', theme === 'light' ? '#f8fafc' : '#05070d');
+        }
+
+        window.toggleThemeInstant = function(e) {
+            if (e) {
+                if (e.preventDefault) e.preventDefault();
+                if (e.stopPropagation) e.stopPropagation();
+                if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+            }
+            if (window._themeToggleBusy) return false;
+            window._themeToggleBusy = true;
+            setTimeout(function() { window._themeToggleBusy = false; }, 200);
+
             var cur = document.documentElement.getAttribute('data-theme') || 'dark';
             var next = cur === 'dark' ? 'light' : 'dark';
 
@@ -50,23 +70,39 @@
             } catch (_) {}
 
             // 3. Update all toggle button UI states on screen
-            var buttons = document.querySelectorAll('.theme-toggle');
-            for (var i = 0; i < buttons.length; i++) {
-                var content = buttons[i].querySelector('.theme-btn-content');
-                if (content) {
-                    if (next === 'light') {
-                        content.innerHTML = '<svg class="moon-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 3a6 6 0 0 0 9 9 9 0 1 1-9-9Z"/></svg><span class="btn-text-badge">DARK</span>';
-                    } else {
-                        content.innerHTML = '<svg class="sun-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg><span class="btn-text-badge">LIGHT</span>';
-                    }
-                }
-            }
+            updateThemeButtons(next);
 
             // 4. Background notify backend
             try {
                 fetch('/set-theme/' + next, { credentials: 'same-origin' }).catch(function(){});
             } catch (_) {}
-        }
+            return false;
+        };
+
+        // 1-Click Instant Category Color Selection
+        window.selectCategoryColor = function(btn, color) {
+            if (!color) return;
+            var parent = btn.closest('.color-picker-group') || btn.parentElement;
+            var input = parent ? parent.querySelector('input[type="color"]') : document.querySelector('input[type="color"]');
+            if (input) {
+                input.value = color;
+                try {
+                    input.dispatchEvent(new Event('input', { bubbles: true }));
+                    input.dispatchEvent(new Event('change', { bubbles: true }));
+                } catch (_) {}
+            }
+            if (parent) {
+                var swatches = parent.querySelectorAll('.quick-color-swatch');
+                for (var i = 0; i < swatches.length; i++) swatches[i].classList.remove('selected');
+            }
+            btn.classList.add('selected');
+        };
+
+        // Sync initial button states on DOM ready
+        document.addEventListener('DOMContentLoaded', function() {
+            var theme = document.documentElement.getAttribute('data-theme') || 'dark';
+            updateThemeButtons(theme);
+        });
 
         // Clean out any stale service workers
         if ('serviceWorker' in navigator) {
@@ -595,15 +631,15 @@
                     <div style="margin-top: 14px;" class="color-picker-group">
                         <label class="form-label">THEME COLOR</label>
                         <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px; flex-wrap: wrap;">
-                            <button type="button" class="quick-color-swatch selected" data-color="#3b82f6" style="background: #3b82f6;" title="Cyber Blue"></button>
-                            <button type="button" class="quick-color-swatch" data-color="#ff003c" style="background: #ff003c;" title="Neon Red"></button>
-                            <button type="button" class="quick-color-swatch" data-color="#38bdf8" style="background: #38bdf8;" title="Electric Cyan"></button>
-                            <button type="button" class="quick-color-swatch" data-color="#00f59b" style="background: #00f59b;" title="Neon Mint"></button>
-                            <button type="button" class="quick-color-swatch" data-color="#f59e0b" style="background: #f59e0b;" title="Amber Gold"></button>
-                            <button type="button" class="quick-color-swatch" data-color="#ff2a55" style="background: #ff2a55;" title="Neon Rose"></button>
+                            <button type="button" class="quick-color-swatch selected" data-color="#3b82f6" style="background: #3b82f6;" onclick="selectCategoryColor(this, '#3b82f6')" title="Cyber Blue"></button>
+                            <button type="button" class="quick-color-swatch" data-color="#ff003c" style="background: #ff003c;" onclick="selectCategoryColor(this, '#ff003c')" title="Neon Red"></button>
+                            <button type="button" class="quick-color-swatch" data-color="#38bdf8" style="background: #38bdf8;" onclick="selectCategoryColor(this, '#38bdf8')" title="Electric Cyan"></button>
+                            <button type="button" class="quick-color-swatch" data-color="#00f59b" style="background: #00f59b;" onclick="selectCategoryColor(this, '#00f59b')" title="Neon Mint"></button>
+                            <button type="button" class="quick-color-swatch" data-color="#f59e0b" style="background: #f59e0b;" onclick="selectCategoryColor(this, '#f59e0b')" title="Amber Gold"></button>
+                            <button type="button" class="quick-color-swatch" data-color="#ff2a55" style="background: #ff2a55;" onclick="selectCategoryColor(this, '#ff2a55')" title="Neon Rose"></button>
                             <div style="display: flex; align-items: center; gap: 6px; margin-left: 6px;">
                                 <input type="color" name="color" id="categoryColorInput" value="#3b82f6" class="color-input-pixel" title="Custom color picker" />
-                                <span style="font-family: var(--font-pixel-sub); font-size: 11px; color: var(--text-muted);">Custom</span>
+                                <label for="categoryColorInput" style="font-family: var(--font-pixel-sub); font-size: 11px; color: var(--text-muted); cursor: pointer;">Custom</label>
                             </div>
                         </div>
                     </div>
@@ -617,6 +653,6 @@
     </div>
 
     <!-- Frontend Interactive Client Scripts -->
-    <script src="/js/instant_actions.js?v=20261027_3" defer></script>
+    <script src="/js/instant_actions.js?v=20261028_1" defer></script>
 </body>
 </html>

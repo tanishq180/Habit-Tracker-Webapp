@@ -101,12 +101,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (themeToggleBtn) {
-        themeToggleBtn.addEventListener('click', () => {
-            const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
-            const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-theme', nextTheme);
-            localStorage.setItem('orbit_theme', nextTheme);
-            document.cookie = `orbit_theme=${nextTheme}; path=/; max-age=31536000; SameSite=Lax`;
+        themeToggleBtn.addEventListener('click', (e) => {
+            if (typeof window.toggleThemeInstant === 'function') {
+                window.toggleThemeInstant(e);
+            }
         });
     }
 

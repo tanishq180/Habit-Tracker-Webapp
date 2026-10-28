@@ -5,69 +5,37 @@
 
 (function () {
     // -------------------------------------------------------------------------
-    // 1. Instant 1-Click Theme Switcher (Zero Reload, 1-Click Instant Toggle)
+    // 1. Instant 1-Click Theme Switcher (Safe Delegate)
     // -------------------------------------------------------------------------
     document.addEventListener('click', (e) => {
         const themeBtn = e.target.closest('.theme-toggle');
         if (!themeBtn) return;
-
-        e.preventDefault();
-
-        const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
-        const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
-
-        // 1. Instant DOM attribute toggle
-        document.documentElement.setAttribute('data-theme', nextTheme);
-
-        // 2. Persist in localStorage and Cookie
-        try {
-            localStorage.setItem('orbit_theme', nextTheme);
-            document.cookie = `orbit_theme=${nextTheme}; path=/; max-age=31536000; SameSite=Lax`;
-        } catch (_) {}
-
-        // 3. Update all theme toggle buttons on the screen
-        document.querySelectorAll('.theme-toggle').forEach(btn => {
-            const content = btn.querySelector('.theme-btn-content');
-            if (content) {
-                if (nextTheme === 'light') {
-                    content.innerHTML = `
-                        <svg class="moon-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <path d="M12 3a6 6 0 0 0 9 9 9 0 1 1-9-9Z"/>
-                        </svg>
-                        <span class="btn-text-badge">DARK</span>
-                    `;
-                } else {
-                    content.innerHTML = `
-                        <svg class="sun-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <circle cx="12" cy="12" r="4"/>
-                            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
-                        </svg>
-                        <span class="btn-text-badge">LIGHT</span>
-                    `;
-                }
-            }
-            btn.href = `/set-theme/${nextTheme === 'dark' ? 'light' : 'dark'}`;
-        });
-
-        // 4. Background sync with backend
-        fetch(`/set-theme/${nextTheme}`, { credentials: 'same-origin' }).catch(() => {});
+        if (typeof window.toggleThemeInstant === 'function') {
+            window.toggleThemeInstant(e);
+        }
     });
 
-    // 1-Click Quick Color Swatches in Modals
+    // 1-Click Quick Color Swatches in Modals (Safe Delegate)
     document.addEventListener('click', (e) => {
         const swatch = e.target.closest('.quick-color-swatch');
         if (!swatch) return;
         const color = swatch.dataset.color;
         if (!color) return;
-        const parent = swatch.closest('.color-picker-group') || swatch.parentElement;
-        const input = parent ? parent.querySelector('input[type="color"]') : document.querySelector('input[type="color"]');
-        if (input) {
-            input.value = color;
-            input.dispatchEvent(new Event('input', { bubbles: true }));
-            input.dispatchEvent(new Event('change', { bubbles: true }));
+        if (typeof window.selectCategoryColor === 'function') {
+            window.selectCategoryColor(swatch, color);
+        } else {
+            const parent = swatch.closest('.color-picker-group') || swatch.parentElement;
+            const input = parent ? parent.querySelector('input[type="color"]') : document.querySelector('input[type="color"]');
+            if (input) {
+                input.value = color;
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+                input.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+            if (parent) {
+                parent.querySelectorAll('.quick-color-swatch').forEach(s => s.classList.remove('selected'));
+            }
+            swatch.classList.add('selected');
         }
-        parent.querySelectorAll('.quick-color-swatch').forEach(s => s.classList.remove('selected'));
-        swatch.classList.add('selected');
     });
 
     const playCoinSound = () => {};

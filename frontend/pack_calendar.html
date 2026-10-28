@@ -18,6 +18,7 @@
     </noscript>
     <link rel="stylesheet" href="/static/css/style.css">
     <script>
+        // Canonical Theme Management (Guaranteed 1-Click Instant Execution)
         (function() {
             var theme = localStorage.getItem('orbit_theme');
             if (!theme) {
@@ -29,37 +30,59 @@
             }
         })();
 
-        function toggleThemeInstant(e) {
-            if (e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            var cur = document.documentElement.getAttribute('data-theme') || 'dark';
-            var next = cur === 'dark' ? 'light' : 'dark';
-
-            document.documentElement.setAttribute('data-theme', next);
-
-            try {
-                localStorage.setItem('orbit_theme', next);
-                document.cookie = 'orbit_theme=' + next + '; path=/; max-age=31536000; SameSite=Lax';
-            } catch (_) {}
-
+        function updateThemeButtons(theme) {
             var buttons = document.querySelectorAll('.theme-toggle');
             for (var i = 0; i < buttons.length; i++) {
                 var content = buttons[i].querySelector('.theme-btn-content');
                 if (content) {
-                    if (next === 'light') {
+                    if (theme === 'light') {
                         content.innerHTML = '<svg class="moon-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 3a6 6 0 0 0 9 9 9 0 1 1-9-9Z"/></svg><span class="btn-text-badge">DARK</span>';
                     } else {
                         content.innerHTML = '<svg class="sun-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg><span class="btn-text-badge">LIGHT</span>';
                     }
                 }
             }
+            var meta = document.querySelector('meta[name="theme-color"]');
+            if (meta) meta.setAttribute('content', theme === 'light' ? '#f8fafc' : '#05070d');
+        }
 
+        window.toggleThemeInstant = function(e) {
+            if (e) {
+                if (e.preventDefault) e.preventDefault();
+                if (e.stopPropagation) e.stopPropagation();
+                if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+            }
+            if (window._themeToggleBusy) return false;
+            window._themeToggleBusy = true;
+            setTimeout(function() { window._themeToggleBusy = false; }, 200);
+
+            var cur = document.documentElement.getAttribute('data-theme') || 'dark';
+            var next = cur === 'dark' ? 'light' : 'dark';
+
+            // 1. Instant DOM attribute switch
+            document.documentElement.setAttribute('data-theme', next);
+
+            // 2. Persist in LocalStorage & Cookie immediately
+            try {
+                localStorage.setItem('orbit_theme', next);
+                document.cookie = 'orbit_theme=' + next + '; path=/; max-age=31536000; SameSite=Lax';
+            } catch (_) {}
+
+            // 3. Update all toggle button UI states on screen
+            updateThemeButtons(next);
+
+            // 4. Background notify backend
             try {
                 fetch('/set-theme/' + next, { credentials: 'same-origin' }).catch(function(){});
             } catch (_) {}
-        }
+            return false;
+        };
+
+        // Sync initial button states on DOM ready
+        document.addEventListener('DOMContentLoaded', function() {
+            var theme = document.documentElement.getAttribute('data-theme') || 'dark';
+            updateThemeButtons(theme);
+        });
     </script>
 </head>
 <body class="calendar-page-body" data-today="{{ today_str }}">
@@ -569,6 +592,6 @@
         }
     });
     </script>
-    <script src="/js/instant_actions.js" defer></script>
+    <script src="/js/instant_actions.js?v=20261028_1" defer></script>
     </body>
 </html>
